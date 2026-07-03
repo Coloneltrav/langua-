@@ -5,6 +5,9 @@ import { defineConfig } from 'vite';
 // Vite's dev server needs an explicit allow-list to serve files outside /frontend.
 export default defineConfig({
   root: '.',
+  // GitHub Pages serves the app under /<repo-name>/ — the deploy workflow
+  // sets BASE_PATH=/langua-/; local dev and the backend-paired build keep '/'.
+  base: process.env.BASE_PATH || '/',
   server: {
     port: 5173,
     fs: { allow: ['..'] },

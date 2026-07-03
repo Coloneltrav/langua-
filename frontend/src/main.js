@@ -16,5 +16,11 @@ import { checkAzureAvailable } from './services/tts.js';
     speechSynthesis.onvoiceschanged = () => {}; // warm up voice list
   }
 
+  // Offline/installable support for production builds (GitHub Pages).
+  // Skipped in dev so the SW never fights Vite's module server.
+  if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+    navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`).catch(() => {});
+  }
+
   checkAzureAvailable().then(() => renderRoute());
 })();
