@@ -1,0 +1,67 @@
+# Keeps the GitHub Pages site in sync with the source on every push.
+#
+# This repo's Pages site is configured in "deploy from a branch" (legacy)
+# mode, serving the default branch's root — so this workflow builds the
+# frontend and commits the output (index.html, assets/, icons/, manifest,
+# sw.js) to the repo root. GitHub's built-in Pages pipeline then publishes
+# it automatically. The .nojekyll file makes Pages serve the files as-is.
+#
+# If the repo's Pages setting is ever switched to "GitHub Actions"
+# (Settings -> Pages -> Source), this can be replaced with the cleaner
+# actions/deploy-pages flow that doesn't commit build output to the repo.
+#
+# Note: commits made here with GITHUB_TOKEN don't re-trigger workflows,
+# so this cannot loop.
+name: Build site
+
+on:
+  push:
+    branches: [claude/blas-frontend-backend-split-t84k23]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-site
+  cancel-in-progress: true
+
+jobs:
+  build-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run frontend tests
+        run: npm run test -w frontend
+
+      - name: Build frontend (Pages base path)
+        run: npm run build -w frontend
+        env:
+          BASE_PATH: /langua-/
+
+      - name: Sync build output to repo root
+        run: |
+          rm -rf assets icons
+          cp -r frontend/dist/* .
+          rm -f assets/*.map
+          touch .nojekyll
+
+      - name: Commit site if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A index.html assets icons manifest.webmanifest sw.js .nojekyll
+          if git diff --cached --quiet; then
+            echo "Site unchanged — nothing to commit."
+          else
+            git commit -m "Rebuild GitHub Pages site [automated]"
+            git push
+          fi
