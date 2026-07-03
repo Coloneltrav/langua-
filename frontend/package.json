@@ -1,0 +1,21 @@
+{
+  "name": "blas-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vite": "^6.0.0",
+    "vitest": "^2.1.5",
+    "eslint": "^9.15.0",
+    "@eslint/js": "^9.15.0"
+  }
+}

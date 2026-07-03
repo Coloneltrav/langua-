@@ -1,0 +1,41 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8787:8787"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - ANTHROPIC_MODEL=${ANTHROPIC_MODEL:-claude-opus-4-8}
+      - AZURE_SPEECH_KEY=${AZURE_SPEECH_KEY:-}
+      - AZURE_SPEECH_REGION=${AZURE_SPEECH_REGION:-westeurope}
+      - BLAS_ACCESS_TOKEN=${BLAS_ACCESS_TOKEN:-}
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:5173}
+      - PRONUNCIATION_ASR_URL=http://pronunciation-asr:8000
+      - PROGRESS_DATA_FILE=/data/progress.json
+    volumes:
+      - blas-progress:/data
+    depends_on:
+      - pronunciation-asr
+
+  # Optional but recommended: real pronunciation scoring. The backend
+  # degrades gracefully (engine:"unavailable") if this isn't running, so
+  # you can omit it from `docker compose up` for a lighter local dev loop.
+  pronunciation-asr:
+    build:
+      context: .
+      dockerfile: services/pronunciation-asr/Dockerfile
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  blas-progress:

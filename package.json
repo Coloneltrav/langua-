@@ -1,0 +1,24 @@
+{
+  "name": "blas",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Blas — a personal Irish learning system. Monorepo: frontend (Vite) + backend (Express) + pronunciation-asr (FastAPI).",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c yellow,green \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "dev:frontend": "npm run dev -w frontend",
+    "dev:backend": "npm run dev -w backend",
+    "build": "npm run build -w frontend",
+    "lint": "npm run lint -w frontend && npm run lint -w backend",
+    "test": "npm run test -w frontend --if-present && npm run test -w backend --if-present"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

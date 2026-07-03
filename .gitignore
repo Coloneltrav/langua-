@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+
+# Build output
+frontend/dist/
+
+# Env files (never commit secrets)
+.env
+.env.local
+backend/.env
+
+# Runtime data
+backend/data/
+*.log
+
+# Editor/OS
+.DS_Store
+.vscode/
+.idea/
+
+# Downloaded ASR models (fetched by download_model.sh / Docker build)
+services/pronunciation-asr/models/
+*.bin
