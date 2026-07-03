@@ -1,16 +1,21 @@
 import { state, saveProgress, todayKey, newWordsLearnedToday } from '../../state/store.js';
-import { azureAvailableSync } from '../../services/tts.js';
+import { azureAvailableSync, audioDbAvailable } from '../../services/tts.js';
 import { uiState } from '../uiState.js';
 
 export function render() {
   const usingAzure = azureAvailableSync();
+  const usingDb = audioDbAvailable();
+  const voiceStatus = usingDb
+    ? 'Pronunciation audio database (real ga-IE Irish neural audio, works offline)'
+    : usingAzure
+      ? 'Azure ga-IE neural voice via the backend (real Irish TTS)'
+      : 'Browser fallback voice (approximate — not verified Irish pronunciation)';
   return `
     <div class="card">
       <div style="font-family:'Cormorant Garamond',serif; font-size:20px; margin-bottom:6px;">Pronunciation voice</div>
       <div style="font-size:12.5px; color:var(--text-dim); line-height:1.6; margin-bottom:14px;">
-        Currently: <b style="color:${usingAzure ? 'var(--gold-bright)' : '#e2a494'}">${usingAzure ? 'Azure ga-IE neural voice (real Irish TTS)' : 'Browser fallback voice (approximate — not verified Irish pronunciation)'}</b>.
-        Azure AI Speech has two purpose-built Irish voices: <b>Colm</b> (male) and <b>Orla</b> (female), trained on actual Irish speech.
-        The key lives on the backend (see <code>backend/.env.example</code>) — nothing to paste here anymore.
+        Currently: <b style="color:${usingDb || usingAzure ? 'var(--gold-bright)' : '#e2a494'}">${voiceStatus}</b>.
+        The voice choice below applies to live backend TTS; the audio database is generated with one voice (Colm by default).
       </div>
       <label class="field-label">Voice</label>
       <select id="azureVoiceSelect">
@@ -31,6 +36,12 @@ export function render() {
         <div style="font-size:11.5px; color:var(--text-dim); margin-top:6px;">You've learned ${newWordsLearnedToday()} new word${newWordsLearnedToday() === 1 ? '' : 's'} today.</div>
       </div>
       <div class="btn-row"><button class="btn" id="saveSettings">Save settings</button></div>
+    </div>
+    <div class="card">
+      <div style="font-family:'Cormorant Garamond',serif; font-size:18px; margin-bottom:6px;">AI Tutor key</div>
+      <div style="font-size:12.5px; color:var(--text-dim); margin-bottom:12px; line-height:1.6;">On this free-hosted version there's no server to pay for tutor chats, so the tutor needs your own Anthropic API key (get one at <a class="word-ref" href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a>). It's stored only on this device and sent only to Anthropic. Leave blank if you're running the full backend.</div>
+      <input type="text" id="anthropicKeyInput" value="${state.settings.anthropicKey}" placeholder="sk-ant-...">
+      <div class="btn-row"><button class="btn secondary" id="saveAnthropicKey">Save key</button></div>
     </div>
     <div class="card">
       <div style="font-family:'Cormorant Garamond',serif; font-size:18px; margin-bottom:6px;">Backend access token</div>
@@ -63,6 +74,14 @@ export function bind(main, rerender) {
     saveProgress();
     saveSettingsBtn.textContent = 'Saved ✓';
     setTimeout(() => { saveSettingsBtn.textContent = 'Save settings'; }, 1500);
+  };
+
+  const saveAnthropicKeyBtn = main.querySelector('#saveAnthropicKey');
+  if (saveAnthropicKeyBtn) saveAnthropicKeyBtn.onclick = () => {
+    state.settings.anthropicKey = main.querySelector('#anthropicKeyInput').value.trim();
+    saveProgress();
+    saveAnthropicKeyBtn.textContent = 'Saved ✓';
+    setTimeout(() => { saveAnthropicKeyBtn.textContent = 'Save key'; }, 1500);
   };
 
   const saveTokenBtn = main.querySelector('#saveToken');

@@ -3,7 +3,7 @@ import { state, saveProgress, registerNewWordLearned } from '../../state/store.j
 import { capsuleReadiness } from '../../engine/readiness.js';
 import { freshProgress } from '../../engine/sm2.js';
 import { linkifyIrish } from '../dom.js';
-import { speakIrish } from '../../services/tts.js';
+import { speakWord } from '../../services/tts.js';
 import { uiState } from '../uiState.js';
 
 export function render() {
@@ -58,7 +58,7 @@ export function bind(main, rerender) {
     chip.onclick = (e) => {
       e.stopPropagation();
       const w = WORDS.find((x) => x.id === chip.dataset.hearWord);
-      if (w) speakIrish(w.irish, w.phonetic).catch((err) => console.error(err));
+      if (w) speakWord(w).catch((err) => console.error(err));
     };
   });
 

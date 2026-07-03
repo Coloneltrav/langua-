@@ -6,10 +6,12 @@
    ========================================================= */
 import { loadProgress } from './state/store.js';
 import { renderApp, renderRoute } from './ui/router.js';
-import { checkAzureAvailable } from './services/tts.js';
+import { checkAzureAvailable, loadAudioDb } from './services/tts.js';
 
 (async function init() {
-  await loadProgress();
+  // The static pronunciation audio DB determines both playback quality and
+  // whether on-device scoring has references — resolve it before first paint.
+  await Promise.all([loadProgress(), loadAudioDb()]);
   renderApp();
 
   if ('speechSynthesis' in window) {

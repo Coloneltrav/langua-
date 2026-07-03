@@ -13,6 +13,7 @@ export const state = {
     savedCapsules: {},
     voiceCardDismissed: false,
     apiToken: '', // bearer token for the backend, if the deployment requires one
+    anthropicKey: '', // device-only Anthropic key for the static build's direct tutor calls
   },
 };
 

@@ -1,5 +1,5 @@
 import { linkifyIrish } from '../dom.js';
-import { teanglannFuaimLink } from '../../services/tts.js';
+import { teanglannFuaimLink, speakWord, staticAudioUrl } from '../../services/tts.js';
 import { pronunciationWidgetHtml, bindPronunciationWidget } from './pronunciationWidget.js';
 
 export function wordCardHtml(w, mode) {
@@ -19,6 +19,7 @@ export function wordCardHtml(w, mode) {
       </div>
       <div class="btn-row">
         <button class="btn secondary" id="hearBtn">🔊 Hear again</button>
+        ${staticAudioUrl(w.id, 'examples') ? '<button class="btn secondary" id="hearExampleBtn">🔊 Hear the sentence</button>' : ''}
       </div>
       ${pronunciationWidgetHtml()}
       ${mode === 'learn' ? `
@@ -36,4 +37,6 @@ export function wordCardHtml(w, mode) {
 
 export function bindWordCard(root, w) {
   bindPronunciationWidget(root, w);
+  const hearExampleBtn = root.querySelector('#hearExampleBtn');
+  if (hearExampleBtn) hearExampleBtn.onclick = () => speakWord(w, 'examples').catch((e) => console.error(e));
 }

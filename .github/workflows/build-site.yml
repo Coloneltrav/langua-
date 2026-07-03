@@ -49,7 +49,7 @@ jobs:
 
       - name: Sync build output to repo root
         run: |
-          rm -rf assets icons
+          rm -rf assets icons audio
           cp -r frontend/dist/* .
           rm -f assets/*.map
           touch .nojekyll
@@ -58,7 +58,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A index.html assets icons manifest.webmanifest sw.js .nojekyll
+          git add -A
           if git diff --cached --quiet; then
             echo "Site unchanged — nothing to commit."
           else

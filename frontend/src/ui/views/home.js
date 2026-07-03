@@ -1,7 +1,7 @@
 import { WORDS } from '../../data/words.js';
 import { state, saveProgress } from '../../state/store.js';
 import { todayDue, newAvailable, startedWords, knownCount } from '../../engine/queue.js';
-import { azureAvailableSync } from '../../services/tts.js';
+import { azureAvailableSync, audioDbAvailable } from '../../services/tts.js';
 import { uiState } from '../uiState.js';
 
 export function render() {
@@ -9,11 +9,11 @@ export function render() {
   const fresh = newAvailable(WORDS, state.progress).length;
   const known = knownCount(WORDS, state.progress);
   const started = startedWords(WORDS, state.progress).length;
-  const voiceCard = (!azureAvailableSync() && !state.settings.voiceCardDismissed) ? `
+  const voiceCard = (!audioDbAvailable() && !azureAvailableSync() && !state.settings.voiceCardDismissed) ? `
     <div class="card" style="border-color:var(--flag-orange);">
       <div style="font-family:'Cormorant Garamond',serif; font-size:18px; margin-bottom:6px;">🔊 True Irish pronunciation</div>
       <div style="font-size:13px; color:var(--text-dim); line-height:1.65;">
-        Right now words are spoken with an <b>approximate</b> voice reading the phonetic respelling. For <b>real Irish pronunciation</b> — Microsoft's ga-IE neural voices (Colm/Orla), trained on actual Irish speech — the app operator needs to set an Azure Speech key on the backend once (see backend/.env.example). Nothing for you to do here.
+        Right now words are spoken with an <b>approximate</b> voice reading the phonetic respelling. Once this site's <b>pronunciation audio database</b> is generated (real ga-IE Irish neural audio for every word — see the repo's "Generate pronunciation audio" workflow), playback and pronunciation scoring switch to it automatically.
       </div>
       <div class="btn-row">
         <button class="btn secondary" id="dismissVoiceCard">Got it</button>

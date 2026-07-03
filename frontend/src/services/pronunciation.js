@@ -74,13 +74,36 @@ export function stopRecording() {
 }
 
 /**
- * Upload a recorded attempt for constrained-vocabulary ASR scoring.
+ * Score a recorded attempt. Two engines, tried in order:
+ *  1. The backend ASR service (grammar-constrained whisper.cpp) when a
+ *     backend is deployed — the stronger signal.
+ *  2. On-device acoustic comparison (MFCC+DTW against the static audio
+ *     database) — works on the free static site with no server at all.
  * @param {Blob} blob - recorded audio (webm/opus)
  * @param {object} targetWord - the WORDS entry the learner was attempting
- * @returns {Promise<{ok:boolean, score?:number, verdict?:string, heard?:string, engine?:string, msg?:string}>}
  */
 export async function scorePronunciation(blob, targetWord) {
   const distractors = pickDistractors(targetWord);
+
+  const backendResult = await scoreViaBackend(blob, targetWord, distractors);
+  if (backendResult && backendResult.engine !== 'unavailable') return backendResult;
+
+  const { audioDbAvailable } = await import('./tts.js');
+  if (audioDbAvailable()) {
+    const { scoreLocally } = await import('./audio/localScore.js');
+    return scoreLocally(blob, targetWord, distractors);
+  }
+
+  return backendResult || {
+    ok: true,
+    engine: 'unavailable',
+    score: null,
+    heard: null,
+    detail: 'No scoring engine available: neither a backend nor the pronunciation audio database is set up.',
+  };
+}
+
+async function scoreViaBackend(blob, targetWord, distractors) {
   const form = new FormData();
   form.append('audio', blob, 'attempt.webm');
   form.append('target_id', targetWord.id);
@@ -88,11 +111,11 @@ export async function scorePronunciation(blob, targetWord) {
   form.append('target_phonetic', targetWord.phonetic || '');
   form.append('distractors', JSON.stringify(distractors.map((d) => ({ id: d.id, irish: d.irish, phonetic: d.phonetic }))));
 
-  const res = await apiFetch('/api/pronunciation/score', { method: 'POST', body: form });
-  if (!res.ok) {
-    let msg = `Scoring failed (${res.status})`;
-    try { const body = await res.json(); if (body?.error) msg = body.error; } catch { /* not json */ }
-    return { ok: false, msg };
+  try {
+    const res = await apiFetch('/api/pronunciation/score', { method: 'POST', body: form });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null; // no backend (static hosting) — caller falls through to local scoring
   }
-  return res.json();
 }

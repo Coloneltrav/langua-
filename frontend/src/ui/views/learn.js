@@ -5,7 +5,7 @@ import { sm2Update, bumpSkill, freshProgress } from '../../engine/sm2.js';
 import { emptyState } from '../dom.js';
 import { wordCardHtml, bindWordCard } from '../components/wordCard.js';
 import { uiState } from '../uiState.js';
-import { speakIrish } from '../../services/tts.js';
+import { speakWord } from '../../services/tts.js';
 
 export function render() {
   const pool = newAvailable(WORDS, state.progress);
@@ -61,9 +61,12 @@ export function bindHear(hearBtn, getWord) {
     const w = getWord();
     hearBtn.disabled = true;
     try {
-      const res = await speakIrish(w.irish, w.phonetic);
+      const res = await speakWord(w);
       if (!res.ok) alert(res.msg);
-      hearBtn.title = res.source === 'azure' ? 'Played via Azure ga-IE neural voice (real Irish TTS).' : 'No Azure key set on the backend — played with an approximate fallback voice.';
+      hearBtn.title = {
+        'audio-db': 'Real Irish neural audio from the pronunciation database.',
+        azure: 'Played live via Azure ga-IE neural voice.',
+      }[res.source] || 'Approximate fallback voice — the pronunciation audio database hasn\'t been generated yet.';
     } finally {
       hearBtn.disabled = false;
     }

@@ -78,6 +78,26 @@ training data). This is real, working closed-set recognition with a
 genuine confidence score — a real step up from record-and-self-compare —
 not yet phoneme-level feedback. That's the documented next step.
 
+### Pronunciation audio database (static builds)
+
+For the free static deployment (GitHub Pages), `scripts/generate-audio.mjs`
+pre-generates real Azure ga-IE neural audio for every word and example
+sentence into `frontend/public/audio/`. Run the **"Generate pronunciation
+audio"** workflow once (needs the `AZURE_SPEECH_KEY` repo secret). With the
+database in place, the static site gets:
+
+- **Real Irish playback** — the app plays the committed MP3s (offline-capable
+  via the service worker) instead of the browser's approximate voice.
+- **On-device pronunciation scoring** — recordings are silence-trimmed, then
+  MFCC+DTW-compared against the target word's reference audio and a few
+  similar-sounding distractors (`frontend/src/services/audio/`). No server
+  involved. Like the server-side scorer, it's closed-set similarity, not
+  phoneme-level feedback — labeled as such in the UI.
+
+The AI Tutor on static builds calls the Anthropic API directly from the
+browser using a key the user pastes in Settings (stored on-device only);
+with a deployed backend, the server key is used instead.
+
 ## Getting started
 
 ### Local dev (no Docker)

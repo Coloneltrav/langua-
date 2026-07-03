@@ -1,5 +1,5 @@
 import { uiState } from './uiState.js';
-import { speakIrish } from '../services/tts.js';
+import { speakWord } from '../services/tts.js';
 
 import * as home from './views/home.js';
 import * as learn from './views/learn.js';
@@ -64,7 +64,7 @@ function renderRoute() {
   const spoken = getSpokenWord();
   if (spoken && spoken.id !== uiState.lastAutoPlayed) {
     uiState.lastAutoPlayed = spoken.id;
-    setTimeout(() => speakIrish(spoken.irish, spoken.phonetic).catch((e) => console.error(e)), 250);
+    setTimeout(() => speakWord(spoken).catch((e) => console.error(e)), 250);
   }
 }
 

@@ -59,6 +59,49 @@ function phoneticForTTS(phonetic) {
 
 const azureAudioCache = {}; // text -> object URL, session-only
 
+// ---- Static pronunciation audio database ----
+// Pre-generated Azure ga-IE neural audio committed to the repo (see
+// scripts/generate-audio.mjs + the "Generate pronunciation audio"
+// workflow). When present, this is the first-choice playback source:
+// real Irish neural audio served as plain files, no key, no server.
+let audioDb = null; // manifest from audio/index.json, or null if not generated yet
+
+export async function loadAudioDb() {
+  try {
+    const res = await fetch(`${import.meta.env.BASE_URL}audio/index.json`);
+    if (res.ok) audioDb = await res.json();
+  } catch {
+    audioDb = null;
+  }
+  return audioDb;
+}
+
+export function audioDbAvailable() {
+  return audioDb !== null;
+}
+
+export function staticAudioUrl(wordId, kind = 'words') {
+  if (!audioDb) return null;
+  const list = kind === 'examples' ? audioDb.examples : audioDb.words;
+  if (!list || !list.includes(wordId)) return null;
+  return `${import.meta.env.BASE_URL}audio/${kind}/${wordId}.mp3`;
+}
+
+/**
+ * Speak a vocabulary word (or its example sentence with kind='examples'):
+ * static audio DB first, then live Azure via the backend, then the
+ * browser-voice phonetic approximation.
+ */
+export async function speakWord(word, kind = 'words') {
+  const url = staticAudioUrl(word.id, kind);
+  if (url) {
+    await new Audio(url).play();
+    return { ok: true, source: 'audio-db' };
+  }
+  const text = kind === 'examples' ? word.example_ga : word.irish;
+  return speakIrish(text, kind === 'examples' ? null : word.phonetic);
+}
+
 let azureAvailable = null; // cached tri-state: null = unknown, true/false once checked
 export function azureAvailableSync() {
   return azureAvailable === true;

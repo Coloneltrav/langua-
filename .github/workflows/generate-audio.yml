@@ -1,0 +1,70 @@
+# Generates the pronunciation audio database (real Azure ga-IE neural
+# audio for every word + example sentence) and republishes the site.
+#
+# One-time setup: add the repo secret AZURE_SPEECH_KEY
+#   (Settings -> Secrets and variables -> Actions -> New repository secret)
+# and optionally the repo variable AZURE_SPEECH_REGION (default:
+# southcentralus). Then run this workflow from the Actions tab — or it can
+# be triggered via the API. The generated MP3s are committed to the repo,
+# so this only ever needs to re-run when shared/vocab.json gains words.
+name: Generate pronunciation audio
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-site
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Check secret is configured
+        run: |
+          if [ -z "${{ secrets.AZURE_SPEECH_KEY }}" ]; then
+            echo "::error::AZURE_SPEECH_KEY secret is not set. Add it under Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+
+      - name: Generate audio from Azure ga-IE neural TTS
+        run: node scripts/generate-audio.mjs
+        env:
+          AZURE_SPEECH_KEY: ${{ secrets.AZURE_SPEECH_KEY }}
+          AZURE_SPEECH_REGION: ${{ vars.AZURE_SPEECH_REGION || 'southcentralus' }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build frontend (Pages base path)
+        run: npm run build -w frontend
+        env:
+          BASE_PATH: /langua-/
+
+      - name: Sync build output to repo root
+        run: |
+          rm -rf assets icons audio
+          cp -r frontend/dist/* .
+          rm -f assets/*.map
+          touch .nojekyll
+
+      - name: Commit audio + site
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing changed."
+          else
+            git commit -m "Add pronunciation audio database [automated]"
+            git push
+          fi

@@ -1,8 +1,9 @@
-// Replaces the old "record yourself, compare to reference audio by ear"
-// placeholder with a real closed-set ASR score, when the pronunciation-asr
-// service is reachable. Falls back to record+playback (labeled honestly)
-// if it isn't — e.g. running the frontend without the optional service.
+// Pronunciation practice: record → trim silence → score → feedback.
+// Scoring chain (see services/pronunciation.js): backend ASR when a
+// server is deployed, otherwise on-device acoustic comparison against the
+// static pronunciation audio database, otherwise honest "no engine" copy.
 import { startRecording, stopRecording, scorePronunciation, recordingActive } from '../../services/pronunciation.js';
+import { audioDbAvailable } from '../../services/tts.js';
 
 export function pronunciationWidgetHtml() {
   return `
@@ -20,13 +21,31 @@ function scoreClass(score) {
   return 'low';
 }
 
-function verdictFor(score, engine) {
-  if (engine === 'unavailable') {
-    return "Pronunciation scoring service isn't running — recorded for playback only. Compare against \"Hear it\" above.";
+const ENGINE_LABELS = {
+  'whisper.cpp-grammar-constrained': 'server ASR (whisper.cpp)',
+  'acoustic-dtw': 'on-device acoustic analysis',
+};
+
+function verdictFor(result) {
+  const score = result.score ?? 0;
+  if (result.matched === 'distractor' && result.heard) {
+    return `That sounded closer to “${result.heard}” than to the target. Listen once more and mind the vowel sounds.`;
   }
-  if (score >= 80) return 'Strong match — the closed-set recognizer picked your target word with high confidence.';
-  if (score >= 55) return 'Close, but the recognizer wasn’t fully confident. Listen again and try matching the stress pattern.';
-  return 'The recognizer leaned toward a different word in the set. Try again after one more listen.';
+  if (score >= 80) return 'Strong match against the reference pronunciation.';
+  if (score >= 55) return 'Close — recognizably the right word, but not a tight match yet. Try shadowing the audio: play, then speak immediately after.';
+  return 'Quite far from the reference. Play the word again and try matching the rhythm and stress before the individual sounds.';
+}
+
+async function trimForPlayback(blob) {
+  try {
+    const { decodeToMono16k } = await import('../../services/audio/decode.js');
+    const { trimSilence, encodeWav } = await import('../../services/audio/trim.js');
+    const samples = await decodeToMono16k(await blob.arrayBuffer());
+    const { samples: trimmed, trimmed: didTrim } = trimSilence(samples, 16000);
+    return { blob: encodeWav(trimmed, 16000), didTrim };
+  } catch {
+    return { blob, didTrim: false }; // decode failed — fall back to the raw take
+  }
 }
 
 export function bindPronunciationWidget(root, word) {
@@ -49,21 +68,25 @@ export function bindPronunciationWidget(root, word) {
     }
     const blob = await stopRecording();
     recBtn.textContent = '🎙️ Record yourself';
-    statusEl.innerHTML = `<span class="loading-dots" style="font-size:13px; color:var(--text-dim);">Scoring</span>`;
-    const playbackUrl = URL.createObjectURL(blob);
+    statusEl.innerHTML = `<span class="loading-dots" style="font-size:13px; color:var(--text-dim);">Analyzing</span>`;
+
+    // Playback uses the silence-trimmed take, so the learner hears exactly
+    // the part where they spoke — no dead air before or after.
+    const playback = await trimForPlayback(blob);
+    const playbackUrl = URL.createObjectURL(playback.blob);
 
     try {
       const result = await scorePronunciation(blob, word);
-      statusEl.innerHTML = `<audio controls src="${playbackUrl}" style="width:100%;"></audio>`;
+      statusEl.innerHTML = `<audio controls src="${playbackUrl}" style="width:100%;"></audio>${playback.didTrim ? '<div style="font-size:11px; color:var(--text-dim); margin-top:4px;">Silence trimmed automatically.</div>' : ''}`;
       if (!result.ok) {
-        resultEl.innerHTML = `<div class="pron-score"><div class="verdict">${result.msg}</div></div>`;
+        resultEl.innerHTML = `<div class="pron-score"><div class="verdict">${result.msg || 'Scoring failed.'}</div></div>`;
         return;
       }
       if (result.engine === 'unavailable' || result.score == null) {
         resultEl.innerHTML = `
           <div class="pron-score">
-            <div class="verdict">${verdictFor(0, 'unavailable')}</div>
-            ${result.detail ? `<div class="heard">${result.detail}</div>` : ''}
+            <div class="verdict">${result.detail || 'Scoring isn’t available right now — recorded for playback only.'}</div>
+            ${!audioDbAvailable() ? '<div class="heard">Tip: once the pronunciation audio database is generated for this site, scoring works right here with no server.</div>' : ''}
           </div>
         `;
         return;
@@ -75,14 +98,14 @@ export function bindPronunciationWidget(root, word) {
             <div class="score-n ${scoreClass(score)}">${score}</div>
             <div class="score-label">/ 100</div>
           </div>
-          <div class="verdict">${verdictFor(score, result.engine)}</div>
-          ${result.heard ? `<div class="heard">Recognizer heard: “${result.heard}”</div>` : ''}
-          <span class="engine-tag">${result.engine || 'unknown engine'}</span>
+          <div class="verdict">${verdictFor(result)}</div>
+          ${result.matched === 'target' && result.heard ? `<div class="heard">Best match: “${result.heard}” ✓</div>` : ''}
+          <span class="engine-tag">${ENGINE_LABELS[result.engine] || result.engine}</span>
         </div>
       `;
     } catch (e) {
       statusEl.innerHTML = `<audio controls src="${playbackUrl}" style="width:100%;"></audio>`;
-      resultEl.innerHTML = `<div class="pron-score"><div class="verdict">Couldn't reach the scoring service (${e.message}). Recorded for playback only.</div></div>`;
+      resultEl.innerHTML = `<div class="pron-score"><div class="verdict">Couldn't score this attempt (${e.message}). Recorded for playback only.</div></div>`;
     }
   };
 }

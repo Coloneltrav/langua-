@@ -3,7 +3,7 @@ import { state, saveProgress } from '../../state/store.js';
 import { startedWords } from '../../engine/queue.js';
 import { bumpSkill } from '../../engine/sm2.js';
 import { emptyState } from '../dom.js';
-import { speakIrish } from '../../services/tts.js';
+import { speakWord } from '../../services/tts.js';
 import { uiState } from '../uiState.js';
 
 function pickQuiz() {
@@ -53,7 +53,7 @@ export function render() {
 
 export function bind(main, rerender) {
   const quizHear = main.querySelector('#quizHear');
-  if (quizHear) quizHear.onclick = () => { if (uiState.quizTarget) speakIrish(uiState.quizTarget.irish, uiState.quizTarget.phonetic).catch((e) => console.error(e)); };
+  if (quizHear) quizHear.onclick = () => { if (uiState.quizTarget) speakWord(uiState.quizTarget).catch((e) => console.error(e)); };
 
   main.querySelectorAll('[data-choice]').forEach((b) => {
     b.onclick = () => {
