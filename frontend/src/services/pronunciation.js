@@ -49,12 +49,22 @@ function textSimilarity(a, b) {
   return na[0] === nb[0] ? 0.15 : 0;
 }
 
+// Browsers disagree on recording containers: Chrome/Firefox do webm/opus,
+// Safari (iPhone!) only mp4/aac. Pick the first supported one, or let the
+// browser choose its default rather than throwing NotSupportedError.
+const MIME_CANDIDATES = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'];
+
+function pickMimeType() {
+  if (typeof MediaRecorder.isTypeSupported !== 'function') return undefined;
+  return MIME_CANDIDATES.find((t) => MediaRecorder.isTypeSupported(t));
+}
+
 export async function startRecording() {
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   activeStream = stream;
   recordedChunks = [];
-  const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' : 'audio/webm';
-  mediaRecorder = new MediaRecorder(stream, { mimeType });
+  const mimeType = pickMimeType();
+  mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
   mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
   isRecording = true;
   mediaRecorder.start();
@@ -105,7 +115,8 @@ export async function scorePronunciation(blob, targetWord) {
 
 async function scoreViaBackend(blob, targetWord, distractors) {
   const form = new FormData();
-  form.append('audio', blob, 'attempt.webm');
+  // Extension hints the backend's ffmpeg at the container (Safari records mp4)
+  form.append('audio', blob, blob.type.includes('mp4') ? 'attempt.mp4' : 'attempt.webm');
   form.append('target_id', targetWord.id);
   form.append('target_irish', targetWord.irish);
   form.append('target_phonetic', targetWord.phonetic || '');
