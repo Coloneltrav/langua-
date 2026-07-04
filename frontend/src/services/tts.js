@@ -10,7 +10,7 @@
 //    voice is installed (almost never an actual Irish voice). This is an
 //    approximation only and is labeled as such in the UI.
 import { apiFetch } from './apiClient.js';
-import { state } from '../state/store.js';
+import { state, recordInput } from '../state/store.js';
 
 const VOICE_PREFERENCE = [
   'Microsoft Ryan Online (Natural)', 'Microsoft Guy Online (Natural)',
@@ -95,8 +95,12 @@ export function staticAudioUrl(wordId, kind = 'words') {
 export async function speakWord(word, kind = 'words') {
   const url = staticAudioUrl(word.id, kind);
   if (url) {
-    await new Audio(url).play();
-    return { ok: true, source: 'audio-db' };
+    const audio = new Audio(url);
+    audio.addEventListener('ended', () => {
+      recordInput('listen', Number.isFinite(audio.duration) ? audio.duration : (kind === 'examples' ? 3 : 1.5));
+    }, { once: true });
+    await audio.play();
+    return { ok: true, source: 'audio-db', duration: audio.duration };
   }
   const text = kind === 'examples' ? word.example_ga : word.irish;
   return speakIrish(text, kind === 'examples' ? null : word.phonetic);

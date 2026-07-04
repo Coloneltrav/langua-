@@ -1,7 +1,7 @@
 import { WORDS } from '../../data/words.js';
 import { state, saveProgress } from '../../state/store.js';
 import { todayDue } from '../../engine/queue.js';
-import { sm2Update, bumpSkill } from '../../engine/sm2.js';
+import { sm2Update, bumpSkill, adjustForWeakPronunciation } from '../../engine/sm2.js';
 import { emptyState, linkifyIrish } from '../dom.js';
 import { teanglannFuaimLink } from '../../services/tts.js';
 import { pronunciationWidgetHtml, bindPronunciationWidget } from '../components/pronunciationWidget.js';
@@ -61,6 +61,7 @@ export function bind(main, rerender) {
       sm2Update(state.progress[id], q);
       bumpSkill(state.progress[id], 'recall', q >= 4 ? 1 : (q < 3 ? -1 : 0));
       bumpSkill(state.progress[id], 'recognition', q >= 3 ? 1 : 0);
+      adjustForWeakPronunciation(state.progress[id]);
       saveProgress();
       uiState.revealAnswer = false;
       rerender(true);

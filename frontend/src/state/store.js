@@ -14,6 +14,9 @@ export const state = {
     voiceCardDismissed: false,
     apiToken: '', // bearer token for the backend, if the deployment requires one
     anthropicKey: '', // device-only Anthropic key for the static build's direct tutor calls
+    // Input tracking — research-backed metric: time spent listening/reading
+    // for meaning correlates with acquisition more than drill counts do.
+    inputStats: { listenPlays: 0, listenSeconds: 0, dictationDone: 0, dictationCorrect: 0, shadowDone: 0 },
   },
 };
 
@@ -77,6 +80,15 @@ export function todayKey() {
 export function newWordsLearnedToday() {
   if (state.settings.newWordsToday.date !== todayKey()) return 0;
   return state.settings.newWordsToday.count;
+}
+
+export function recordInput(kind, seconds = 0) {
+  const s = state.settings.inputStats;
+  if (kind === 'listen') { s.listenPlays += 1; s.listenSeconds += seconds; }
+  else if (kind === 'dictation') { s.dictationDone += 1; }
+  else if (kind === 'dictationCorrect') { s.dictationCorrect += 1; }
+  else if (kind === 'shadow') { s.shadowDone += 1; }
+  saveProgress();
 }
 
 export function registerNewWordLearned() {

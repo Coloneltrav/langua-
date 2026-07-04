@@ -309,3 +309,30 @@ a.audio-ref:hover{color:var(--gold-bright); border-color:var(--gold-bright);}
   display:inline-block; margin-top:8px; font-size:10.5px; padding:2px 8px;
   border-radius:10px; background:var(--surface); color:var(--text-dim); border:1px solid var(--border);
 }
+
+/* ---- Ireland map ---- */
+.province{
+  fill:var(--surface-2);
+  stroke:var(--border);
+  stroke-width:2;
+  cursor:pointer;
+  transition:fill .15s ease;
+}
+.province:hover{fill:#24382b;}
+.province.active{fill:var(--gold-dim); stroke:var(--gold);}
+.province:focus{outline:none; stroke:var(--gold-bright);}
+.province-label{
+  fill:var(--text-dim);
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+  font-weight:600;
+  text-anchor:middle;
+  pointer-events:none;
+}
+.province-label.active{fill:#10241a; font-weight:700;}
+.gaeltacht-dot{
+  fill:var(--flag-orange);
+  stroke:#0e1712;
+  stroke-width:1.5;
+  pointer-events:all;
+}

@@ -20,10 +20,41 @@ export function render() {
     return `<div style="margin-top:12px;"><div style="font-family:'Cormorant Garamond',serif; font-size:16px;">${t.title}</div><div style="font-size:12.5px; color:var(--text-dim); margin-top:2px;">${t.text}</div><span class="readiness-pill ${cls}">${pct}% known words</span></div>`;
   }).join('');
 
+  const input = state.settings.inputStats || { listenPlays: 0, listenSeconds: 0, dictationDone: 0, dictationCorrect: 0, shadowDone: 0 };
+  const listenMin = input.listenSeconds / 60;
+  const dictPct = input.dictationDone ? Math.round((input.dictationCorrect / input.dictationDone) * 100) : null;
+
+  // Coverage by frequency band: how much of everyday Irish (as sampled by
+  // this vocabulary's frequency ordering) the learner already knows.
+  const bands = [
+    ['Top 50 most frequent', (w) => w.freq <= 50],
+    ['51–100', (w) => w.freq > 50 && w.freq <= 100],
+    ['101–150', (w) => w.freq > 100 && w.freq <= 150],
+    ['Culture & place words', (w) => w.freq >= 500],
+  ];
+  const coverageRows = bands.map(([label, match]) => {
+    const bandWords = WORDS.filter(match);
+    const knownInBand = bandWords.filter((w) => state.progress[w.id] && state.progress[w.id].repetitions >= 2).length;
+    const pct = bandWords.length ? Math.round((knownInBand / bandWords.length) * 100) : 0;
+    return `
+      <div class="skill-bar-row" style="margin-top:8px;">
+        <div class="label" style="width:150px;">${label}</div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="width:${pct}%"></div></div>
+        <div style="font-size:11.5px; color:var(--text-dim); width:70px; text-align:right;">${knownInBand}/${bandWords.length} · ${pct}%</div>
+      </div>`;
+  }).join('');
+
   return `
     <div class="grid2">
       <div class="stat"><div class="n">${started.length}</div><div class="l">words started</div></div>
       <div class="stat"><div class="n">${knownCount(WORDS, state.progress)}</div><div class="l">words known</div></div>
+      <div class="stat"><div class="n">${listenMin >= 60 ? (listenMin / 60).toFixed(1) + 'h' : Math.round(listenMin) + 'm'}</div><div class="l">listening input (${input.listenPlays} plays)</div></div>
+      <div class="stat"><div class="n">${dictPct === null ? '—' : dictPct + '%'}</div><div class="l">dictation accuracy (${input.dictationDone} tries) · ${input.shadowDone} shadows</div></div>
+    </div>
+    <div class="card">
+      <div style="font-family:'Cormorant Garamond',serif; font-size:19px; margin-bottom:4px;">Coverage by frequency band</div>
+      <div style="font-size:12px; color:var(--text-dim); margin-bottom:6px;">The most frequent words do the most work in real Irish — fill the top bands first.</div>
+      ${coverageRows}
     </div>
     <div class="card">
       <div style="font-family:'Cormorant Garamond',serif; font-size:19px; margin-bottom:10px;">Skill breakdown (avg. across started words)</div>

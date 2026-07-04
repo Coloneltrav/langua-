@@ -4,6 +4,8 @@
 // static pronunciation audio database, otherwise honest "no engine" copy.
 import { startRecording, stopRecording, scorePronunciation, recordingActive } from '../../services/pronunciation.js';
 import { audioDbAvailable } from '../../services/tts.js';
+import { state, saveProgress } from '../../state/store.js';
+import { bumpSkill } from '../../engine/sm2.js';
 
 export function pronunciationWidgetHtml() {
   return `
@@ -92,6 +94,12 @@ export function bindPronunciationWidget(root, word) {
         return;
       }
       const score = result.score;
+      // Feed the score into per-word skill tracking (drives the skill bars
+      // and the weak-pronunciation review boost in engine/sm2.js).
+      if (state.progress[word.id]) {
+        bumpSkill(state.progress[word.id], 'pronunciation', score >= 80 ? 1 : (score < 55 ? -1 : 0));
+        saveProgress();
+      }
       resultEl.innerHTML = `
         <div class="pron-score">
           <div class="score-row">

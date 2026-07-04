@@ -28,3 +28,14 @@ export function sm2Update(p, quality) { // quality 0-5
 export function bumpSkill(p, skill, delta) {
   p.skills[skill] = Math.max(0, Math.min(5, (p.skills[skill] || 0) + delta));
 }
+
+// Words the learner recognizes but pronounces poorly shouldn't drift into
+// month-long intervals — shorten the gap so weak-pronunciation items come
+// back sooner for spoken practice. Applied after sm2Update on reviews.
+export function adjustForWeakPronunciation(p) {
+  if (p.repetitions >= 2 && (p.skills.pronunciation || 0) <= 1 && p.interval > 4) {
+    p.interval = Math.max(4, Math.round(p.interval * 0.6));
+    p.dueDate = Date.now() + p.interval * 86400000;
+  }
+  return p;
+}

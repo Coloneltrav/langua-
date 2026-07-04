@@ -7,16 +7,17 @@ import * as review from './views/review.js';
 import * as vocab from './views/vocab.js';
 import * as wordDetail from './views/wordDetail.js';
 import * as quiz from './views/quiz.js';
+import * as input from './views/input.js';
 import * as culture from './views/culture.js';
 import * as capsuleDetail from './views/capsuleDetail.js';
 import * as tutor from './views/tutor.js';
 import * as stats from './views/stats.js';
 import * as settings from './views/settings.js';
 
-const VIEWS = { home, learn, review, vocab, wordDetail, quiz, culture, capsuleDetail, tutor, stats, settings };
+const VIEWS = { home, learn, review, input, vocab, wordDetail, quiz, culture, capsuleDetail, tutor, stats, settings };
 
 const TABS = [
-  ['home', 'Home'], ['learn', 'New Word'], ['review', 'Review'], ['quiz', 'Listening Quiz'],
+  ['home', 'Home'], ['learn', 'New Word'], ['review', 'Review'], ['input', 'Input'], ['quiz', 'Listen'],
   ['culture', 'Ireland'], ['vocab', 'Vocabulary'], ['tutor', 'AI Tutor'], ['stats', 'Stats'], ['settings', 'Settings'],
 ];
 
