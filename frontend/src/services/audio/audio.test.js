@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { trimSilence, encodeWav } from './trim.js';
 import { mfcc } from './mfcc.js';
 import { dtwDistance, dtwAlign } from './dtw.js';
+import { scoreFromDistances } from './localScore.js';
 
 const SR = 16000;
 
@@ -170,5 +171,32 @@ describe('dtwAlign', () => {
     const { distance, refCosts } = dtwAlign([], mfcc(tone(300, 0.2), SR));
     expect(distance).toBe(Infinity);
     expect(refCosts).toEqual([]);
+  });
+});
+
+describe('scoreFromDistances', () => {
+  it('gives a confident target match when the attempt is close to target and far from distractors', () => {
+    const { matched, score } = scoreFromDistances(0.5, [3, 4, 5], 4);
+    expect(matched).toBe('target');
+    expect(score).toBeGreaterThanOrEqual(55);
+  });
+
+  it('calls it unclear when the attempt is nearly as far from target as unrelated words are from each other', () => {
+    // This is the "noise/silence" failure mode: distractors can end up even
+    // farther away by chance (so the relative margin alone looks fine), but
+    // the attempt isn't actually close to the target in absolute terms.
+    const { matched, score } = scoreFromDistances(9.6, [11, 12, 13], 10);
+    expect(matched).toBe('unclear');
+    expect(score).toBeLessThan(35);
+  });
+
+  it('still finds a confident match even with a tight baseline, when the attempt is genuinely close', () => {
+    const { matched } = scoreFromDistances(1, [8, 9], 10);
+    expect(matched).toBe('target');
+  });
+
+  it('calls it a distractor match when a distractor is clearly closer than the target', () => {
+    const { matched } = scoreFromDistances(6, [1, 8], 10);
+    expect(matched).toBe('distractor');
   });
 });

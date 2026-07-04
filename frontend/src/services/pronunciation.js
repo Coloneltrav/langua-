@@ -72,7 +72,17 @@ function pickMimeType() {
 }
 
 export async function startRecording() {
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  // Browsers apply automatic gain control (and often noise suppression) to
+  // getUserMedia audio by default, continuously riding the input level
+  // toward a target loudness. That's exactly what breaks fixed-threshold
+  // silence detection: it can amplify plain background noise into
+  // something that reads as "loud enough to be speech", and it can shift
+  // gain mid-recording so a word's own start/end no longer sits at a
+  // consistent level. These are requested, not required — unsupported
+  // browsers (notably some mobile Safari versions) just ignore them.
+  const stream = await navigator.mediaDevices.getUserMedia({
+    audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+  });
   activeStream = stream;
   recordedChunks = [];
   const mimeType = pickMimeType();

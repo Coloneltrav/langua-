@@ -30,6 +30,9 @@ const ENGINE_LABELS = {
 
 function verdictFor(result) {
   const score = result.score ?? 0;
+  if (result.matched === 'unclear') {
+    return "Didn't sound like a clear attempt at this word — could be too quiet, cut off, or a different sound entirely. Get close to the mic and try again.";
+  }
   if (result.matched === 'distractor' && result.heard) {
     return `That sounded closer to “${result.heard}” than to the target. Listen once more and mind the vowel sounds.`;
   }

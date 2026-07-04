@@ -58,7 +58,24 @@ function splitThirds(word) {
   return [word.slice(0, a), word.slice(a, b), word.slice(b)];
 }
 
-function scoreFromDistances(targetDist, distractorDists) {
+// Relative margin (attempt vs. its nearest distractor) can look confident
+// even when the attempt doesn't actually resemble the target at all — if
+// every distractor happens to be even farther away, "closer than the
+// worst option" isn't the same as "close". baseline anchors targetDist
+// against something absolute: how far apart the target and its
+// distractors' OWN reference recordings sit from each other, i.e. how far
+// apart two genuinely different words typically are in this same
+// acoustic space. If the attempt is nearly as far from the target as a
+// different word would be, it isn't a recognizable attempt, regardless of
+// the relative margin.
+export function scoreFromDistances(targetDist, distractorDists, baseline) {
+  if (baseline > 0) {
+    const relToBaseline = targetDist / baseline;
+    if (relToBaseline >= 0.95) {
+      return { matched: 'unclear', score: Math.round(Math.min(30, Math.max(5, 20 - (relToBaseline - 0.95) * 40))) };
+    }
+  }
+
   const minDistractor = Math.min(...distractorDists, Infinity);
   const matched = targetDist <= minDistractor;
   if (matched) {
@@ -98,12 +115,18 @@ export async function scoreLocally(blob, targetWord, distractors) {
   const { distance: targetDist, refCosts } = dtwAlign(attemptFrames, targetFrames);
 
   const distractorResults = [];
+  const targetVsDistractorDists = [];
   for (const d of distractors) {
     const frames = await referenceFrames(d.id).catch(() => null);
-    if (frames) distractorResults.push({ word: d, dist: dtwDistance(attemptFrames, frames) });
+    if (!frames) continue;
+    distractorResults.push({ word: d, dist: dtwDistance(attemptFrames, frames) });
+    targetVsDistractorDists.push(dtwDistance(targetFrames, frames));
   }
+  const baseline = targetVsDistractorDists.length
+    ? targetVsDistractorDists.reduce((a, c) => a + c, 0) / targetVsDistractorDists.length
+    : 0;
 
-  const { matched, score } = scoreFromDistances(targetDist, distractorResults.map((r) => r.dist));
+  const { matched, score } = scoreFromDistances(targetDist, distractorResults.map((r) => r.dist), baseline);
   const nearest = distractorResults.sort((a, b) => a.dist - b.dist)[0];
 
   // Point at the roughly weakest third of the TARGET word's shape — only
@@ -121,7 +144,7 @@ export async function scoreLocally(blob, targetWord, distractors) {
     engine: 'acoustic-dtw',
     score,
     matched,
-    heard: matched === 'target' ? targetWord.irish : (nearest ? nearest.word.irish : null),
+    heard: matched === 'target' ? targetWord.irish : (matched === 'distractor' && nearest ? nearest.word.irish : null),
     weakSegment,
     segments,
     didTrim,

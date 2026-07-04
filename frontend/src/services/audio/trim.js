@@ -23,9 +23,16 @@ const HANGOVER_MS = 400;
 // A flat recording is only treated as "no speech" below CONFIDENT_PEAK_RMS —
 // a buffer that's uniformly loud from start to end (no quiet region to
 // contrast against at all) is still real audio, just never trimmed.
-const MIN_PEAK_TO_FLOOR_RATIO = 3;
-const MIN_ABSOLUTE_PEAK_RMS = 0.006;
-const CONFIDENT_PEAK_RMS = 0.05;
+// Tuned for a raw, un-boosted mic signal (see startRecording in
+// pronunciation.js, which now asks getUserMedia to skip automatic gain
+// control) — with AGC left on, the browser can ride quiet background noise
+// up toward a target loudness over the course of a recording, which both
+// fakes a peak/floor contrast that looks like speech and makes actual
+// speech boundaries drift, which is what let some silent takes score high
+// and some genuine words get clipped even with the padding above.
+const MIN_PEAK_TO_FLOOR_RATIO = 4;
+const MIN_ABSOLUTE_PEAK_RMS = 0.004;
+const CONFIDENT_PEAK_RMS = 0.025;
 
 function frameRms(samples, start, len) {
   let sum = 0;
