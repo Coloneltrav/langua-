@@ -28,11 +28,22 @@ describe('trimSilence', () => {
     const signal = concat(silence(1.0), tone(300, 0.6), silence(1.2));
     const { samples, trimmed, startSec, endSec } = trimSilence(signal, SR);
     expect(trimmed).toBe(true);
-    // 0.6s of tone + up to ~220ms padding each side
-    expect(samples.length / SR).toBeGreaterThan(0.55);
-    expect(samples.length / SR).toBeLessThan(1.1);
-    expect(startSec).toBeGreaterThan(0.6);
-    expect(endSec).toBeLessThan(1.9);
+    // 0.6s of tone + ~150ms start pad + ~320ms end pad (end lag > start lag)
+    expect(samples.length / SR).toBeGreaterThan(0.95);
+    expect(samples.length / SR).toBeLessThan(1.2);
+    expect(startSec).toBeGreaterThan(0.75);
+    expect(startSec).toBeLessThan(0.95);
+    expect(endSec).toBeGreaterThan(1.8);
+    expect(endSec).toBeLessThan(2.0);
+  });
+
+  it('rides out a brief silent gap instead of ending speech early (hangover)', () => {
+    // A word with a soft middle (e.g. a stop-consonant closure) shouldn't
+    // get truncated right at the dip — only sustained silence should end it.
+    // The 100ms gap is well under the ~400ms hangover tolerance.
+    const signal = concat(silence(0.5), tone(300, 0.3, 0.5), silence(0.1), tone(300, 0.3, 0.5), silence(0.5));
+    const { startSec, endSec } = trimSilence(signal, SR);
+    expect(endSec - startSec).toBeGreaterThan(0.3 + 0.1 + 0.3);
   });
 
   it('returns input unchanged when there is nothing to trim', () => {

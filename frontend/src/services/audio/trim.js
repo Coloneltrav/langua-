@@ -3,11 +3,16 @@
 // math — no browser APIs — so it's unit-testable (see trim.test.js).
 
 const FRAME_MS = 20;
-// Generous padding + a low relative-peak threshold: quiet consonant onsets/
-// releases (s, f, t, ch...) sit well below the loudest vowel frame, and
-// clipping them costs real scoring accuracy for comparatively little
-// silence saved. Better to keep a touch of true silence than cut speech.
-const PAD_MS = 220;
+// Asymmetric padding: learners trail off at the end of a word (breathy
+// release, soft final consonant) far more often than they're quiet at the
+// very start, so the end gets noticeably more slack — this is the "end
+// lag" a fixed symmetric pad couldn't give without also over-padding the
+// front of every single clip.
+const START_PAD_MS = 150;
+const END_PAD_MS = 320;
+// How long a dip below the low (trailing) threshold is tolerated before we
+// decide speech has actually ended, instead of just taking a breath.
+const HANGOVER_MS = 400;
 
 function frameRms(samples, start, len) {
   let sum = 0;
@@ -27,25 +32,37 @@ export function trimSilence(samples, sampleRate) {
   if (frameCount < 3) return { samples, startSec: 0, endSec: samples.length / sampleRate, trimmed: false };
 
   const rms = new Array(frameCount);
-  let peak = 0;
-  for (let f = 0; f < frameCount; f++) {
-    rms[f] = frameRms(samples, f * frameLen, frameLen);
-    if (rms[f] > peak) peak = rms[f];
-  }
+  for (let f = 0; f < frameCount; f++) rms[f] = frameRms(samples, f * frameLen, frameLen);
 
-  // Noise floor: median of the quietest quarter of frames. Threshold sits
-  // well above the floor but well below the peak, so both a quiet room and
-  // a noisy one resolve sensibly.
+  // Peak as the 90th percentile rather than the true max: a single click or
+  // pop right as recording starts (common with cheap mics/browsers) would
+  // otherwise inflate the whole threshold and clip real, quieter speech.
   const sorted = [...rms].sort((a, b) => a - b);
   const noiseFloor = sorted[Math.floor(frameCount / 8)] || 0;
-  const threshold = Math.max(noiseFloor * 2.5, peak * 0.05);
+  const peak = sorted[Math.min(frameCount - 1, Math.floor(frameCount * 0.9))] || 0;
+
+  // Two thresholds, hysteresis-style: a confident one to trigger the start
+  // of speech, and a much gentler one (plus a hangover window) to keep
+  // riding out a trailing consonant or breathy tail instead of clipping it
+  // the instant energy dips below the strict threshold.
+  const highThreshold = Math.max(noiseFloor * 2.5, peak * 0.06);
+  const lowThreshold = highThreshold * 0.35;
 
   let first = -1;
   let last = -1;
+  let silenceRun = 0;
+  const hangoverFrames = Math.ceil(HANGOVER_MS / FRAME_MS);
   for (let f = 0; f < frameCount; f++) {
-    if (rms[f] >= threshold) {
+    if (rms[f] >= highThreshold) {
       if (first === -1) first = f;
       last = f;
+      silenceRun = 0;
+    } else if (first !== -1 && rms[f] >= lowThreshold) {
+      last = f;
+      silenceRun = 0;
+    } else if (first !== -1) {
+      silenceRun++;
+      if (silenceRun > hangoverFrames) break; // speech has genuinely ended
     }
   }
   if (first === -1) {
@@ -53,9 +70,10 @@ export function trimSilence(samples, sampleRate) {
     return { samples, startSec: 0, endSec: samples.length / sampleRate, trimmed: false };
   }
 
-  const padFrames = Math.ceil(PAD_MS / FRAME_MS);
-  const startFrame = Math.max(0, first - padFrames);
-  const endFrame = Math.min(frameCount, last + 1 + padFrames);
+  const startPadFrames = Math.ceil(START_PAD_MS / FRAME_MS);
+  const endPadFrames = Math.ceil(END_PAD_MS / FRAME_MS);
+  const startFrame = Math.max(0, first - startPadFrames);
+  const endFrame = Math.min(frameCount, last + 1 + endPadFrames);
   const start = startFrame * frameLen;
   const end = Math.min(samples.length, endFrame * frameLen);
 
