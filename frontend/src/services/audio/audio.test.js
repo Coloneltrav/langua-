@@ -26,8 +26,9 @@ function concat(...arrays) {
 describe('trimSilence', () => {
   it('cuts leading and trailing silence around speech', () => {
     const signal = concat(silence(1.0), tone(300, 0.6), silence(1.2));
-    const { samples, trimmed, startSec, endSec } = trimSilence(signal, SR);
+    const { samples, trimmed, startSec, endSec, hasSpeech } = trimSilence(signal, SR);
     expect(trimmed).toBe(true);
+    expect(hasSpeech).toBe(true);
     // 0.6s of tone + ~150ms start pad + ~320ms end pad (end lag > start lag)
     expect(samples.length / SR).toBeGreaterThan(0.95);
     expect(samples.length / SR).toBeLessThan(1.2);
@@ -35,6 +36,24 @@ describe('trimSilence', () => {
     expect(startSec).toBeLessThan(0.95);
     expect(endSec).toBeGreaterThan(1.8);
     expect(endSec).toBeLessThan(2.0);
+  });
+
+  it('reports no speech for a silent recording instead of scoring noise', () => {
+    // The bug: a "no audio recorded" take should never look like a real,
+    // scoreable attempt just because padding/hangover stretched some stray
+    // noise blip past the caller's minimum-length check.
+    const signal = silence(1.0);
+    const { hasSpeech, trimmed } = trimSilence(signal, SR);
+    expect(hasSpeech).toBe(false);
+    expect(trimmed).toBe(false);
+  });
+
+  it('reports no speech for flat, uniformly quiet background noise', () => {
+    // Low-level room tone with no distinguishable louder region at all —
+    // not silence, but not a spoken word either.
+    const signal = tone(120, 1.0, 0.01);
+    const { hasSpeech } = trimSilence(signal, SR);
+    expect(hasSpeech).toBe(false);
   });
 
   it('rides out a brief silent gap instead of ending speech early (hangover)', () => {
@@ -48,8 +67,9 @@ describe('trimSilence', () => {
 
   it('returns input unchanged when there is nothing to trim', () => {
     const signal = tone(300, 0.5);
-    const { samples, trimmed } = trimSilence(signal, SR);
+    const { samples, trimmed, hasSpeech } = trimSilence(signal, SR);
     expect(trimmed).toBe(false);
+    expect(hasSpeech).toBe(true);
     expect(samples.length).toBe(signal.length);
   });
 

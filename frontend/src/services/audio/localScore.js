@@ -79,10 +79,14 @@ function scoreFromDistances(targetDist, distractorDists) {
  */
 export async function scoreLocally(blob, targetWord, distractors) {
   const raw = await decodeToMono16k(await blob.arrayBuffer());
-  const { samples: trimmed, trimmed: didTrim } = trimSilence(raw, 16000);
+  const { samples: trimmed, trimmed: didTrim, hasSpeech } = trimSilence(raw, 16000);
 
-  if (trimmed.length < 16000 * 0.15) {
-    return { ok: true, engine: 'acoustic-dtw', score: null, heard: null, detail: 'The recording was too short or too quiet — try again a little closer to the microphone.' };
+  // hasSpeech is the real gate here — without it, a recording with no
+  // actual word in it (silence, muted mic, room noise) could still pass
+  // the length check below once padding is added around a stray noise
+  // blip, and get scored (sometimes generously) as if it were an attempt.
+  if (!hasSpeech || trimmed.length < 16000 * 0.15) {
+    return { ok: true, engine: 'acoustic-dtw', score: null, heard: null, detail: 'No speech detected — the recording was too short, too quiet, or silent. Try again a little closer to the microphone.' };
   }
 
   const targetFrames = await referenceFrames(targetWord.id);

@@ -13,6 +13,19 @@ const END_PAD_MS = 320;
 // How long a dip below the low (trailing) threshold is tolerated before we
 // decide speech has actually ended, instead of just taking a breath.
 const HANGOVER_MS = 400;
+// A recording with no real speech (silence, muted mic, background noise
+// only) is fairly flat — its "peak" isn't meaningfully louder than its own
+// noise floor. Real speech has a clearly louder region than the room tone
+// around it. Without this gate, a stray noise blip could cross the (fairly
+// permissive) relative threshold for just long enough that the fixed
+// start/end padding alone stretched it past the caller's minimum-length
+// check, scoring pure silence as if it were a real attempt.
+// A flat recording is only treated as "no speech" below CONFIDENT_PEAK_RMS —
+// a buffer that's uniformly loud from start to end (no quiet region to
+// contrast against at all) is still real audio, just never trimmed.
+const MIN_PEAK_TO_FLOOR_RATIO = 3;
+const MIN_ABSOLUTE_PEAK_RMS = 0.006;
+const CONFIDENT_PEAK_RMS = 0.05;
 
 function frameRms(samples, start, len) {
   let sum = 0;
@@ -24,12 +37,15 @@ function frameRms(samples, start, len) {
 /**
  * @param {Float32Array} samples mono PCM
  * @param {number} sampleRate
- * @returns {{samples: Float32Array, startSec: number, endSec: number, trimmed: boolean}}
+ * @returns {{samples: Float32Array, startSec: number, endSec: number, trimmed: boolean, hasSpeech: boolean}}
+ *   hasSpeech is false when no distinguishable spoken region was found at
+ *   all (silence, muted mic, room noise only) — callers should treat that
+ *   as "nothing to score", not fall through to scoring whatever's left.
  */
 export function trimSilence(samples, sampleRate) {
   const frameLen = Math.round((FRAME_MS / 1000) * sampleRate);
   const frameCount = Math.floor(samples.length / frameLen);
-  if (frameCount < 3) return { samples, startSec: 0, endSec: samples.length / sampleRate, trimmed: false };
+  if (frameCount < 3) return { samples, startSec: 0, endSec: samples.length / sampleRate, trimmed: false, hasSpeech: false };
 
   const rms = new Array(frameCount);
   for (let f = 0; f < frameCount; f++) rms[f] = frameRms(samples, f * frameLen, frameLen);
@@ -40,6 +56,17 @@ export function trimSilence(samples, sampleRate) {
   const sorted = [...rms].sort((a, b) => a - b);
   const noiseFloor = sorted[Math.floor(frameCount / 8)] || 0;
   const peak = sorted[Math.min(frameCount - 1, Math.floor(frameCount * 0.9))] || 0;
+
+  // No real speech at all: either the whole buffer is too quiet in
+  // absolute terms, or it's flat (no region louder than the rest) *and*
+  // not loud enough to be confident that flatness just means "solid
+  // speech with no silence to trim" rather than "uniform background
+  // noise". Bail here, before the threshold logic below gets a chance to
+  // latch onto a stray noise blip.
+  const flat = peak < noiseFloor * MIN_PEAK_TO_FLOOR_RATIO;
+  if (peak < MIN_ABSOLUTE_PEAK_RMS || (flat && peak < CONFIDENT_PEAK_RMS)) {
+    return { samples, startSec: 0, endSec: samples.length / sampleRate, trimmed: false, hasSpeech: false };
+  }
 
   // Two thresholds, hysteresis-style: a confident one to trigger the start
   // of speech, and a much gentler one (plus a hangover window) to keep
@@ -66,8 +93,13 @@ export function trimSilence(samples, sampleRate) {
     }
   }
   if (first === -1) {
-    // Nothing above threshold — pure silence/noise; return as-is.
-    return { samples, startSec: 0, endSec: samples.length / sampleRate, trimmed: false };
+    // No frame crossed the relative threshold — this happens when the
+    // whole buffer is uniformly loud (highThreshold, built from the noise
+    // floor, ends up above the actual peak because there's no quiet floor
+    // to contrast against). The gate above already established this is
+    // real, sufficiently loud audio, so it's "nothing to trim", not "no
+    // speech" — leave the samples as-is rather than mislabeling it silent.
+    return { samples, startSec: 0, endSec: samples.length / sampleRate, trimmed: false, hasSpeech: true };
   }
 
   const startPadFrames = Math.ceil(START_PAD_MS / FRAME_MS);
@@ -82,6 +114,7 @@ export function trimSilence(samples, sampleRate) {
     startSec: start / sampleRate,
     endSec: end / sampleRate,
     trimmed: start > 0 || end < samples.length,
+    hasSpeech: true,
   };
 }
 
