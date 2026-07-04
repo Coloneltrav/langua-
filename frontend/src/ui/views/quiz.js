@@ -8,7 +8,7 @@ import { startedWords } from '../../engine/queue.js';
 import { bumpSkill } from '../../engine/sm2.js';
 import { normalizeAnswer, diffAnswer } from '../../engine/textDiff.js';
 import { escapeHtml } from '../dom.js';
-import { speakWord, audioDbAvailable } from '../../services/tts.js';
+import { speakWord, hasRealAudioForActivePack } from '../../services/tts.js';
 import { uiState } from '../uiState.js';
 
 let mode = 'meaning'; // 'meaning' | 'dictation'
@@ -83,8 +83,8 @@ function diffHtml(ops) {
 }
 
 function dictationHtml() {
-  if (!audioDbAvailable()) {
-    return `<div class="empty-state" style="padding:30px 10px;"><div style="font-size:14px; color:var(--text-dim);">Dictation needs the pronunciation audio database (real Irish audio) — it isn't generated for this site yet.</div></div>`;
+  if (!hasRealAudioForActivePack()) {
+    return `<div class="empty-state" style="padding:30px 10px;"><div style="font-size:14px; color:var(--text-dim);">Dictation needs real pronunciation audio — it isn't available for this language yet.</div></div>`;
   }
   if (!dictTarget) dictTarget = pickDictation();
   if (!dictTarget) {
@@ -105,8 +105,8 @@ function dictationHtml() {
     <div style="font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Type what you hear</div>
     <div class="btn-row" style="justify-content:center;"><button class="btn" id="dictHear">🔊 Play</button></div>
     <div style="margin-top:14px;">
-      <input type="text" id="dictInput" placeholder="type the Irish you heard…" autocomplete="off" autocapitalize="off" spellcheck="false" ${dictChecked ? 'disabled' : ''} value="${dictChecked ? escapeHtml(dictChecked.typedRaw) : ''}">
-      <div style="font-size:11px; color:var(--text-dim); margin-top:6px;">Fadas count! Long-press a vowel on your phone keyboard (or use ´ ) to type á é í ó ú.</div>
+      <input type="text" id="dictInput" placeholder="type what you heard…" autocomplete="off" autocapitalize="off" spellcheck="false" ${dictChecked ? 'disabled' : ''} value="${dictChecked ? escapeHtml(dictChecked.typedRaw) : ''}">
+      <div style="font-size:11px; color:var(--text-dim); margin-top:6px;">Accents count! Long-press a vowel on your phone keyboard (or use ´ ) to type accented letters.</div>
     </div>
     ${feedback}
   `;

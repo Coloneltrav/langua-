@@ -8,14 +8,18 @@
 import { apiFetch } from './apiClient.js';
 import { state } from '../state/store.js';
 import { calcReadiness } from '../engine/readiness.js';
+import { activePack, activeAccent } from '../data/languagePacks.js';
 
 const DIRECT_MODEL = 'claude-opus-4-8';
 
 function buildSystemPrompt(known, dialect) {
-  return `You are an Irish (Gaeilge) language tutor inside a personal learning app called Blas.
-The learner's currently KNOWN words are: ${known.length ? known.join(', ') : '(none started yet — use only extremely basic words like tá, is, mé, tú, agus)'}.
-Dialect preference: ${dialect}.
-Rules: when writing Irish text, use ONLY the learner's known words plus at most 3 new words, which you must gloss in parentheses immediately after each new word in English. Keep responses short (under 120 words). Always include an English translation line after any Irish text. Stay in the context of this ongoing conversation.`;
+  const pack = activePack();
+  const accent = activeAccent();
+  const dialectLine = accent ? `Country/accent: ${accent.country} (${accent.code}).` : `Dialect preference: ${dialect}.`;
+  return `You are a ${pack.name} language tutor inside a personal learning app called Blas.
+The learner's currently KNOWN words are: ${known.length ? known.join(', ') : '(none started yet — use only the most basic words)'}.
+${dialectLine}
+Rules: when writing text in the target language, use ONLY the learner's known words plus at most 3 new words, which you must gloss in parentheses immediately after each new word in English. Keep responses short (under 120 words). Always include an English translation line after any target-language text. Stay in the context of this ongoing conversation.`;
 }
 
 async function askViaBackend({ known, dialect, history, message }) {

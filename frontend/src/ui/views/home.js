@@ -1,7 +1,8 @@
 import { WORDS } from '../../data/words.js';
 import { state, saveProgress } from '../../state/store.js';
 import { todayDue, newAvailable, startedWords, knownCount } from '../../engine/queue.js';
-import { azureAvailableSync, audioDbAvailable } from '../../services/tts.js';
+import { azureAvailableSync, audioDbCoversActivePack } from '../../services/tts.js';
+import { activePack } from '../../data/languagePacks.js';
 import { uiState } from '../uiState.js';
 
 export function render() {
@@ -9,7 +10,11 @@ export function render() {
   const fresh = newAvailable(WORDS, state.progress).length;
   const known = knownCount(WORDS, state.progress);
   const started = startedWords(WORDS, state.progress).length;
-  const voiceCard = (!audioDbAvailable() && !azureAvailableSync() && !state.settings.voiceCardDismissed) ? `
+  // This card is about Irish's specific situation (no real browser voice
+  // exists, so it falls back to a phonetic-respelling approximation until
+  // the static audio DB is generated) — Spanish's browser-voice fallback is
+  // a genuine native voice, not an approximation, so it doesn't apply.
+  const voiceCard = (activePack().code === 'ga' && !audioDbCoversActivePack() && !azureAvailableSync() && !state.settings.voiceCardDismissed) ? `
     <div class="card" style="border-color:var(--flag-orange);">
       <div style="font-family:'Cormorant Garamond',serif; font-size:18px; margin-bottom:6px;">🔊 True Irish pronunciation</div>
       <div style="font-size:13px; color:var(--text-dim); line-height:1.65;">

@@ -19,7 +19,7 @@ export function render() {
     <div class="card">
       <div style="font-family:'Cormorant Garamond',serif; font-size:20px; margin-bottom:6px;">Your tutor</div>
       <div style="font-size:12.5px; color:var(--text-dim); margin-bottom:14px;">
-        Knows your ${known} known word${known === 1 ? '' : 's'}. New Irish words it introduces get glossed in parentheses — nothing appears that you can't at least partly decode.
+        Knows your ${known} known word${known === 1 ? '' : 's'}. New words it introduces get glossed in parentheses — nothing appears that you can't at least partly decode.
       </div>
       <div class="btn-row">
         <button class="btn secondary" data-prompt="story" ${uiState.tutorBusy ? 'disabled' : ''}>Mini story, known words only</button>

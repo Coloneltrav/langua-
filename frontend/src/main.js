@@ -7,13 +7,16 @@
 import { loadProgress } from './state/store.js';
 import { renderApp, renderRoute } from './ui/router.js';
 import { checkAzureAvailable, loadAudioDb } from './services/tts.js';
-import { applyTheme } from './ui/theme.js';
+import { applyActivePack } from './ui/packSwitch.js';
 
 (async function init() {
-  applyTheme();
   // The static pronunciation audio DB determines both playback quality and
   // whether on-device scoring has references — resolve it before first paint.
   await Promise.all([loadProgress(), loadAudioDb()]);
+  // words.js/capsules.js already loaded once against the default settings
+  // at import time — now that persisted settings (packCode/accentCode)
+  // have loaded, make sure the active pack's data and theme match them.
+  applyActivePack();
   renderApp();
 
   if ('speechSynthesis' in window) {

@@ -6,6 +6,8 @@ const SAVE_DEBOUNCE_MS = 500;
 export const state = {
   progress: {}, // wordId -> {interval, repetitions, ease, dueDate, skills, started}
   settings: {
+    packCode: 'ga', // active language pack — see data/languagePacks.js
+    accentCode: '', // active country accent, for packs with hasAccents (e.g. es-ES)
     dialect: 'Standard / An Caighdeán',
     dailyNewWordCap: 5,
     newWordsToday: { date: '', count: 0 },

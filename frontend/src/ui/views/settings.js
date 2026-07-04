@@ -1,29 +1,77 @@
 import { state, saveProgress, todayKey, newWordsLearnedToday } from '../../state/store.js';
-import { azureAvailableSync, audioDbAvailable } from '../../services/tts.js';
+import { azureAvailableSync, audioDbCoversActivePack } from '../../services/tts.js';
 import { uiState } from '../uiState.js';
+import { LANGUAGE_PACKS, activePack, activeAccentCode } from '../../data/languagePacks.js';
+import { setPack, setAccent } from '../packSwitch.js';
 
-export function render() {
+function languageCardHtml() {
+  const pack = activePack();
+  const packButtons = Object.values(LANGUAGE_PACKS).map((p) => `
+    <button class="btn ${p.code === pack.code ? '' : 'secondary'}" data-pack="${p.code}">${p.name}</button>
+  `).join('');
+  let accentSection = '';
+  if (pack.hasAccents) {
+    const accentCode = activeAccentCode();
+    const accent = pack.accents[accentCode];
+    const accentButtons = pack.accentOrder.map((code) => {
+      const a = pack.accents[code];
+      return `<button class="btn ${code === accentCode ? '' : 'secondary'}" data-accent="${code}">${a.flag} ${a.country}</button>`;
+    }).join('');
+    const regionalVocab = (pack.regionalVocab[accentCode] || []).map((v) => `
+      <div style="margin-top:6px; font-size:12.5px;"><b class="display" style="color:var(--gold-bright); font-size:15px;">${v.term}</b> — ${v.concept} <span style="color:var(--text-dim);">(${v.note})</span></div>
+    `).join('');
+    accentSection = `
+      <div style="margin-top:16px;">
+        <label class="field-label">Accent / country</label>
+        <div class="btn-row" style="flex-wrap:wrap;">${accentButtons}</div>
+        <div style="font-size:12.5px; color:var(--text-dim); line-height:1.6; margin-top:10px;">${accent.blurb}</div>
+        <div style="margin-top:10px; font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;">Words that differ in ${accent.country}</div>
+        ${regionalVocab}
+      </div>
+    `;
+  }
+  return `
+    <div class="card">
+      <div style="font-family:'Cormorant Garamond',serif; font-size:20px; margin-bottom:6px;">Language</div>
+      <div style="font-size:12.5px; color:var(--text-dim); line-height:1.6; margin-bottom:12px;">Switching keeps every word's progress — nothing is lost, the app just shows a different pack's vocabulary, culture, and map.</div>
+      <div class="btn-row">${packButtons}</div>
+      ${accentSection}
+    </div>
+  `;
+}
+
+function voiceCardHtml() {
+  const pack = activePack();
   const usingAzure = azureAvailableSync();
-  const usingDb = audioDbAvailable();
+  const usingDb = audioDbCoversActivePack();
   const voiceStatus = usingDb
-    ? 'Pronunciation audio database (real ga-IE Irish neural audio, works offline)'
+    ? `Pronunciation audio database (real ${pack.name} neural audio, works offline)`
     : usingAzure
-      ? 'Azure ga-IE neural voice via the backend (real Irish TTS)'
-      : 'Browser fallback voice (approximate — not verified Irish pronunciation)';
+      ? `Azure neural voice via the backend (real ${pack.name} TTS)`
+      : `Browser fallback voice (approximate — not verified ${pack.name} pronunciation)`;
+  const voiceOptions = pack.hasAccents
+    ? [pack.accents[activeAccentCode()].voice, pack.accents[activeAccentCode()].voiceAlt]
+    : (pack.azureVoices || []);
   return `
     <div class="card">
       <div style="font-family:'Cormorant Garamond',serif; font-size:20px; margin-bottom:6px;">Pronunciation voice</div>
       <div style="font-size:12.5px; color:var(--text-dim); line-height:1.6; margin-bottom:14px;">
         Currently: <b style="color:${usingDb || usingAzure ? 'var(--gold-bright)' : '#e2a494'}">${voiceStatus}</b>.
-        The voice choice below applies to live backend TTS; the audio database is generated with one voice (Colm by default).
+        The voice choice below applies to live backend TTS.
       </div>
       <label class="field-label">Voice</label>
       <select id="azureVoiceSelect">
-        <option value="ga-IE-ColmNeural" ${state.settings.azureVoice === 'ga-IE-ColmNeural' ? 'selected' : ''}>Colm (male)</option>
-        <option value="ga-IE-OrlaNeural" ${state.settings.azureVoice === 'ga-IE-OrlaNeural' ? 'selected' : ''}>Orla (female)</option>
+        ${voiceOptions.map((v) => `<option value="${v.id}" ${state.settings.azureVoice === v.id ? 'selected' : ''}>${v.label}</option>`).join('')}
       </select>
       <div class="btn-row"><button class="btn" id="saveVoice">Save voice</button></div>
     </div>
+  `;
+}
+
+export function render() {
+  return `
+    ${languageCardHtml()}
+    ${voiceCardHtml()}
     <div class="card">
       <div style="font-family:'Cormorant Garamond',serif; font-size:20px; margin-bottom:14px;">General</div>
       <label class="field-label">Preferred dialect (label only — Azure's ga-IE voices are standard pronunciation, not dialect-specific)</label>
@@ -58,6 +106,24 @@ export function render() {
 }
 
 export function bind(main, rerender) {
+  main.querySelectorAll('[data-pack]').forEach((btn) => {
+    btn.onclick = () => {
+      if (btn.dataset.pack === state.settings.packCode) return;
+      setPack(btn.dataset.pack);
+      saveProgress();
+      uiState.route = 'home';
+      rerender(true);
+    };
+  });
+  main.querySelectorAll('[data-accent]').forEach((btn) => {
+    btn.onclick = () => {
+      if (btn.dataset.accent === state.settings.accentCode) return;
+      setAccent(btn.dataset.accent);
+      saveProgress();
+      rerender(true);
+    };
+  });
+
   const saveVoiceBtn = main.querySelector('#saveVoice');
   if (saveVoiceBtn) saveVoiceBtn.onclick = () => {
     state.settings.azureVoice = main.querySelector('#azureVoiceSelect').value;

@@ -1,0 +1,33 @@
+// Culture capsules for the Spanish pack. Most are tagged to a specific
+// country (shown only when that accent is active); a few are general
+// enough to show regardless of which accent is selected.
+export const ES_CAPSULES = [
+  {id:'es-c1', title:'Vos, tú, or usted?', category:'Language', difficulty:'beginner', country:null,
+   target:['s7'],
+   text:"Spanish has more than one word for \"you\". Most of the Spanish-speaking world uses tú informally, but Argentina, Uruguay, and much of Central America use vos instead — with its own verb endings (vos tenés, not tú tienes). Nearly everywhere, usted is the polite/formal form, used with strangers, elders, or in business.",
+   quiz:{q:'Which pronoun does Argentina use instead of tú?', options:['vos','usted','vosotros','ustedes'], answer:0}},
+  {id:'es-c2', title:'21 Countries, One Language', category:'Geography', difficulty:'beginner', country:null,
+   target:['s75'],
+   text:"Spanish is an official language in 21 países (countries) across four continents — most of Latin America, Spain, and Equatorial Guinea in Africa. It's the world's second most-spoken native language after Mandarin. Accents, slang, and even some grammar (like vos vs. tú) vary widely, but a Spanish speaker from Madrid and one from Mexico City can understand each other easily.",
+   quiz:{q:'Roughly how many countries have Spanish as an official language?', options:['21','5','50','12'], answer:0}},
+  {id:'es-c3', title:'Madrid, capital de España', category:'Geography', difficulty:'beginner', country:'es-ES',
+   target:['s74'],
+   text:"Madrid es la capital de España desde 1561, cuando el rey Felipe II trasladó la corte allí. Está justo en el centro de la península ibérica, la ciudad más alta de Europa Occidental entre las grandes capitales. El Museo del Prado, uno de los mejores museos de arte del mundo, está en Madrid.",
+   quiz:{q:'What is the capital of Spain?', options:['Madrid','Barcelona','Sevilla','Valencia'], answer:0}},
+  {id:'es-c4', title:'Ciudad de México, la megaciudad', category:'Geography', difficulty:'beginner', country:'es-MX',
+   target:['s70'],
+   text:"Ciudad de México fue construida sobre Tenochtitlan, la capital azteca, en un lago que ya no existe. Hoy es una de las ciudades más grandes del mundo, con más de 20 millones de personas en su área metropolitana. El Zócalo, su plaza central, es una de las plazas públicas más grandes del planeta.",
+   quiz:{q:'What ancient city was Ciudad de México built on top of?', options:['Tenochtitlan','Machu Picchu','Cusco','Teotihuacán'], answer:0}},
+  {id:'es-c5', title:'Buenos Aires y el tango', category:'Culture', difficulty:'beginner', country:'es-AR',
+   target:['s86'],
+   text:"El tango nació en los barrios portuarios de Buenos Aires a finales del siglo XIX, mezclando influencias africanas, europeas y criollas. Hoy se baila en milongas (salones de baile) por toda la ciudad, y la UNESCO lo declaró Patrimonio Cultural Inmaterial de la Humanidad en 2009.",
+   quiz:{q:'In which city did tango originate?', options:['Buenos Aires','Madrid','Bogotá','Santiago'], answer:0}},
+  {id:'es-c6', title:'Café de Colombia', category:'Culture', difficulty:'beginner', country:'es-CO',
+   target:['s76'],
+   text:"Colombia es uno de los mayores productores de café del mundo, especialmente en la región del Eje Cafetero. El paisaje cultural cafetero fue declarado Patrimonio de la Humanidad por la UNESCO en 2011, gracias al esfuerzo de generaciones de familias cafeteras en las montañas.",
+   quiz:{q:'What is Colombia famous for producing?', options:['Coffee','Wine','Tango','Tequila'], answer:0}},
+  {id:'es-c7', title:'Los Andes y el desierto de Atacama', category:'Geography', difficulty:'beginner', country:'es-CL',
+   target:['s82'],
+   text:"Chile es un país extremadamente largo y delgado — más de 4.000 kilómetros de norte a sur — atrapado entre los Andes y el océano Pacífico. En el norte está el desierto de Atacama, el más seco del mundo; en el sur, glaciares y fiordos de la Patagonia. Pocos países tienen tanta variedad geográfica en un solo territorio.",
+   quiz:{q:"What is Chile's shape known for?", options:['Extremely long and narrow','Perfectly round','Very small','Mostly islands'], answer:0}},
+];

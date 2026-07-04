@@ -1,96 +1,13 @@
-// Each capsule teaches Ireland through language: mostly English, with a
-// handful of Irish target words woven in and glossed. Facts here are kept
-// deliberately factual/neutral, especially the Northern Ireland capsule —
-// history and current politics are summarized, not editorialized.
-export const CULTURE_CAPSULES = [
-  {id:'c1', title:'Éire — Ireland', category:'Geography', difficulty:'beginner',
-   target:['w143','w144'],
-   text:"Éire is the Irish name for Ireland. Ireland is an oileán — an island — sitting in the Atlantic just west of Great Britain. Irish speakers use Éire constantly: it's on coins, passports, and is simply the country's own name for itself.",
-   quiz:{q:'What does “oileán” mean?', options:['Island','County','River','King'], answer:0}},
-  {id:'c2', title:'The Four Provinces', category:'Geography', difficulty:'beginner',
-   target:['w146','w147','w148','w149','w150'],
-   text:"Ireland has traditionally been divided into four cúigí — provinces: Cúige Uladh (Ulster) in the north, Cúige Chonnacht (Connacht) in the west, Cúige Laighean (Leinster) in the east, and Cúige Mumhan (Munster) in the south. They aren't official administrative units today, but they're still everywhere — especially in sport, where county teams compete within their cúige.",
-   quiz:{q:'Which province is in the west?', options:['Cúige Chonnacht (Connacht)','Cúige Uladh (Ulster)','Cúige Laighean (Leinster)','Cúige Mumhan (Munster)'], answer:0}},
-  {id:'c3', title:'The Counties', category:'Counties', difficulty:'beginner',
-   target:['w145'],
-   text:"Ireland is divided into 32 contaetha — counties. 26 make up the Republic of Ireland, and 6 make up Northern Ireland. Counties predate the modern state by centuries and are still the basis for local identity, sports rivalries, and postal addresses.",
-   quiz:{q:'How many counties are on the island of Ireland?', options:['32','4','26','6'], answer:0}},
-  {id:'c4', title:'Dublin / Baile Átha Cliath', category:'Geography', difficulty:'beginner',
-   target:['w151','w152'],
-   text:"Baile Átha Cliath — literally 'town of the hurdled ford' — is the Irish name for Dublin, the príomhchathair (capital city) of the Republic of Ireland. It sits on the east coast, at the mouth of the River Liffey.",
-   quiz:{q:'What is the Irish name for Dublin?', options:['Baile Átha Cliath','Gaillimh','Cúige Laighean','An Ghaeltacht'], answer:0}},
-  {id:'c5', title:'Galway / Gaillimh', category:'Geography', difficulty:'beginner',
-   target:['w153'],
-   text:"Gaillimh (Galway) is a city on Ireland's west coast, known for its arts scene, festivals, and closeness to the Connemara Gaeltacht. It's one of the places you're most likely to hear Irish spoken casually on the street.",
-   quiz:{q:'Which part of Ireland is Gaillimh in?', options:['The west','The east','The north','The south'], answer:0}},
-  {id:'c6', title:'The Gaeltacht', category:'Gaeltacht', difficulty:'intermediate',
-   target:['w154','w155'],
-   text:"A Ghaeltacht is a region — mostly along the west coast, in places like Donegal, Connemara, and Kerry — where Irish remains the everyday community language, not just a school subject. Labhraítear Gaeilge sa Ghaeltacht: Irish is spoken in the Gaeltacht, at home and in daily life, by the local pobal (community).",
-   quiz:{q:'What is a Gaeltacht?', options:['A region where Irish is the community language','A type of county','A river','A province'], answer:0}},
-  {id:'c7', year:432, title:'Saint Patrick', category:'Mythology', difficulty:'beginner',
-   target:['w156','w157'],
-   text:"Naomh Pádraig — Saint Patrick — is Ireland's patron saint, traditionally credited with bringing Christianity to Ireland in the 5th century. Lá Fhéile Pádraig, March 17th, is Ireland's national holiday. The famous story of him driving snakes out of Ireland is a legend, not history — Ireland likely never had snakes to begin with.",
-   quiz:{q:'What is Naomh Pádraig in English?', options:['Saint Patrick','Saint Brigid','A Viking king','A province'], answer:0}},
-  {id:'c8', year:795, title:'The Vikings in Ireland', category:'History', difficulty:'intermediate',
-   target:['w158','w159'],
-   text:"The Lochlannaigh — Vikings — began raiding Ireland's coast in the late 8th century, starting around 795 CE. Over time they shifted from raiding to settling, founding or expanding many of Ireland's major coastal cities, including Dublin, Waterford, Wexford, Cork, and Limerick.",
-   quiz:{q:'What were the Lochlannaigh known for founding in Ireland?', options:['Coastal trading cities like Dublin','The Gaeltacht regions','The four provinces','The Irish constitution'], answer:0}},
-  {id:'c9', year:1916, title:'The Easter Rising', category:'History', difficulty:'intermediate',
-   target:['w160','w161','w162'],
-   text:"Éirí Amach na Cásca — the Easter Rising — was an armed uprising against British rule in Dublin during Easter week, 1916. It was militarily defeated within a week, but the British response hardened public support for saoirse — freedom — and full independence in the years that followed.",
-   quiz:{q:'In what year did Éirí Amach na Cásca happen?', options:['1916','1921','1949','1845'], answer:0}},
-  {id:'c10', year:1921, title:'Northern Ireland & the Republic', category:'Northern Ireland', difficulty:'intermediate',
-   target:['w163','w164','w165'],
-   text:"Ireland's island today has two jurisdictions: Poblacht na hÉireann, the Republic of Ireland, and Tuaisceart Éireann, Northern Ireland, which is part of the United Kingdom. This partition dates to 1921, following the Anglo-Irish Treaty. Both remain distinct stáit today, and the relationship between them continues to be an active, sometimes contested, political topic.",
-   quiz:{q:'What is Tuaisceart Éireann in English?', options:['Northern Ireland','The Republic of Ireland','A Gaeltacht region','A Viking city'], answer:0}},
-  {id:'c11', year:1893, title:'The Irish Language Revival', category:'Language', difficulty:'intermediate',
-   target:['w166','w167'],
-   text:"By the early 1900s, Irish had declined sharply as a spoken language, accelerated by the Great Famine of the 1840s and decades of English-only schooling. Athbheochan na Gaeilge — the Irish language revival — began with groups like Conradh na Gaeilge (founded 1893) and continues today: Irish is an official EU language, compulsory in Irish schools, and the first language of Gaeltacht communities.",
-   quiz:{q:'What does “athbheochan” refer to here?', options:['The revival of the Irish language','A type of county','A Viking settlement','An Irish province'], answer:0}},
-  {id:'c12', year:-500, title:'The Celts', category:'History', difficulty:'intermediate',
-   target:['w170','w168'],
-   text:"The Ceiltigh — the Celts — arrived in Ireland during the Iron Age, roughly 2,500 years ago, bringing the language family that Irish descends from. Celtic Ireland was never one kingdom: it was a patchwork of small territories, each with its own rí (king), bound together by shared law, language, and mythology rather than a single state.",
-   quiz:{q:'What did the Celts bring to Ireland that survives today?', options:['The ancestor of the Irish language','The county system','Christianity','The potato'], answer:0}},
-  {id:'c13', year:1169, title:'The Normans Arrive', category:'History', difficulty:'intermediate',
-   target:['w180'],
-   text:"In 1169, the Normannaigh — Normans — landed in Ireland, beginning eight centuries of English and later British involvement in Irish affairs. Over generations, many Norman families became, in the famous phrase, 'more Irish than the Irish themselves,' adopting the Irish language and customs.",
-   quiz:{q:'When did the Normans arrive in Ireland?', options:['1169','795','1916','1845'], answer:0}},
-  {id:'c14', year:1845, title:'An Gorta Mór — The Great Famine', category:'History', difficulty:'intermediate',
-   target:['w171','w172','w173'],
-   text:"An Gorta Mór — the Great Famine, or Great Hunger — devastated Ireland from 1845 to 1852 after potato blight destroyed the crop most of the rural poor depended on. Around one million people died of ocras (hunger) and disease, and over a million more left on imirce — emigration. Ireland's population has still not returned to its pre-famine level, and the Famine dealt a heavy blow to the Irish language, which was strongest in the poorest regions.",
-   quiz:{q:'What does imirce mean?', options:['Emigration','Hunger','A potato','A government'], answer:0}},
-  {id:'c15', year:1919, title:'The War of Independence', category:'History', difficulty:'intermediate',
-   target:['w174','w181'],
-   text:"Cogadh na Saoirse — the War of Independence — was fought between Irish republican forces and British forces from 1919 to 1921. It ended with the Anglo-Irish Treaty, which created the Irish Free State but also led to partition and a bitter civil war among former comrades over the treaty's terms. The word síocháin (peace) carries weight in Irish history precisely because it was so hard-won.",
-   quiz:{q:'What is Cogadh na Saoirse in English?', options:['The War of Independence','The Great Famine','The Easter Rising','The Norman invasion'], answer:0}},
-  {id:'c16', year:1921, title:'Partition', category:'Northern Ireland', difficulty:'intermediate',
-   target:['w175'],
-   text:"The chríochdheighilt — partition — of Ireland in 1921 divided the island into two jurisdictions: what became the Republic of Ireland, and Northern Ireland, which remained part of the United Kingdom. Partition and its consequences shaped the century that followed, including the Troubles in Northern Ireland (late 1960s–1998), which ended with the Good Friday Agreement. It remains a defining fact of Irish politics, and views on the island's constitutional future continue to differ across communities.",
-   quiz:{q:'What does críochdheighilt mean?', options:['Partition','Freedom','Peace','Republic'], answer:0}},
-  {id:'c17', year:2026, title:'How Ireland Is Governed', category:'Politics', difficulty:'intermediate',
-   target:['w176','w177','w178','w179'],
-   text:"The Republic of Ireland is a parliamentary democracy. The rialtas (government) is led by the Taoiseach — the head of government, comparable to a prime minister. Laws are made in the Dáil (Dáil Éireann), the main chamber of parliament, whose members are called TDs. The uachtarán (president) is the directly elected head of state, with a largely ceremonial and constitutional role. Nearly all Irish political vocabulary is used in Irish even in English-language news — Taoiseach, Dáil, and TD are everyday words in Ireland.",
-   quiz:{q:'Who is the head of government in Ireland?', options:['The Taoiseach','The uachtarán','The rí','The TD'], answer:0}},
+// The active pack's culture capsules, live-swappable the same way
+// data/words.js is — see there for why the array reference never changes.
+import { activePack, activeAccentCode } from './languagePacks.js';
 
-  // ---- Geography set (hand-written; targets stay within the audio-backed vocabulary) ----
-  {id:'c18', title:'The Three Dialects', category:'Geography', difficulty:'beginner',
-   target:['w146','w167','w154'],
-   text:"Living Irish comes in three broad flavours, one per Gaeltacht cúige (province): Ulster Irish in Donegal, Connacht Irish in Connemara and Mayo, and Munster Irish in Kerry, Cork and Waterford. They differ in melody and stress more than in vocabulary — the teanga (language) is one, and speakers understand each other. Most learning materials (and this app's audio) use a standard close to Connacht pronunciation.",
-   quiz:{q:'How many main living dialects does Irish have?', options:['Three','One','Seven','Twelve'], answer:0}},
-  {id:'c19', title:'The Wild Western Edge', category:'Geography', difficulty:'beginner',
-   target:['w99','w100','w144','w101'],
-   text:"Ireland's west coast — where the Gaeltacht mostly survives — is a landscape of farraige (sea), sliabh (mountain) and abhainn (river). Connemara's bogs run down to the Atlantic, and offshore sit islands like the Aran Islands, each an oileán where Irish is the daily language. The rougher, remoter land is part of why the language held on here when it faded in the east.",
-   quiz:{q:'What does "farraige" mean?', options:['Sea','Mountain','River','Island'], answer:0}},
-  {id:'c20', title:'What Place Names Say', category:'Geography', difficulty:'beginner',
-   target:['w24','w159','w151','w153'],
-   text:"Nearly every place name in Ireland is Irish wearing an English spelling. Baile (town/home) begins hundreds of them — anglicised as 'Bally'. Dublin's Irish name, Baile Átha Cliath, means 'town of the hurdled ford'; Gaillimh (Galway) is a cathair (city) named for its stony river. Reading place names in Irish turns any road sign into a tiny history lesson — signs in the Republic show both languages.",
-   quiz:{q:'What does "baile" — the "Bally-" in Irish place names — mean?', options:['Town or home','Mountain','Church','King'], answer:0}},
-  {id:'c21', title:'Weather off the Atlantic', category:'Geography', difficulty:'beginner',
-   target:['w128','w129','w35','w98'],
-   text:"Ireland's weather arrives from the Atlantic: báisteach (rain) in soft persistent forms English barely has words for, gaoth (wind) that shapes the bent trees of the west coast, and a famously changeable spéir (sky). It is rarely truly fuar (cold) — the Gulf Stream keeps winters mild — which is why the island stays green enough to earn the name 'the Emerald Isle'. Small talk about weather is a national pastime in both languages.",
-   quiz:{q:'What does "báisteach" mean?', options:['Rain','Wind','Sky','Snow'], answer:0}},
-  {id:'c22', title:'A Day in the Gaeltacht', category:'Geography', difficulty:'intermediate',
-   target:['w123','w79','w25','w124','w23'],
-   text:"In a Gaeltacht village, Irish carries the whole day: maidin (morning) greetings at the shop, tae (tea) with neighbours, obair (work) on land or sea or — increasingly — remote for a city employer, music in the pub come tráthnóna (evening), and oíche mhaith (good night) at the door. Thousands of Irish teenagers spend summer weeks boarding in these villages at Irish colleges — for many it's where the school subject first becomes a living language.",
-   quiz:{q:'What does "maidin" mean?', options:['Morning','Evening','Night','Tea'], answer:0}},
-];
+export const CULTURE_CAPSULES = [];
+
+export function reloadActiveCapsules() {
+  const pack = activePack();
+  const capsules = pack.getCapsules(activeAccentCode());
+  CULTURE_CAPSULES.length = 0;
+  CULTURE_CAPSULES.push(...capsules);
+}
+reloadActiveCapsules();

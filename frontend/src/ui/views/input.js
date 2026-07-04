@@ -10,8 +10,9 @@ import { WORDS } from '../../data/words.js';
 import { state, recordInput } from '../../state/store.js';
 import { knownWordSet, calcReadiness } from '../../engine/readiness.js';
 import { emptyState, linkifyIrish } from '../dom.js';
-import { speakWord, audioDbAvailable, staticAudioUrl } from '../../services/tts.js';
+import { speakWord, audioDbCoversActivePack, staticAudioUrl } from '../../services/tts.js';
 import { startRecording, stopRecording, recordingActive } from '../../services/pronunciation.js';
+import { activePack } from '../../data/languagePacks.js';
 import { uiState } from '../uiState.js';
 
 // Session state (module-local: resets on full reload, survives tab hops)
@@ -37,8 +38,8 @@ function current() {
 }
 
 export function render() {
-  if (!audioDbAvailable()) {
-    return emptyState('Input practice needs the audio database', 'Once the pronunciation audio database is generated for this site, this tab serves real Irish sentences in listen → reveal → shadow flow.');
+  if (!audioDbCoversActivePack()) {
+    return emptyState('Input practice needs pre-generated audio', `This tab plays real ${activePack().name} sentence audio in a listen → reveal → shadow flow — that hasn't been generated for this pack yet.`);
   }
   if (queue.length === 0) queue = buildQueue();
   const item = current();
@@ -52,7 +53,7 @@ export function render() {
          <div style="font-size:15px; color:var(--text-dim);">Listen first — what do you catch?</div>
          <div class="btn-row" style="justify-content:center;">
            <button class="btn" id="playSentence">🔊 Play sentence</button>
-           <button class="btn secondary" id="revealIrish">Show the Irish</button>
+           <button class="btn secondary" id="revealIrish">Show the text</button>
          </div>
        </div>`
     : `<div class="example-box" style="margin-top:8px;">

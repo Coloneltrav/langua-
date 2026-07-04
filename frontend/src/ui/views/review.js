@@ -3,10 +3,16 @@ import { state, saveProgress } from '../../state/store.js';
 import { todayDue } from '../../engine/queue.js';
 import { sm2Update, bumpSkill, adjustForWeakPronunciation } from '../../engine/sm2.js';
 import { emptyState, linkifyIrish } from '../dom.js';
-import { teanglannFuaimLink } from '../../services/tts.js';
+import { activePack } from '../../data/languagePacks.js';
 import { pronunciationWidgetHtml, bindPronunciationWidget } from '../components/pronunciationWidget.js';
 import { uiState } from '../uiState.js';
 import { bindHear } from './learn.js';
+
+function nativeSpeakerLinkHtml(word) {
+  const pack = activePack();
+  if (!pack.fuaimLink) return '';
+  return `<a class="audio-ref" href="${pack.fuaimLink(word)}" target="_blank" rel="noopener">🔊 Hear native speakers on ${pack.dictName} ↗</a>`;
+}
 
 export function render() {
   const due = todayDue(WORDS, state.progress);
@@ -21,7 +27,7 @@ export function render() {
       <div class="word-hero">
         <div class="pos mono">${w.pos}</div>
         <div class="irish display"><span class="dropcap">${w.irish[0]}</span>${w.irish.slice(1)}</div>
-        ${uiState.revealAnswer ? `<div class="phonetic">/ ${w.phonetic} /</div><div class="english">${w.english}</div><div class="chunk-tag mono">chunk: "${linkifyIrish(w.chunk)}"</div><a class="audio-ref" href="${teanglannFuaimLink(w.irish)}" target="_blank" rel="noopener">🔊 Hear native speakers on teanglann.ie ↗</a>` : `<div class="phonetic" style="opacity:0.35;">/ ? /</div><div class="english" style="color:var(--text-dim);">— recall it before revealing —</div>`}
+        ${uiState.revealAnswer ? `<div class="phonetic">/ ${w.phonetic} /</div><div class="english">${w.english}</div><div class="chunk-tag mono">chunk: "${linkifyIrish(w.chunk)}"</div>${nativeSpeakerLinkHtml(w.irish)}` : `<div class="phonetic" style="opacity:0.35;">/ ? /</div><div class="english" style="color:var(--text-dim);">— recall it before revealing —</div>`}
       </div>
       ${uiState.revealAnswer ? `
       <div class="example-box">

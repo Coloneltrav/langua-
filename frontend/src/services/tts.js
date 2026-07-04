@@ -1,51 +1,64 @@
 // ---------- TTS ----------
-// Two tiers, and the app is honest with the user about which one is active:
+// Three tiers, and the app is honest with the user about which one is
+// active (see settings.js):
 //
-// 1. REAL Irish pronunciation: Azure AI Speech has two purpose-built Irish
-//    (ga-IE) neural voices — Colm (male) and Orla (female) — trained on
-//    actual Irish speech, not a generic voice guessing at Irish spelling.
-//    The Azure key lives server-side (backend/.env) so it's never exposed
-//    to the browser; the frontend just asks the backend to synthesize.
-// 2. Fallback: the device's browser TTS reading the text with whatever
-//    voice is installed (almost never an actual Irish voice). This is an
-//    approximation only and is labeled as such in the UI.
+// 1. Static audio database: pre-generated Azure neural audio committed to
+//    the repo (currently Irish only — see scripts/generate-audio.mjs).
+// 2. Live Azure via the backend, when one is deployed — real neural voices
+//    for whatever language/voice id the active pack asks for.
+// 3. Browser TTS. For Spanish this is usually a genuine native voice (most
+//    platforms ship real es-ES/es-MX/etc voices) — a real fallback, not an
+//    approximation. Irish has no real browser voice on virtually any
+//    platform, so that path instead reads the phonetic respelling (built
+//    for English readers) with an English-ish voice, same as before.
 import { apiFetch } from './apiClient.js';
 import { state, recordInput } from '../state/store.js';
+import { activePack, activeAccentCode } from '../data/languagePacks.js';
 
-const VOICE_PREFERENCE = [
+const IRISH_APPROX_VOICE_PREFERENCE = [
   'Microsoft Ryan Online (Natural)', 'Microsoft Guy Online (Natural)',
   'Google UK English Male', 'Daniel', 'Microsoft David', 'Alex', 'Fred',
 ];
 
-let cachedVoice = null;
-function pickBestVoice() {
-  if (cachedVoice) return cachedVoice;
+let cachedIrishApproxVoice = null;
+function pickIrishApproxVoice() {
+  if (cachedIrishApproxVoice) return cachedIrishApproxVoice;
   const voices = speechSynthesis.getVoices();
   if (!voices.length) return null;
   const gaVoice = voices.find((v) => v.lang.toLowerCase().startsWith('ga'));
-  if (gaVoice) { cachedVoice = gaVoice; return gaVoice; }
-  for (const pref of VOICE_PREFERENCE) {
+  if (gaVoice) { cachedIrishApproxVoice = gaVoice; return gaVoice; }
+  for (const pref of IRISH_APPROX_VOICE_PREFERENCE) {
     const hit = voices.find((v) => v.name.includes(pref));
-    if (hit) { cachedVoice = hit; return hit; }
+    if (hit) { cachedIrishApproxVoice = hit; return hit; }
   }
   const anyMale = voices.find((v) => /male/i.test(v.name) && v.lang.startsWith('en'));
-  if (anyMale) { cachedVoice = anyMale; return anyMale; }
+  if (anyMale) { cachedIrishApproxVoice = anyMale; return anyMale; }
   const anyEn = voices.find((v) => v.lang.startsWith('en'));
-  cachedVoice = anyEn || voices[0];
-  return cachedVoice;
+  cachedIrishApproxVoice = anyEn || voices[0];
+  return cachedIrishApproxVoice;
 }
 
-function speakBrowserFallback(text) {
+// A real voice for the given BCP-47-ish locale (e.g. "es-MX"), falling
+// back to any voice sharing just the language subtag ("es"), or null.
+function pickVoiceForLocale(locale) {
+  const voices = speechSynthesis.getVoices();
+  if (!voices.length || !locale) return null;
+  const exact = voices.find((v) => v.lang.toLowerCase() === locale.toLowerCase());
+  if (exact) return exact;
+  const lang = locale.split('-')[0].toLowerCase();
+  return voices.find((v) => v.lang.toLowerCase().startsWith(lang)) || null;
+}
+
+function speakBrowser(text, { voice, lang, rate = 1, pitch = 1 }) {
   if (!('speechSynthesis' in window)) return { ok: false, msg: 'Speech synthesis not supported in this browser.' };
   speechSynthesis.cancel();
-  const voice = pickBestVoice();
   const utter = new SpeechSynthesisUtterance(text);
   if (voice) utter.voice = voice;
-  utter.lang = 'en-GB';
-  utter.rate = 0.88;
-  utter.pitch = 0.95;
+  utter.lang = lang;
+  utter.rate = rate;
+  utter.pitch = pitch;
   speechSynthesis.speak(utter);
-  return { ok: true, source: 'browser-approx' };
+  return { ok: true, source: voice ? 'browser-native' : 'browser-approx' };
 }
 
 // English TTS engines mangle real Irish spelling (e.g. reading "Dia duit"
@@ -80,6 +93,26 @@ export function audioDbAvailable() {
   return audioDb !== null;
 }
 
+// The static audio database currently only has Irish audio in it — a
+// generic `audioDbAvailable()` check would wrongly read as "yes" while a
+// Spanish accent is active. Use this wherever a feature (dictation, the
+// home voice-status card) actually depends on the *active pack's* words
+// having real static audio.
+export function audioDbCoversActivePack() {
+  return audioDb !== null && activePack().code === 'ga';
+}
+
+// Whether the active pack has *some* legitimate audio source right now —
+// used to gate features (dictation, Input Flood) that need real
+// pronunciation, not the Irish phonetic-respelling-read-by-an-English-voice
+// hack. Spanish's browser fallback is a genuine native voice, so it always
+// counts; Irish only counts once the static DB or a live Azure backend
+// exists.
+export function hasRealAudioForActivePack() {
+  if (audioDbCoversActivePack() || azureAvailableSync()) return true;
+  return activePack().code === 'es';
+}
+
 export function staticAudioUrl(wordId, kind = 'words') {
   if (!audioDb) return null;
   const list = kind === 'examples' ? audioDb.examples : audioDb.words;
@@ -103,7 +136,7 @@ export async function speakWord(word, kind = 'words') {
     return { ok: true, source: 'audio-db', duration: audio.duration };
   }
   const text = kind === 'examples' ? word.example_ga : word.irish;
-  return speakIrish(text, kind === 'examples' ? null : word.phonetic);
+  return speakTargetLanguage(text, kind === 'examples' ? null : word.phonetic);
 }
 
 let azureAvailable = null; // cached tri-state: null = unknown, true/false once checked
@@ -141,25 +174,25 @@ async function speakAzure(text) {
   return { ok: true, source: 'azure' };
 }
 
-export async function speakIrish(text, phonetic) {
+export async function speakTargetLanguage(text, phonetic) {
   if (await checkAzureAvailable()) {
     try {
-      return await speakAzure(text); // real Irish spelling -> real Irish voice
+      return await speakAzure(text); // real spelling -> real neural voice
     } catch (e) {
       console.error('Azure TTS failed, falling back to browser voice:', e);
     }
   }
-  // No Azure voice: English TTS reading raw Irish spelling is badly wrong
-  // ("Dia duit" read with English rules). Speak the phonetic respelling
-  // instead when we have it — it was written for English readers.
+  const pack = activePack();
+  if (pack.code === 'es') {
+    // Spanish orthography is phonetic and real Spanish browser voices are
+    // common — try the selected country's own locale first, then any
+    // Spanish voice, and just read the actual text (no respelling hack).
+    const locale = activeAccentCode() || 'es-ES';
+    const voice = pickVoiceForLocale(locale);
+    return speakBrowser(text, { voice, lang: locale, rate: 1, pitch: 1 });
+  }
+  // No real browser voice for this pack's language: read the phonetic
+  // respelling (written for English readers) with an English-ish voice.
   const approx = phoneticForTTS(phonetic);
-  return speakBrowserFallback(approx || text);
-}
-
-export function teanglannFuaimLink(word) {
-  return 'https://www.teanglann.ie/en/fuaim/' + encodeURIComponent(word.split(/\s+/)[0].toLowerCase());
-}
-
-export function teanglannDictLink(word) {
-  return 'https://www.teanglann.ie/en/fgb/' + encodeURIComponent(word.toLowerCase());
+  return speakBrowser(approx || text, { voice: pickIrishApproxVoice(), lang: 'en-GB', rate: 0.88, pitch: 0.95 });
 }

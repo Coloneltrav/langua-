@@ -3,6 +3,7 @@ import { WORDS } from '../../data/words.js';
 import { state } from '../../state/store.js';
 import { capsuleReadiness, capsuleNewWordCount } from '../../engine/readiness.js';
 import { generateCapsuleRemote } from '../../services/capsuleGen.js';
+import { activePack } from '../../data/languagePacks.js';
 import { uiState } from '../uiState.js';
 
 export function render() {
@@ -38,21 +39,22 @@ export function render() {
     </div>`;
   }).join('');
 
+  const pack = activePack();
   return `
     <div class="card">
-      <div style="font-family:'Cormorant Garamond',serif; font-size:20px; margin-bottom:4px;">Ireland</div>
-      <div style="font-size:12.5px; color:var(--text-dim); margin-bottom:14px;">Small bilingual culture capsules — geography, history, politics, and the Gaeltacht — sorted by how ready you are for each one. Each capsule's Irish target words feed straight into your review queue.</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:20px; margin-bottom:4px;">${pack.cultureTabLabel}</div>
+      <div style="font-size:12.5px; color:var(--text-dim); margin-bottom:14px;">Small bilingual culture capsules — geography, history, politics, and daily life — sorted by how ready you are for each one. Each capsule's target words feed straight into your review queue.</div>
       ${cards}
     </div>
     <div class="card">
       <div style="font-family:'Cormorant Garamond',serif; font-size:18px; margin-bottom:4px;">History timeline</div>
-      <div style="font-size:12px; color:var(--text-dim); margin-bottom:10px;">The same capsules, in the order it actually happened — from the Celts to the modern state.</div>
+      <div style="font-size:12px; color:var(--text-dim); margin-bottom:10px;">The same capsules, in the order it actually happened.</div>
       ${timeline}
     </div>
     <div class="card">
       <div style="font-family:'Cormorant Garamond',serif; font-size:17px; margin-bottom:8px;">Generate a new capsule</div>
       <div style="font-size:12px; color:var(--text-dim); margin-bottom:10px;">AI-generated capsules aren't hand fact-checked the way the ones above are — treat them as a starting point, not ground truth.</div>
-      <input type="text" id="capsuleTopicInput" placeholder="e.g. Brigid, the GAA, Irish folklore..." ${uiState.capsuleGenBusy ? 'disabled' : ''}>
+      <input type="text" id="capsuleTopicInput" placeholder="e.g. a festival, a historical event, a tradition..." ${uiState.capsuleGenBusy ? 'disabled' : ''}>
       <div class="btn-row"><button class="btn secondary" id="genCapsuleBtn" ${uiState.capsuleGenBusy ? 'disabled' : ''}>${uiState.capsuleGenBusy ? 'Generating…' : '✨ Generate'}</button></div>
     </div>
   `;

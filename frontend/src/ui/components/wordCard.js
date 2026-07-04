@@ -1,6 +1,13 @@
 import { linkifyIrish } from '../dom.js';
-import { teanglannFuaimLink, speakWord, staticAudioUrl } from '../../services/tts.js';
+import { speakWord, staticAudioUrl } from '../../services/tts.js';
+import { activePack } from '../../data/languagePacks.js';
 import { pronunciationWidgetHtml, bindPronunciationWidget } from './pronunciationWidget.js';
+
+function nativeSpeakerLinkHtml(word) {
+  const pack = activePack();
+  if (!pack.fuaimLink) return '';
+  return `<a class="audio-ref" href="${pack.fuaimLink(word)}" target="_blank" rel="noopener">🔊 Hear native speakers on ${pack.dictName} ↗</a>`;
+}
 
 export function wordCardHtml(w, mode) {
   return `
@@ -11,7 +18,7 @@ export function wordCardHtml(w, mode) {
         <div class="phonetic">/ ${w.phonetic} /</div>
         <div class="english">${w.english}</div>
         <div class="chunk-tag mono">chunk: “${linkifyIrish(w.chunk)}”</div>
-        <a class="audio-ref" href="${teanglannFuaimLink(w.irish)}" target="_blank" rel="noopener">🔊 Hear native speakers on teanglann.ie ↗</a>
+        ${nativeSpeakerLinkHtml(w.irish)}
       </div>
       <div class="example-box">
         <div class="ga display">${linkifyIrish(w.example_ga)}</div>

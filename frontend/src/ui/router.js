@@ -1,7 +1,7 @@
 import { uiState } from './uiState.js';
 import { speakWord } from '../services/tts.js';
 import { state } from '../state/store.js';
-import { activePack } from '../data/languagePacks.js';
+import { activePack, activeAccentCode } from '../data/languagePacks.js';
 import { wordPopupHtml, bindWordPopup } from './components/wordPopup.js';
 
 // Decorative header glyphs keyed by pack.theme.motif — abstract, not tied
@@ -26,10 +26,6 @@ import * as settings from './views/settings.js';
 
 const VIEWS = { home, learn, review, input, vocab, wordDetail, quiz, culture, geography, capsuleDetail, tutor, stats, settings };
 
-const BASE_TABS = [
-  ['home', 'Home'], ['learn', 'New Word'], ['review', 'Review'], ['input', 'Input'], ['quiz', 'Listen'],
-  ['culture', 'Ireland'], ['geography', 'Geography'], ['vocab', 'Vocabulary'],
-];
 // The AI Tutor needs a personal Anthropic key (settings.js) on this
 // backend-less static site — hide its tab until one is set up, rather
 // than showing a feature that just errors for most visitors.
@@ -37,8 +33,13 @@ const TUTOR_TAB = ['tutor', 'AI Tutor'];
 const TAIL_TABS = [['stats', 'Stats'], ['settings', 'Settings']];
 
 function currentTabs() {
+  const cultureLabel = activePack().cultureTabLabel || 'Culture';
+  const baseTabs = [
+    ['home', 'Home'], ['learn', 'New Word'], ['review', 'Review'], ['input', 'Input'], ['quiz', 'Listen'],
+    ['culture', cultureLabel], ['geography', 'Geography'], ['vocab', 'Vocabulary'],
+  ];
   const tutorReady = !!state.settings.anthropicKey;
-  return [...BASE_TABS, ...(tutorReady ? [TUTOR_TAB] : []), ...TAIL_TABS];
+  return [...baseTabs, ...(tutorReady ? [TUTOR_TAB] : []), ...TAIL_TABS];
 }
 
 function activeTabFor(route) {
@@ -96,9 +97,9 @@ export function renderApp() {
       <div class="wordmark">
         <span class="cap display">B</span>
         <h1>las</h1>
-        ${MOTIFS[activePack().theme?.motif] || ''}
+        ${MOTIFS[activePack().getTheme(activeAccentCode())?.motif] || ''}
       </div>
-      <div class="tagline">A personal Irish learning system — no streaks, no ads, just the words.</div>
+      <div class="tagline">A personal language learning system — no streaks, no ads, just the words.</div>
     </header>
     <nav class="tabs" id="tabs"></nav>
     <main id="main"></main>

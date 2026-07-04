@@ -3,7 +3,7 @@
 // decoration (see main.css [data-pack="ga"] rules) can key off it. This is
 // the one place the app reads pack.theme — everything else just uses the
 // existing --gold/--bg/etc custom properties as before.
-import { activePack } from '../data/languagePacks.js';
+import { activePack, activeAccentCode } from '../data/languagePacks.js';
 
 const VAR_MAP = {
   bg: '--bg', surface: '--surface', surface2: '--surface-2', border: '--border',
@@ -14,7 +14,7 @@ const VAR_MAP = {
 
 export function applyTheme() {
   const pack = activePack();
-  const theme = pack.theme || {};
+  const theme = pack.getTheme(activeAccentCode()) || {};
   const root = document.documentElement;
   for (const [key, cssVar] of Object.entries(VAR_MAP)) {
     if (theme[key]) root.style.setProperty(cssVar, theme[key]);

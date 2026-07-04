@@ -53,7 +53,7 @@ export function render() {
     </div>
     <div class="card">
       <div style="font-family:'Cormorant Garamond',serif; font-size:19px; margin-bottom:4px;">Coverage by frequency band</div>
-      <div style="font-size:12px; color:var(--text-dim); margin-bottom:6px;">The most frequent words do the most work in real Irish — fill the top bands first.</div>
+      <div style="font-size:12px; color:var(--text-dim); margin-bottom:6px;">The most frequent words do the most work in real speech — fill the top bands first.</div>
       ${coverageRows}
     </div>
     <div class="card">

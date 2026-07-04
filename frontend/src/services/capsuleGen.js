@@ -3,13 +3,17 @@
 // Settings (same pattern as services/tutor.js).
 import { apiJson } from './apiClient.js';
 import { state } from '../state/store.js';
+import { activePack, activeAccent } from '../data/languagePacks.js';
 
 const DIRECT_MODEL = 'claude-opus-4-8';
 
 function buildSystemPrompt(known) {
-  return `You write short Irish (Gaeilge) culture capsules for a language app called Blas. Output ONLY valid JSON, no markdown fences, no preamble, matching exactly this shape:
-{"title":"...", "category":"...", "difficulty":"beginner|intermediate", "text":"2-4 sentences, mostly English, with 3-5 Irish words/phrases woven in naturally and glossed in parentheses on first use", "target_words":[{"irish":"...","english":"..."}], "quiz":{"q":"...","options":["...","...","...","..."],"answer":0}}
-Keep it factual and neutral, especially for any historical or political topic. The learner's known Irish words: ${known.length ? known.join(', ') : '(none yet)'}.`;
+  const pack = activePack();
+  const accent = activeAccent();
+  const countryLine = accent ? ` Focus on ${accent.country} specifically unless the topic is pan-regional.` : '';
+  return `You write short ${pack.name} culture capsules for a language app called Blas.${countryLine} Output ONLY valid JSON, no markdown fences, no preamble, matching exactly this shape:
+{"title":"...", "category":"...", "difficulty":"beginner|intermediate", "text":"2-4 sentences, mostly English, with 3-5 target-language words/phrases woven in naturally and glossed in parentheses on first use", "target_words":[{"irish":"...","english":"..."}], "quiz":{"q":"...","options":["...","...","...","..."],"answer":0}}
+Keep it factual and neutral, especially for any historical or political topic. The learner's known words: ${known.length ? known.join(', ') : '(none yet)'}.`;
 }
 
 async function generateDirect({ topic, known }) {
@@ -25,7 +29,7 @@ async function generateDirect({ topic, known }) {
       model: DIRECT_MODEL,
       max_tokens: 800,
       system: buildSystemPrompt(known),
-      messages: [{ role: 'user', content: `Generate a beginner-friendly Irish culture capsule about: ${topic}` }],
+      messages: [{ role: 'user', content: `Generate a beginner-friendly ${activePack().name} culture capsule about: ${topic}` }],
     }),
   });
   if (!res.ok) {
