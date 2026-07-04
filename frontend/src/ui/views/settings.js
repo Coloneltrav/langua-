@@ -39,7 +39,7 @@ export function render() {
     </div>
     <div class="card">
       <div style="font-family:'Cormorant Garamond',serif; font-size:18px; margin-bottom:6px;">AI Tutor key</div>
-      <div style="font-size:12.5px; color:var(--text-dim); margin-bottom:12px; line-height:1.6;">On this free-hosted version there's no server to pay for tutor chats, so the tutor needs your own Anthropic API key (get one at <a class="word-ref" href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a>). It's stored only on this device and sent only to Anthropic. Leave blank if you're running the full backend.</div>
+      <div style="font-size:12.5px; color:var(--text-dim); margin-bottom:12px; line-height:1.6;">On this free-hosted version there's no server to pay for tutor chats, so the AI Tutor tab stays hidden until you paste your own Anthropic API key here (get one at <a class="word-ref" href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a>). It's stored only on this device and sent only to Anthropic — no key, no tab, no cost. Leave blank if you're running the full backend.</div>
       <input type="text" id="anthropicKeyInput" value="${state.settings.anthropicKey}" placeholder="sk-ant-...">
       <div class="btn-row"><button class="btn secondary" id="saveAnthropicKey">Save key</button></div>
     </div>
@@ -80,8 +80,7 @@ export function bind(main, rerender) {
   if (saveAnthropicKeyBtn) saveAnthropicKeyBtn.onclick = () => {
     state.settings.anthropicKey = main.querySelector('#anthropicKeyInput').value.trim();
     saveProgress();
-    saveAnthropicKeyBtn.textContent = 'Saved ✓';
-    setTimeout(() => { saveAnthropicKeyBtn.textContent = 'Save key'; }, 1500);
+    rerender(true); // key presence toggles the AI Tutor tab — refresh nav immediately
   };
 
   const saveTokenBtn = main.querySelector('#saveToken');

@@ -7,8 +7,10 @@
 import { loadProgress } from './state/store.js';
 import { renderApp, renderRoute } from './ui/router.js';
 import { checkAzureAvailable, loadAudioDb } from './services/tts.js';
+import { applyTheme } from './ui/theme.js';
 
 (async function init() {
+  applyTheme();
   // The static pronunciation audio DB determines both playback quality and
   // whether on-device scoring has references — resolve it before first paint.
   await Promise.all([loadProgress(), loadAudioDb()]);

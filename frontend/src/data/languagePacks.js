@@ -21,6 +21,20 @@ export const LANGUAGE_PACKS = {
     dictName: 'teanglann.ie',
     words: WORDS,
     capsules: CULTURE_CAPSULES,
+    // Visual identity for this pack — read by ui/theme.js at startup and
+    // written onto :root as CSS custom properties, plus a data-pack
+    // attribute for pack-specific decorative CSS (see main.css). A future
+    // pack (e.g. Polish/pl) supplies its own palette + flag colors here
+    // and the whole app re-skins with zero changes to engine or view code.
+    theme: {
+      bg: '#0e1712', surface: '#152019', surface2: '#1c2a21', border: '#2a3b2f',
+      text: '#eef1e8', textDim: '#93a396', onAccent: '#0e1712',
+      accent: '#3fae74', accentBright: '#5fd090', accentDim: '#2c7a52',
+      flagOrange: '#d9722c', rubric: '#b1503a',
+      flagStripe: ['#3fae74', '#f4f1e8', '#d9722c'], // tricolour, green-white-orange
+      motif: 'rings', // decorative header glyph id (ui/theme.js + main.css)
+      wordmarkFont: "'Uncial Antiqua', serif",
+    },
   },
 };
 
