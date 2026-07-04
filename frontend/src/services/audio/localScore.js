@@ -15,7 +15,7 @@
 import { decodeToMono16k, fetchAndDecode } from './decode.js';
 import { trimSilence } from './trim.js';
 import { mfcc } from './mfcc.js';
-import { dtwDistance } from './dtw.js';
+import { dtwDistance, dtwAlign } from './dtw.js';
 import { staticAudioUrl } from '../tts.js';
 
 const refCache = new Map(); // wordId -> MFCC frames of the trimmed reference
@@ -29,6 +29,33 @@ async function referenceFrames(wordId) {
   const frames = mfcc(trimmed);
   refCache.set(wordId, frames);
   return frames;
+}
+
+// Which third of the reference word aligned worst, if any one third is
+// meaningfully worse than the others — a real signal from the DTW path,
+// not a guess. Returns null for words too short to split meaningfully, or
+// when the mismatch is spread evenly (nothing specific to call out).
+function weakThird(refCosts) {
+  const m = refCosts.length;
+  if (m < 6) return null;
+  const third = Math.floor(m / 3);
+  const buckets = [refCosts.slice(0, third), refCosts.slice(third, m - third), refCosts.slice(m - third, m)];
+  const avgs = buckets.map((b) => b.reduce((a, c) => a + c, 0) / Math.max(1, b.length));
+  const overall = avgs.reduce((a, c) => a + c, 0) / 3;
+  if (overall === 0) return null;
+  const worstIdx = avgs.indexOf(Math.max(...avgs));
+  if (avgs[worstIdx] < overall * 1.2) return null; // not meaningfully worse — don't overclaim precision
+  return ['start', 'middle', 'end'][worstIdx];
+}
+
+// Rough visual pointer at the weak third, splitting the written word into
+// three chunks by character count. Not phoneme-aligned — it's an honest
+// approximation ("the beginning of the word"), not IPA-level precision.
+function splitThirds(word) {
+  const n = word.length;
+  const a = Math.round(n / 3);
+  const b = Math.round((2 * n) / 3);
+  return [word.slice(0, a), word.slice(a, b), word.slice(b)];
 }
 
 function scoreFromDistances(targetDist, distractorDists) {
@@ -64,7 +91,7 @@ export async function scoreLocally(blob, targetWord, distractors) {
   }
 
   const attemptFrames = mfcc(trimmed);
-  const targetDist = dtwDistance(attemptFrames, targetFrames);
+  const { distance: targetDist, refCosts } = dtwAlign(attemptFrames, targetFrames);
 
   const distractorResults = [];
   for (const d of distractors) {
@@ -75,12 +102,24 @@ export async function scoreLocally(blob, targetWord, distractors) {
   const { matched, score } = scoreFromDistances(targetDist, distractorResults.map((r) => r.dist));
   const nearest = distractorResults.sort((a, b) => a.dist - b.dist)[0];
 
+  // Point at the roughly weakest third of the TARGET word's shape — only
+  // meaningful when the attempt was actually judged against the target and
+  // isn't already a clean match.
+  let weakSegment = null;
+  let segments = null;
+  if (matched === 'target' && score < 90) {
+    weakSegment = weakThird(refCosts);
+    if (weakSegment) segments = splitThirds(targetWord.irish);
+  }
+
   return {
     ok: true,
     engine: 'acoustic-dtw',
     score,
     matched,
     heard: matched === 'target' ? targetWord.irish : (nearest ? nearest.word.irish : null),
+    weakSegment,
+    segments,
     didTrim,
   };
 }

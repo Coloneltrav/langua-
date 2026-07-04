@@ -69,18 +69,6 @@ header.top .tagline{
   letter-spacing:0.2px;
 }
 
-.banner{
-  margin:16px 20px 0 20px;
-  padding:12px 14px;
-  border:1px solid var(--rubric);
-  border-left:3px solid var(--rubric);
-  border-radius:6px;
-  background:rgba(177,80,58,0.08);
-  font-size:12.5px;
-  color:#e2b7ab;
-  line-height:1.5;
-}
-.banner b{color:#f0d2c8;}
 
 nav.tabs{
   display:flex;
@@ -288,6 +276,37 @@ select{
 
 a.word-ref{color:inherit; text-decoration:underline dotted var(--gold-dim,#8a713a); text-underline-offset:3px; cursor:pointer;}
 a.word-ref:hover{color:var(--gold-bright);}
+.word-tap{color:inherit; text-decoration:underline dotted var(--gold-bright); text-underline-offset:3px; cursor:pointer;}
+.word-tap:hover, .word-tap:focus{color:var(--gold-bright); outline:none;}
+
+.word-popup{
+  position:fixed; left:0; right:0; bottom:0; z-index:50;
+  display:flex; justify-content:center;
+  padding:0 16px 16px 16px;
+  pointer-events:none;
+}
+.word-popup.hidden{display:none;}
+.word-popup-card{
+  pointer-events:auto;
+  width:100%; max-width:400px;
+  background:var(--surface); border:1px solid var(--gold-dim);
+  border-radius:var(--radius);
+  padding:18px 20px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.45);
+  position:relative;
+  animation:popup-in .15s ease;
+}
+@keyframes popup-in{from{transform:translateY(12px); opacity:0;} to{transform:translateY(0); opacity:1;}}
+.word-popup-close{
+  position:absolute; top:10px; right:12px;
+  background:none; border:none; color:var(--text-dim);
+  font-size:20px; line-height:1; cursor:pointer; padding:4px;
+}
+.word-popup-close:hover{color:var(--text);}
+.word-popup-card .irish{font-family:'Cormorant Garamond',serif; font-size:26px; color:var(--gold-bright); padding-right:20px;}
+.word-popup-card .phonetic{margin-top:2px;}
+.word-popup-card .english{font-size:14px; margin-top:6px;}
+.word-popup-card .btn-row{margin-top:12px;}
 .phonetic{
   font-family:'IBM Plex Mono',monospace;
   color:var(--gold);
@@ -318,6 +337,7 @@ a.audio-ref:hover{color:var(--gold-bright); border-color:var(--gold-bright);}
 .pron-score .score-label{font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;}
 .pron-score .verdict{margin-top:8px; font-size:13.5px; line-height:1.6;}
 .pron-score .heard{margin-top:6px; font-size:12px; color:var(--text-dim);}
+.weak-segment{color:var(--rubric); text-decoration:underline wavy var(--rubric); text-underline-offset:3px;}
 .pron-score .engine-tag{
   display:inline-block; margin-top:8px; font-size:10.5px; padding:2px 8px;
   border-radius:10px; background:var(--surface); color:var(--text-dim); border:1px solid var(--border);

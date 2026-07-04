@@ -38,6 +38,23 @@ function verdictFor(result) {
   return 'Quite far from the reference. Play the word again and try matching the rhythm and stress before the individual sounds.';
 }
 
+const SEGMENT_LABEL = { start: 'beginning', middle: 'middle', end: 'end' };
+
+// Points at roughly which third of the word aligned worst against the
+// reference audio (see services/audio/dtw.js dtwAlign) — a real signal
+// from the acoustic alignment, not a fabricated guess. Only shown when one
+// third is genuinely worse than the other two.
+function segmentHintHtml(result) {
+  if (!result.weakSegment || !result.segments) return '';
+  const idx = { start: 0, middle: 1, end: 2 }[result.weakSegment];
+  const parts = result.segments.map((seg, i) => (i === idx ? `<b class="weak-segment">${seg}</b>` : seg)).join('');
+  return `
+    <div class="heard" style="margin-top:8px;">
+      The <b>${SEGMENT_LABEL[result.weakSegment]}</b> of the word was the least accurate part: <span class="display" style="font-size:17px;">${parts}</span>
+    </div>
+  `;
+}
+
 async function trimForPlayback(blob) {
   try {
     const { decodeToMono16k } = await import('../../services/audio/decode.js');
@@ -108,6 +125,7 @@ export function bindPronunciationWidget(root, word) {
           </div>
           <div class="verdict">${verdictFor(result)}</div>
           ${result.matched === 'target' && result.heard ? `<div class="heard">Best match: “${result.heard}” ✓</div>` : ''}
+          ${segmentHintHtml(result)}
           <span class="engine-tag">${ENGINE_LABELS[result.engine] || result.engine}</span>
         </div>
       `;

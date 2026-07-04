@@ -33,14 +33,26 @@ function normalizePhonetic(p) {
   return (p || '').toLowerCase().replace(/[-\s]/g, '');
 }
 
+// Levenshtein distance, normalized to a 0-1 similarity. A plain
+// same-index character comparison misses similarity when one respelling
+// has an extra letter (everything after shifts and stops matching) — edit
+// distance catches that, so the distractor pool is actually phonetically
+// close rather than just "happens to start the same".
 function phoneticSimilarity(a, b) {
   const na = normalizePhonetic(a);
   const nb = normalizePhonetic(b);
   if (!na || !nb) return 0;
-  const len = Math.min(na.length, nb.length);
-  let shared = 0;
-  for (let i = 0; i < len; i++) if (na[i] === nb[i]) shared++;
-  return shared / Math.max(na.length, nb.length);
+  const dp = Array.from({ length: na.length + 1 }, (_, i) => [i, ...Array(nb.length).fill(0)]);
+  for (let j = 0; j <= nb.length; j++) dp[0][j] = j;
+  for (let i = 1; i <= na.length; i++) {
+    for (let j = 1; j <= nb.length; j++) {
+      dp[i][j] = na[i - 1] === nb[j - 1]
+        ? dp[i - 1][j - 1]
+        : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+    }
+  }
+  const dist = dp[na.length][nb.length];
+  return 1 - dist / Math.max(na.length, nb.length);
 }
 
 function textSimilarity(a, b) {

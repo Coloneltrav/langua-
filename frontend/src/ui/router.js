@@ -2,6 +2,7 @@ import { uiState } from './uiState.js';
 import { speakWord } from '../services/tts.js';
 import { state } from '../state/store.js';
 import { activePack } from '../data/languagePacks.js';
+import { wordPopupHtml, bindWordPopup } from './components/wordPopup.js';
 
 // Decorative header glyphs keyed by pack.theme.motif — abstract, not tied
 // to any single language, so a future pack can reuse or replace the id.
@@ -99,12 +100,13 @@ export function renderApp() {
       </div>
       <div class="tagline">A personal Irish learning system — no streaks, no ads, just the words.</div>
     </header>
-    <div class="banner"><b>Scaffold notice:</b> the ~180 seed words and culture capsules here were hand-written with care but haven't been formally validated against teanglann.ie or the National Corpus of Irish — spot-check anything you rely on. Phonetic respellings are approximations for English readers, not IPA.</div>
     <nav class="tabs" id="tabs"></nav>
     <main id="main"></main>
+    ${wordPopupHtml()}
   `;
   renderTabs();
   renderRoute();
+  bindWordPopup(() => { renderRoute(); renderTabs(); });
 }
 
 export { renderRoute, renderTabs };

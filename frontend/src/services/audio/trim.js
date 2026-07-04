@@ -3,7 +3,11 @@
 // math — no browser APIs — so it's unit-testable (see trim.test.js).
 
 const FRAME_MS = 20;
-const PAD_MS = 120;
+// Generous padding + a low relative-peak threshold: quiet consonant onsets/
+// releases (s, f, t, ch...) sit well below the loudest vowel frame, and
+// clipping them costs real scoring accuracy for comparatively little
+// silence saved. Better to keep a touch of true silence than cut speech.
+const PAD_MS = 220;
 
 function frameRms(samples, start, len) {
   let sum = 0;
@@ -34,7 +38,7 @@ export function trimSilence(samples, sampleRate) {
   // a noisy one resolve sensibly.
   const sorted = [...rms].sort((a, b) => a - b);
   const noiseFloor = sorted[Math.floor(frameCount / 8)] || 0;
-  const threshold = Math.max(noiseFloor * 3, peak * 0.08);
+  const threshold = Math.max(noiseFloor * 2.5, peak * 0.05);
 
   let first = -1;
   let last = -1;

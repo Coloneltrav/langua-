@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { trimSilence, encodeWav } from './trim.js';
 import { mfcc } from './mfcc.js';
-import { dtwDistance } from './dtw.js';
+import { dtwDistance, dtwAlign } from './dtw.js';
 
 const SR = 16000;
 
@@ -28,11 +28,11 @@ describe('trimSilence', () => {
     const signal = concat(silence(1.0), tone(300, 0.6), silence(1.2));
     const { samples, trimmed, startSec, endSec } = trimSilence(signal, SR);
     expect(trimmed).toBe(true);
-    // 0.6s of tone + up to ~120ms padding each side
+    // 0.6s of tone + up to ~220ms padding each side
     expect(samples.length / SR).toBeGreaterThan(0.55);
-    expect(samples.length / SR).toBeLessThan(1.0);
-    expect(startSec).toBeGreaterThan(0.7);
-    expect(endSec).toBeLessThan(1.8);
+    expect(samples.length / SR).toBeLessThan(1.1);
+    expect(startSec).toBeGreaterThan(0.6);
+    expect(endSec).toBeLessThan(1.9);
   });
 
   it('returns input unchanged when there is nothing to trim', () => {
@@ -104,5 +104,40 @@ describe('dtwDistance', () => {
 
   it('returns Infinity for empty input', () => {
     expect(dtwDistance([], mfcc(tone(300, 0.2), SR))).toBe(Infinity);
+  });
+});
+
+describe('dtwAlign', () => {
+  it('agrees with dtwDistance on the overall distance', () => {
+    const a = mfcc(tone(300, 0.4), SR);
+    const b = mfcc(tone(320, 0.4), SR);
+    const { distance } = dtwAlign(a, b);
+    expect(distance).toBeCloseTo(dtwDistance(a, b), 6);
+  });
+
+  it('returns one refCost per reference frame', () => {
+    const a = mfcc(tone(300, 0.3), SR);
+    const b = mfcc(tone(310, 0.5), SR);
+    const { refCosts } = dtwAlign(a, b);
+    expect(refCosts.length).toBe(b.length);
+  });
+
+  it('localizes a mismatch to the reference frames it actually affects', () => {
+    // Reference: low tone then high tone. Attempt: low tone twice (the
+    // "high" half never happens) — the second half of the reference should
+    // carry most of the alignment cost, not the first.
+    const ref = mfcc(concat(tone(250, 0.3), tone(1200, 0.3)), SR);
+    const attempt = mfcc(concat(tone(250, 0.3), tone(252, 0.3)), SR);
+    const { refCosts } = dtwAlign(attempt, ref);
+    const half = Math.floor(refCosts.length / 2);
+    const firstHalfAvg = refCosts.slice(0, half).reduce((a, c) => a + c, 0) / half;
+    const secondHalfAvg = refCosts.slice(half).reduce((a, c) => a + c, 0) / (refCosts.length - half);
+    expect(secondHalfAvg).toBeGreaterThan(firstHalfAvg);
+  });
+
+  it('returns Infinity distance and empty refCosts for empty input', () => {
+    const { distance, refCosts } = dtwAlign([], mfcc(tone(300, 0.2), SR));
+    expect(distance).toBe(Infinity);
+    expect(refCosts).toEqual([]);
   });
 });
