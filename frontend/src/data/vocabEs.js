@@ -143,4 +143,5 @@ export const ES_WORDS = [
   {id:'s135', irish:'de nada', english:"you're welcome", pos:'phrase', example_ga:'—Gracias. —De nada.', example_en:"'Thanks.' 'You're welcome.'", chunk:'de nada', freq:135, phonetic:'deh NAH-dah'},
   {id:'s136', irish:'recordar', english:'to remember', pos:'verb', example_ga:'Siempre la voy a recordar.', example_en:"I will always remember her.", chunk:'recordar a alguien', freq:136, phonetic:'reh-kor-DAR'},
   {id:'s137', irish:'abuela', english:'grandmother', pos:'noun', example_ga:'Mi abuela cocina muy bien.', example_en:'My grandmother cooks very well.', chunk:'mi abuela', freq:137, phonetic:'ah-BWEH-lah'},
+  {id:'s138', irish:'la cuenta', english:'the check / bill', pos:'phrase', example_ga:'¿Me traes la cuenta, por favor?', example_en:'Could you bring me the check, please?', chunk:'la cuenta, por favor', freq:138, phonetic:'lah KWEN-tah'},
 ];

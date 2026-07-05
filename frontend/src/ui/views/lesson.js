@@ -31,6 +31,7 @@ let quizChoice = null;
 let participateChoice = null;
 let beatIndex = 0; // how many of the current encounter's beats are revealed
 let spokenBeatIndex = -1; // guards against re-speaking a beat on every rerender
+let revealedTranslations = new Set(); // indices of dialogue beats whose English has been tapped into view
 
 function hasEncounter() {
   return !!plan?.capsule.encounter;
@@ -41,6 +42,7 @@ function resetEncounterState() {
   participateChoice = null;
   beatIndex = hasEncounter() ? 1 : 0; // reveal the first beat immediately
   spokenBeatIndex = -1;
+  revealedTranslations = new Set();
 }
 
 function ensurePlan() {
@@ -141,13 +143,17 @@ function beatHtml(beat, i, isLatest) {
   if (beat.type === 'narration') {
     return `<div style="font-size:13.5px; font-style:italic; color:var(--text-dim); line-height:1.7; ${dim}">${beat.text}</div>`;
   }
+  const revealed = revealedTranslations.has(i);
+  const translationHtml = revealed
+    ? `<div style="font-size:12.5px; color:var(--text-dim); margin-top:4px;">${beat.english}</div>`
+    : `<button class="chunk-tag mono" data-reveal-translation="${i}" style="cursor:pointer; border:1px dashed rgba(201,162,75,0.35); background:none; margin-top:6px; font-size:11px;">Show translation</button>`;
   return `
     <div style="${dim}">
       <div style="font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:3px;">${beat.speaker}</div>
       <div class="example-box" style="border-left-color:var(--flag-orange); display:flex; align-items:baseline; gap:8px; justify-content:space-between;">
         <div>
           <div style="font-size:15px; line-height:1.6;">${linkifyIrish(beat.irish)}</div>
-          <div style="font-size:12.5px; color:var(--text-dim); margin-top:4px;">${beat.english}</div>
+          ${translationHtml}
         </div>
         <button class="chunk-tag mono" data-replay-beat="${i}" style="cursor:pointer; border:1px solid rgba(201,162,75,0.35); background:none; flex-shrink:0;">🔊</button>
       </div>
@@ -255,6 +261,9 @@ export function bind(main, rerender) {
     }
     main.querySelectorAll('[data-replay-beat]').forEach((b) => {
       b.onclick = () => speakBeat(e.beats[parseInt(b.dataset.replayBeat, 10)]);
+    });
+    main.querySelectorAll('[data-reveal-translation]').forEach((b) => {
+      b.onclick = () => { revealedTranslations.add(parseInt(b.dataset.revealTranslation, 10)); rerender(); };
     });
     const toParticipate = main.querySelector('#toParticipate');
     if (toParticipate) toParticipate.onclick = () => {

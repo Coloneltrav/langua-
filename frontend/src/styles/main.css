@@ -150,6 +150,8 @@ main{padding:20px;}
 .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
 @media(max-width:420px){.grid2{grid-template-columns:1fr;}}
 
+.encounter-visual{width:100%; height:auto; max-height:280px; object-fit:cover; display:block;}
+
 .stat{
   background:var(--surface-2);
   border:1px solid var(--border);
