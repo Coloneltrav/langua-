@@ -9,10 +9,11 @@ import { applyTheme } from './theme.js';
 import { activePack, activeAccentCode } from '../data/languagePacks.js';
 import { state } from '../state/store.js';
 import { uiState } from './uiState.js';
+import { resetLesson } from './views/lesson.js';
 
-// Any in-flight quiz/word/capsule reference points at the *previous*
-// pack's word ids — clear it rather than risk a stale lookup after the
-// swap below.
+// Any in-flight quiz/word/capsule/lesson reference points at the
+// *previous* pack's word ids — clear it rather than risk a stale lookup
+// after the swap below.
 function clearStaleSelections() {
   uiState.currentWord = null;
   uiState.detailWord = null;
@@ -21,6 +22,7 @@ function clearStaleSelections() {
   uiState.quizChoice = null;
   uiState.activeCapsule = null;
   uiState.capsuleQuizChoice = null;
+  resetLesson();
 }
 
 function syncVoiceToAccent() {

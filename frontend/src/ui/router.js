@@ -11,6 +11,7 @@ const MOTIFS = {
 };
 
 import * as home from './views/home.js';
+import * as lesson from './views/lesson.js';
 import * as learn from './views/learn.js';
 import * as review from './views/review.js';
 import * as vocab from './views/vocab.js';
@@ -24,7 +25,7 @@ import * as tutor from './views/tutor.js';
 import * as stats from './views/stats.js';
 import * as settings from './views/settings.js';
 
-const VIEWS = { home, learn, review, input, vocab, wordDetail, quiz, culture, geography, capsuleDetail, tutor, stats, settings };
+const VIEWS = { home, lesson, learn, review, input, vocab, wordDetail, quiz, culture, geography, capsuleDetail, tutor, stats, settings };
 
 // The AI Tutor needs a personal Anthropic key (settings.js) on this
 // backend-less static site — hide its tab until one is set up, rather
@@ -35,7 +36,7 @@ const TAIL_TABS = [['stats', 'Stats'], ['settings', 'Settings']];
 function currentTabs() {
   const cultureLabel = activePack().cultureTabLabel || 'Culture';
   const baseTabs = [
-    ['home', 'Home'], ['learn', 'New Word'], ['review', 'Review'], ['input', 'Input'], ['quiz', 'Listen'],
+    ['home', 'Home'], ['lesson', 'Lesson'], ['learn', 'New Word'], ['review', 'Review'], ['input', 'Input'], ['quiz', 'Listen'],
     ['culture', cultureLabel], ['geography', 'Geography'], ['vocab', 'Vocabulary'],
   ];
   const tutorReady = !!state.settings.anthropicKey;
@@ -68,6 +69,7 @@ function getSpokenWord() {
   if (uiState.route === 'learn' || uiState.route === 'review') return uiState.currentWord;
   if (uiState.route === 'quiz') return uiState.quizTarget;
   if (uiState.route === 'wordDetail') return uiState.detailWord;
+  if (uiState.route === 'lesson') return lesson.spokenWord();
   return null;
 }
 

@@ -13,6 +13,7 @@ export const state = {
     newWordsToday: { date: '', count: 0 },
     azureVoice: 'ga-IE-ColmNeural',
     savedCapsules: {},
+    completedCapsules: {}, // capsuleId -> true, once its lesson has been finished (engine/curriculum.js)
     voiceCardDismissed: false,
     apiToken: '', // bearer token for the backend, if the deployment requires one
     anthropicKey: '', // device-only Anthropic key for the static build's direct tutor calls
