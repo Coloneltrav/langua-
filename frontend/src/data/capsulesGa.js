@@ -82,7 +82,45 @@ export const GA_CAPSULES = [
   {id:'c8', year:795, title:'The Vikings in Ireland', category:'History', difficulty:'intermediate',
    target:['w158','w159'],
    text:"The Lochlannaigh — Vikings — began raiding Ireland's coast in the late 8th century, starting around 795 CE. Over time they shifted from raiding to settling, founding or expanding many of Ireland's major coastal cities, including Dublin, Waterford, Wexford, Cork, and Limerick.",
-   quiz:{q:'What were the Lochlannaigh known for founding in Ireland?', options:['Coastal trading cities like Dublin','The Gaeltacht regions','The four provinces','The Irish constitution'], answer:0}},
+   quiz:{q:'What were the Lochlannaigh known for founding in Ireland?', options:['Coastal trading cities like Dublin','The Gaeltacht regions','The four provinces','The Irish constitution'], answer:0},
+   // Living Encounter opening on the actual first recorded raid (795 CE),
+   // then bridging forward in the same scene to the founding of Dublin as
+   // a longphort in 841 — the "raiding to settling" arc the capsule's own
+   // text describes, and where the second target word (cathair) belongs.
+   encounter: {
+     visual: 'rathlin-raid',
+     observeTitle: 'Rathlin Island, 795 CE',
+     teaser: 'Ships on the horizon at dawn, and only minutes to decide what a monastery is worth saving.',
+     observeNote: 'Grounded in the earliest recorded Viking raid on Ireland, at Rathlin — the specific monks and moment are illustrative, not a verified record.',
+     beats: [
+       { type: 'narration', text: 'Rathlin Island, off the north coast. Dawn. The bell hasn\'t rung yet, but you\'ve already seen what\'s coming across the water.' },
+       { type: 'line', speaker: 'A fellow monk, running', irish: 'Longa! Tá na Lochlannaigh ag teacht!', phonetic: 'LONG-uh! taw nuh LOKH-lun-igh egg TCHAHK-tin', english: 'Ships! The Vikings are coming!' },
+       { type: 'narration', text: "There's no wall here, no soldiers — just a bell, a handful of monks, and whatever this monastery has spent generations gathering." },
+       { type: 'narration', text: 'Decades later, some of those same raiders\' grandchildren would build a winter camp at the mouth of a river to the south. It would grow into a cathair — a city. Baile Átha Cliath. Dublin.' },
+     ],
+     participatePrompt: "The ships are minutes from shore. What do you save first?",
+     participateChoices: [
+       {
+         label: 'The illuminated gospel book, generations in the making.',
+         consequence: "You run with it inland, into the bog country. Manuscripts like this one are exactly why some of Ireland's greatest illustrated books — like the Book of Kells — survive today: monks who ran rather than fought.",
+       },
+       {
+         label: "Ring the bell as long as you can, to warn the rest of the island.",
+         consequence: "The warning reaches a few households in time to scatter into the hills. You're among the last off the grounds — it costs you almost everything but time.",
+       },
+       {
+         label: 'Run for the shore path yourself, immediately.',
+         consequence: "You survive. It isn't heroic, and you know it — but Rathlin's monks who lived to tell of this raid are the only reason anyone wrote it down at all.",
+       },
+     ],
+     reflectPoints: [
+       "The first recorded Viking raid on Ireland struck Rathlin Island in 795 CE — the annals call it \"the burning of Rechru by heathens\" — the same year islands off Sligo and Galway were also hit.",
+       'Monasteries were targeted because they were Ireland\'s main concentrations of portable wealth — precious metalwork, relics, manuscripts — and had no military defence.',
+       'Round towers are popularly believed to have been built as refuges against exactly this kind of raid, but most were actually built well after the main raiding period, mainly as bell towers and treasuries — a few even became death traps when monks were caught inside during rarer, later attacks.',
+       'Dublin began in 841 CE as a longphort — a Viking winter naval camp — used first for raiding and slave-trading before growing into the most important trading city in the western Viking world.',
+       'Vikings founded or expanded most of Ireland\'s major port cities — Dublin, Waterford, Wexford, Cork, and Limerick — and, over generations, settled, intermarried, and were absorbed into Irish society.',
+     ],
+   }},
   {id:'c9', year:1916, title:'The Easter Rising', category:'History', difficulty:'intermediate',
    target:['w160','w161','w162'],
    text:"Éirí Amach na Cásca — the Easter Rising — was an armed uprising against British rule in Dublin during Easter week, 1916. It was militarily defeated within a week, but the British response hardened public support for saoirse — freedom — and full independence in the years that followed.",
@@ -213,7 +251,46 @@ export const GA_CAPSULES = [
   {id:'c15', year:1919, title:'The War of Independence', category:'History', difficulty:'intermediate',
    target:['w174','w181'],
    text:"Cogadh na Saoirse — the War of Independence — was fought between Irish republican forces and British forces from 1919 to 1921. It ended with the Anglo-Irish Treaty, which created the Irish Free State but also led to partition and a bitter civil war among former comrades over the treaty's terms. The word síocháin (peace) carries weight in Irish history precisely because it was so hard-won.",
-   quiz:{q:'What is Cogadh na Saoirse in English?', options:['The War of Independence','The Great Famine','The Easter Rising','The Norman invasion'], answer:0}},
+   quiz:{q:'What is Cogadh na Saoirse in English?', options:['The War of Independence','The Great Famine','The Easter Rising','The Norman invasion'], answer:0},
+   // Living Encounter set at the real Truce (noon, 11 July 1921) rather
+   // than combat itself — the documented reaction among IRA volunteers was
+   // genuine bewilderment and distrust, which maps directly onto a real
+   // decision instead of an invented one, and gives "síocháin" (peace) its
+   // full weight as something genuinely uncertain in the moment.
+   encounter: {
+     visual: 'truce-farmhouse',
+     observeTitle: 'A farmhouse, County Cork — 11 July 1921',
+     teaser: "Word says the fighting is over at noon today. Nobody on the run believes it that easily.",
+     observeNote: "Grounded in the real, documented uncertainty among IRA volunteers on the day of the Truce — the household itself is illustrative, not a specific verified family.",
+     beats: [
+       { type: 'narration', text: "A farmhouse outside town. You've been sleeping in barns and ditches for months, moving with your flying column. This morning, a runner arrives out of breath." },
+       { type: 'line', speaker: 'Your sister, breathless', irish: 'Tá an cogadh thart! Tá síocháin ann, ó mheán lae inniu!', phonetic: 'taw un KUG-uh hart! taw SHEE-khawn on, oh vyawn lay in-YOO', english: 'The war is over! There is peace, from noon today!' },
+       { type: 'line', speaker: 'You', irish: 'An bhfuil muinín agat as?', phonetic: 'un vwil MWIN-een AH-gut ahss', english: 'Do you trust it?' },
+       { type: 'narration', text: "You don't, not really — not yet. Word like this has never held before. Word like this is exactly what gets a column caught off guard." },
+     ],
+     participatePrompt: "Noon comes and goes. No shots, no raids — but do you trust it enough to go home?",
+     participateChoices: [
+       {
+         label: 'Go home. If it holds, it holds — you\'re tired of ditches.',
+         consequence: "This is what most volunteers eventually did. The Truce held, messily, for months — long enough for a Treaty to be negotiated, though not long enough to stop a bitter split over its terms the following year.",
+       },
+       {
+         label: 'Stay hidden a while longer, certain it won\'t last.',
+         consequence: "This is exactly how many officers genuinely reacted — one Monaghan volunteer later admitted his 'lust for blood had not been satisfied' and doubted the Truce outright. You lose nothing by waiting, except time.",
+       },
+       {
+         label: 'Go home, but keep the rifle within reach, just in case.',
+         consequence: "You go home cautious rather than certain — which, as it turns out, is closer to how the next eighteen months actually unfold than either full trust or full suspicion alone.",
+       },
+     ],
+     reflectPoints: [
+       'The Truce was agreed on 8 July 1921 but deliberately delayed until noon on 11 July, to allow time for ceasefire orders to reach every unit around the country.',
+       "Many IRA volunteers on the ground were genuinely bewildered by the sudden order and distrusted it — some assumed it was temporary and kept recruiting and training regardless.",
+       "The British commander-in-chief in Ireland reportedly arrived at the truce talks with a concealed pistol — distrust cut in both directions.",
+       "The Truce held long enough for the Anglo-Irish Treaty (December 1921), which created the Irish Free State — but its terms split former comrades so bitterly that civil war followed within a year.",
+       "Síocháin (peace) carries real weight in Irish historical memory precisely because it was this fragile, and this short-lived, the first time it came.",
+     ],
+   }},
   {id:'c16', year:1921, title:'Partition', category:'Northern Ireland', difficulty:'intermediate',
    target:['w175'],
    text:"The chríochdheighilt — partition — of Ireland in 1921 divided the island into two jurisdictions: what became the Republic of Ireland, and Northern Ireland, which remained part of the United Kingdom. Partition and its consequences shaped the century that followed, including the Troubles in Northern Ireland (late 1960s–1998), which ended with the Good Friday Agreement. It remains a defining fact of Irish politics, and views on the island's constitutional future continue to differ across communities.",

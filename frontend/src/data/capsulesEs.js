@@ -217,11 +217,93 @@ export const ES_CAPSULES = [
   {id:'es-c6', title:'Café de Colombia', category:'Culture', difficulty:'beginner', country:'es-CO',
    target:['s76'],
    text:"Colombia es uno de los mayores productores de café del mundo, especialmente en la región del Eje Cafetero. El paisaje cultural cafetero fue declarado Patrimonio de la Humanidad por la UNESCO en 2011, gracias al esfuerzo de generaciones de familias cafeteras en las montañas.",
-   quiz:{q:'What is Colombia famous for producing?', options:['Coffee','Wine','Tango','Tequila'], answer:0}},
+   quiz:{q:'What is Colombia famous for producing?', options:['Coffee','Wine','Tango','Tequila'], answer:0},
+   // A finca (family coffee farm) scene in the Eje Cafetero, built around
+   // two real, verified customs: the tinto as a hospitality ritual, and
+   // selective hand-picking of only ripe cherries as the actual quality
+   // practice — giving the Participate choice a real right answer rather
+   // than an arbitrary one.
+   encounter: {
+     visual: 'finca-cafetera',
+     observeTitle: 'A finca in the Eje Cafetero, harvest morning',
+     teaser: 'A cup of tinto before you\'ve even sat down, and a coffee branch with every stage of ripeness on it at once.',
+     observeNote: 'A composite, everyday scene of a small family coffee farm — not one specific finca or family.',
+     senseOfPlace: [
+       'Mist still on the mountainside.',
+       'The smell of roasting beans, faint but constant.',
+       'Green hills terraced in even rows.',
+     ],
+     beats: [
+       { type: 'narration', text: 'A small family finca in the Eje Cafetero — the Coffee Triangle. Seven in the morning, mist still on the hillside.' },
+       { type: 'line', speaker: 'The farmer\'s wife', irish: '¿Quieres un tinto?', phonetic: 'kee-EH-rehs oon TEEN-toh', english: 'Do you want a tinto (small black coffee)?' },
+       { type: 'narration', text: "It's a small cup, on purpose — tinto is offered constantly here, to family, neighbours, anyone who walks in. Refusing one would be strange." },
+       { type: 'line', speaker: 'The farmer\'s wife', irish: 'Y un poco de comida también — no se trabaja con el estómago vacío.', phonetic: 'ee oon POH-koh deh koh-MEE-dah tam-bee-EN — noh seh trah-BAH-hah kon el ehs-TOH-mah-goh vah-SEE-oh', english: "And a little food too — nobody works on an empty stomach." },
+       { type: 'narration', text: "After breakfast, she hands you a basket and points to a branch heavy with cherries — deep red, orange, yellow, and still-green, all on the same branch." },
+     ],
+     participatePrompt: 'She shows you the branch and hands you a basket. Which cherries do you pick?',
+     participateChoices: [
+       {
+         label: 'Only the deep red ones, leaving the rest for another day.',
+         consequence: "Exactly right — this is the real practice: pickers pass over each tree several times through the season, taking only fully ripe cherries. It's slower, but it's most of why Colombian coffee tastes the way it does.",
+       },
+       {
+         label: 'Everything on the branch at once, to save time.',
+         consequence: 'She gently picks the green ones back out of your basket. Stripping a branch is faster, but it mixes underripe and overripe beans in with the good ones — a real quality difference, not just a preference.',
+       },
+       {
+         label: "Ask her to show you which ones, since you're not sure.",
+         consequence: "She laughs and picks the first three with you, slowly, until your hand learns the slight give of a ripe cherry under your thumb. By the second row, you don't need to ask anymore.",
+       },
+     ],
+     reflectPoints: [
+       'Tinto — a small black coffee, not the word\'s literal meaning of "red wine" elsewhere in Spanish — is offered constantly across Colombia as a basic gesture of hospitality, which is part of why it\'s served in such small cups.',
+       'Most Colombian coffee still comes from small family-run fincas rather than large plantations, especially in the mountainous Eje Cafetero (Caldas, Quindío, and Risaralda).',
+       "Colombia's steep terrain rules out mechanical harvesting almost everywhere — pickers hand-select only fully ripe, deep-red cherries, passing over each tree multiple times across the season.",
+       'UNESCO declared the Coffee Cultural Landscape (Paisaje Cultural Cafetero) a World Heritage site in 2011, recognizing generations of these small coffee-growing families directly.',
+     ],
+   }},
   {id:'es-c7', title:'Los Andes y el desierto de Atacama', category:'Geography', difficulty:'beginner', country:'es-CL',
    target:['s82'],
    text:"Chile es un país extremadamente largo y delgado — más de 4.000 kilómetros de norte a sur — atrapado entre los Andes y el océano Pacífico. En el norte está el desierto de Atacama, el más seco del mundo; en el sur, glaciares y fiordos de la Patagonia. Pocos países tienen tanta variedad geográfica en un solo territorio.",
-   quiz:{q:"What is Chile's shape known for?", options:['Extremely long and narrow','Perfectly round','Very small','Mostly islands'], answer:0}},
+   quiz:{q:"What is Chile's shape known for?", options:['Extremely long and narrow','Perfectly round','Very small','Mostly islands'], answer:0},
+   // A coastal-cliff scene built around the genuine, scientifically real
+   // paradox already named in this capsule's own text — the driest desert
+   // on Earth running directly alongside the Pacific (mar, the target
+   // word) rather than an invented decision.
+   encounter: {
+     visual: 'atacama-coast',
+     observeTitle: 'A cliff above the Pacific, Atacama coast',
+     teaser: "The driest desert on Earth, and the ocean, close enough to hear — with almost no rain passing between them.",
+     observeNote: 'A composite guided-tour scene set on the real Atacama coastline — not one specific tour or guide.',
+     beats: [
+       { type: 'narration', text: 'A cliff above the Pacific, somewhere on the Atacama coast. Bare orange rock drops straight to the water; nothing green grows anywhere in sight.' },
+       { type: 'line', speaker: 'Your guide', irish: 'Aquí tienes el desierto más seco del mundo, y el mar más grande, justo al lado.', phonetic: 'ah-KEE tee-EH-nehs el deh-see-EHR-toh mahs SEH-koh del MOON-doh, ee el mar mahs GRAHN-deh, HOOS-toh al LAH-doh', english: 'Here you have the driest desert in the world, and the biggest sea, right beside it.' },
+       { type: 'line', speaker: 'You', irish: '¿Por qué no llueve, si el mar está tan cerca?', phonetic: 'por keh noh YWEH-veh, see el mar ehs-TAH tan SEHR-kah', english: "Why doesn't it rain, if the sea is so close?" },
+       { type: 'line', speaker: 'Your guide', irish: 'La corriente es fría — atrapa la humedad cerca del agua. Casi nunca sube lo bastante alto para hacer nubes.', phonetic: 'lah kor-ree-EHN-teh ehs FREE-ah — ah-TRAH-pah lah oo-meh-DAD SEHR-kah del AH-gwah. KAH-see NOON-kah SOO-beh loh bahs-TAHN-teh AL-toh PAH-rah AH-sehr NOO-behs', english: "The current is cold — it traps the moisture near the water. It almost never rises high enough to make clouds." },
+       { type: 'narration', text: "Tonight, the tour moves inland, away from the coastal cloud, for what the guide keeps calling the clearest sky on the planet." },
+     ],
+     participatePrompt: "Your guide asks: knowing there's a whole ocean right there, why do you think the desert stays so dry?",
+     participateChoices: [
+       {
+         label: 'The cold ocean current traps moisture low, before it can turn into rain clouds.',
+         consequence: "Exactly it — the cold Humboldt Current keeps the air near the water stable, so evaporated moisture almost never rises high enough to form the clouds that would otherwise bring rain.",
+       },
+       {
+         label: 'The mountains block all the moisture before it reaches the desert.',
+         consequence: "Partly right — the Andes do block moisture from the east, and the Chilean Coast Range blocks some from the west too. But your guide points out the ocean-current effect matters just as much here.",
+       },
+       {
+         label: "Honestly, you're not sure — you just find it strange.",
+         consequence: 'Your guide laughs: "Todo el mundo lo encuentra raro." (Everyone finds it strange.) It genuinely is one of the odder facts in world geography — a coastline dry enough that some weather stations nearby have never recorded rain at all.',
+       },
+     ],
+     reflectPoints: [
+       "The Atacama's extreme dryness comes from two things at once: a double rain shadow from the Andes and the Chilean Coast Range, and the cold Humboldt Current, which traps moisture near the ocean surface and stops it from forming rain clouds.",
+       "Average rainfall across the desert is around 15mm a year, and some weather stations there have never recorded any rain at all in the historical record.",
+       "That same extreme dryness and clear air make the Atacama the best stargazing location on Earth — over 70% of the world's most advanced telescopes, including the ALMA array, are sited there.",
+       "Chile itself runs over 4,000km north to south along this same Pacific coast, from the Atacama in the north to Patagonia's glaciers and fjords in the far south.",
+     ],
+   }},
   {id:'es-c8', title:'Día de los Muertos', category:'Culture', difficulty:'beginner', country:'es-MX',
    target:['s137','s136'],
    text:"El Día de los Muertos (November 1–2) honra a los familiares que han fallecido — not a sad occasion, but a celebration of remembering them. Families build ofrendas (altars) with photos, food, and cempasúchil (marigold) flowers, whose scent is said to guide spirits home for the night. UNESCO declared it Intangible Cultural Heritage in 2008.",
