@@ -1,11 +1,30 @@
 import { WORDS, findWord } from '../../data/words.js';
+import { CULTURE_CAPSULES } from '../../data/capsules.js';
 import { state, saveProgress, registerNewWordLearned } from '../../state/store.js';
 import { capsuleReadiness } from '../../engine/readiness.js';
 import { freshProgress } from '../../engine/sm2.js';
 import { linkifyIrish } from '../dom.js';
 import { speakWord } from '../../services/tts.js';
+import { activePack } from '../../data/languagePacks.js';
 import { uiState } from '../uiState.js';
 import { startCapsule } from './lesson.js';
+
+// A museum wing, not a dead end: a couple of neighbouring capsules to wander
+// into next, instead of always bouncing back to the flat list. Same
+// category, and same country for packs with accents (an Argentina capsule
+// shouldn't suggest a Madrid one).
+function relatedCapsulesHtml(c) {
+  const related = CULTURE_CAPSULES
+    .filter((other) => other.id !== c.id && other.category === c.category && (c.country === undefined || other.country === c.country))
+    .slice(0, 3);
+  if (!related.length) return '';
+  return `
+    <div style="margin-top:22px; font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;">More ${c.category}</div>
+    <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
+      ${related.map((r) => `<button class="chunk-tag mono" data-related-capsule="${r.id}" style="cursor:pointer; text-align:left; border:1px solid rgba(201,162,75,0.25); background:none; padding:10px 12px; font-size:13px;">${r.title}</button>`).join('')}
+    </div>
+  `;
+}
 
 export function render() {
   const c = uiState.activeCapsule;
@@ -25,7 +44,7 @@ export function render() {
   }).join('') : '';
 
   return `
-    <button class="btn secondary" id="backToCulture" style="margin-bottom:14px;">← Back to Ireland</button>
+    <button class="btn secondary" id="backToCulture" style="margin-bottom:14px;">← Back to ${activePack().cultureTabLabel}</button>
     <div class="card">
       <div style="display:flex; justify-content:space-between; align-items:baseline;">
         <div class="pos mono">${c.category} · ${c.difficulty}</div>
@@ -50,6 +69,7 @@ export function render() {
         <div style="margin-top:8px; font-size:14.5px;">${q.q}</div>
         <div style="margin-top:8px;">${optsHtml}</div>
       ` : ''}
+      ${relatedCapsulesHtml(c)}
     </div>
   `;
 }
@@ -91,6 +111,16 @@ export function bind(main, rerender) {
       if (uiState.capsuleQuizChoice != null) return;
       uiState.capsuleQuizChoice = parseInt(b.dataset.capsuleChoice, 10);
       rerender();
+    };
+  });
+
+  main.querySelectorAll('[data-related-capsule]').forEach((b) => {
+    b.onclick = () => {
+      const next = CULTURE_CAPSULES.find((c) => c.id === b.dataset.relatedCapsule);
+      if (!next) return;
+      uiState.activeCapsule = next;
+      uiState.capsuleQuizChoice = null;
+      rerender(true);
     };
   });
 }
