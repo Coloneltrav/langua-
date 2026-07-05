@@ -67,11 +67,103 @@ export const ES_CAPSULES = [
   {id:'es-c4', title:'Ciudad de México, la megaciudad', category:'Geography', difficulty:'beginner', country:'es-MX',
    target:['s70'],
    text:"Ciudad de México fue construida sobre Tenochtitlan, la capital azteca, en un lago que ya no existe. Hoy es una de las ciudades más grandes del mundo, con más de 20 millones de personas en su área metropolitana. El Zócalo, su plaza central, es una de las plazas públicas más grandes del planeta.",
-   quiz:{q:'What ancient city was Ciudad de México built on top of?', options:['Tenochtitlan','Machu Picchu','Cusco','Teotihuacán'], answer:0}},
+   quiz:{q:'What ancient city was Ciudad de México built on top of?', options:['Tenochtitlan','Machu Picchu','Cusco','Teotihuacán'], answer:0},
+   // A market scene distinct in mood and setting from the quiet ofrenda
+   // encounter (es-c8) already covering Mexico — built around a real,
+   // specific custom (respectful haggling at craft markets, but not at
+   // fixed-price shops) so the Participate choice tests real judgment.
+   encounter: {
+     visual: 'cdmx-mercado',
+     observeTitle: 'Mercado de la Ciudadela, a Saturday morning',
+     teaser: "No price tags, no fixed number — just a friendly back-and-forth that has its own unwritten rules.",
+     observeNote: 'A composite, everyday scene of an ordinary CDMX craft market — not one specific stall or vendor.',
+     senseOfPlace: [
+       'Color everywhere — blankets, pottery, painted wood.',
+       'Someone always calling out a price.',
+       'Grilled corn, somewhere close, on a cart.',
+     ],
+     beats: [
+       { type: 'narration', text: 'Mercado de la Ciudadela, Ciudad de México — a market known citywide for handmade crafts. Nothing on this stall has a price tag.' },
+       { type: 'line', speaker: 'You', irish: '¿Cuánto cuesta este textil?', phonetic: 'KWAN-toh KWEHS-tah EHS-teh tehks-TEEL', english: 'How much does this textile cost?' },
+       { type: 'line', speaker: 'The vendor', irish: 'Quinientos pesos — pero para ti, cuatrocientos.', phonetic: 'kee-nee-EHN-tohs PEH-sohs — PEH-roh PAH-rah tee, kwah-troh-see-EHN-tohs', english: 'Five hundred pesos — but for you, four hundred.' },
+       { type: 'narration', text: "That drop before you've even answered is the opening move, not the final offer. Regatear — haggling — is expected here, though never at a supermarket or a store with a price tag." },
+       { type: 'line', speaker: 'The vendor, smiling', irish: 'Aquí regatea todo el mundo — no te preocupes.', phonetic: 'ah-KEE reh-gah-TEH-ah TOH-doh el MOON-doh — noh teh preh-oh-KOO-pehs', english: "Everyone haggles here — don't worry about it." },
+     ],
+     participatePrompt: 'Four hundred pesos still feels a little high. What do you do?',
+     participateChoices: [
+       {
+         label: 'Smile and offer three hundred, gently, to see what happens.',
+         consequence: 'Exactly the expected rhythm — you settle at three-fifty a moment later, both of you satisfied. This is the whole custom: a friendly negotiation, not a fight.',
+       },
+       {
+         label: 'Pay the four hundred without countering.',
+         consequence: "Completely fine — the vendor thanks you warmly. You probably paid a touch more than a regular would, but nobody thinks less of you for it.",
+       },
+       {
+         label: 'Push hard for one hundred, treating it like a contest to win.',
+         consequence: "The vendor's smile tightens. Aggressive haggling isn't the norm here and rarely works — you end up paying close to the original four hundred anyway, with a little less warmth in the exchange.",
+       },
+     ],
+     reflectPoints: [
+       'Regatear (haggling) is genuinely expected at craft and artisan markets like La Ciudadela, La Lagunilla, or the Bazaar Sábado — but not at supermarkets, chain stores, or anywhere with a visible price tag.',
+       "The custom is a friendly back-and-forth, not a confrontation — vendors expect an opening price to move, and a warm tone gets further than an aggressive one.",
+       'A vendor naming a lower "special" price immediately is itself the opening move of the negotiation, not a final offer.',
+       "Ciudad de México's metropolitan area holds over 20 million people, making it one of the largest urban areas on Earth — built directly on top of Tenochtitlan, the former Aztec capital.",
+     ],
+   }},
   {id:'es-c5', title:'Buenos Aires y el tango', category:'Culture', difficulty:'beginner', country:'es-AR',
    target:['s86'],
    text:"El tango nació en los barrios portuarios de Buenos Aires a finales del siglo XIX, mezclando influencias africanas, europeas y criollas. Hoy se baila en milongas (salones de baile) por toda la ciudad, y la UNESCO lo declaró Patrimonio Cultural Inmaterial de la Humanidad en 2009.",
-   quiz:{q:'In which city did tango originate?', options:['Buenos Aires','Madrid','Bogotá','Santiago'], answer:0}},
+   quiz:{q:'In which city did tango originate?', options:['Buenos Aires','Madrid','Bogotá','Santiago'], answer:0},
+   // A second Buenos Aires Living Encounter alongside the café one (es-c9)
+   // — a milonga at night instead of a rainy-day café, built around a real,
+   // documented piece of social etiquette (the cabeceo and the tanda) so
+   // the Participate choice tests real cultural knowledge, not an
+   // arbitrary decision.
+   encounter: {
+     visual: 'ba-milonga',
+     observeTitle: 'A milonga in San Telmo, tonight',
+     teaser: "A silent code across a crowded room decides who dances with whom — get it wrong and you'll know instantly.",
+     observeNote: 'A composite, everyday scene of an ordinary Buenos Aires milonga — not one specific dance hall or event.',
+     senseOfPlace: [
+       'Bandoneón, somewhere close.',
+       'A hundred pairs of shoes on old wood.',
+       'Eyes finding eyes across the room.',
+     ],
+     beats: [
+       { type: 'narration', text: 'A milonga in San Telmo, Buenos Aires. Couples turn slowly under low light; a bandoneón carries the melody from a corner of the room.' },
+       { type: 'line', speaker: 'Your friend', irish: '¿Vienes a bailar esta noche, o solo a mirar?', phonetic: 'bee-EH-nehs ah bai-LAR EHS-tah NOH-cheh, oh SOH-loh ah mee-RAR', english: 'Are you coming to dance tonight, or just to watch?' },
+       { type: 'narration', text: 'Nobody walks up and asks out loud. Across the room, someone holds your gaze for a second too long, then tips their head toward the floor — the cabeceo. You nod back.' },
+       { type: 'line', speaker: 'Your friend, low', irish: 'Ya está — te invitó. Ahora vas y bailás.', phonetic: 'yah ehs-TAH — teh in-vee-TOH. ah-OH-rah bahs ee bai-LAHS', english: "That's it — they invited you. Now you go and dance." },
+       { type: 'narration', text: "The orchestra plays a tanda — three or four songs in a row, the same partner for all of them. One song ends; you're still paired for the next." },
+     ],
+     participatePrompt: 'The first song of the tanda ends. Unsure of the custom, what do you do?',
+     participateChoices: [
+       {
+         label: 'Say "gracias" and step back toward your seat, since the song is over.',
+         consequence: "Your partner nods politely and walks you back — but you've just used the exact phrase that signals \"I'd like to stop here.\" No offense taken; you simply ended the tanda one song early without meaning to.",
+       },
+       {
+         label: 'Say nothing, and stay for the rest of the tanda.',
+         consequence: "Correct — a tanda is three or four songs with the same partner, and 'gracias' is specifically how you signal you're done. Silence between songs just means: still dancing.",
+       },
+       {
+         label: 'Ask directly: "¿Quieres seguir bailando?" (Do you want to keep dancing?)',
+         consequence: "Unusual, but not wrong — your partner laughs and says yes. A little more forward than the silent custom, but genuinely nobody minds a direct question asked kindly.",
+       },
+     ],
+     reflectPoints: [
+       'Tango developed in the working-class port neighborhoods of Buenos Aires and Montevideo in the late 1800s, blending African-descended communities\' music (including Candombe rhythms), European immigrant traditions, and local criollo culture.',
+       'The cabeceo — inviting someone to dance with eye contact and a small nod, never a verbal ask across the room — lets either person decline without anyone else noticing, avoiding public rejection.',
+       'A tanda is a set of three or four songs, traditionally by the same orchestra, danced with one partner; saying "gracias" between songs is the accepted way to end it early.',
+       'UNESCO declared tango Intangible Cultural Heritage of Humanity in 2009, recognizing both the Argentine and Uruguayan traditions jointly.',
+     ],
+     primarySource: {
+       text: 'Antes era una orgiástica diablura; hoy es una manera de caminar.',
+       translation: 'Before it was an orgiastic devilry; today it is a way of walking.',
+       attribution: 'Jorge Luis Borges, on how tango changed, in his essay "Historia del tango"',
+     },
+   }},
   {id:'es-c9', title:'Un café en Buenos Aires', category:'Language', difficulty:'beginner', country:'es-AR',
    target:['sr-ar-1','s17'],
    text:"In Argentina and Uruguay, you'll rarely hear tú in daily conversation — vos has taken over completely, with its own verb endings: vos tenés (not tú tienes), vos querés (not tú quieres). It's such a core part of rioplatense identity that using tú instead marks you as a foreigner instantly.",

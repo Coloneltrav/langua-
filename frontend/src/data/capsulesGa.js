@@ -30,7 +30,55 @@ export const GA_CAPSULES = [
   {id:'c7', year:432, title:'Saint Patrick', category:'Mythology', difficulty:'beginner',
    target:['w156','w157'],
    text:"Naomh Pádraig — Saint Patrick — is Ireland's patron saint, traditionally credited with bringing Christianity to Ireland in the 5th century. Lá Fhéile Pádraig, March 17th, is Ireland's national holiday. The famous story of him driving snakes out of Ireland is a legend, not history — Ireland likely never had snakes to begin with.",
-   quiz:{q:'What is Naomh Pádraig in English?', options:['Saint Patrick','Saint Brigid','A Viking king','A province'], answer:0}},
+   quiz:{q:'What is Naomh Pádraig in English?', options:['Saint Patrick','Saint Brigid','A Viking king','A province'], answer:0},
+   // Living Encounter drawn from Patrick's own Confessio — one of the only
+   // surviving first-person accounts from 5th-century Britain or Ireland.
+   // A striking parallel for this app specifically: a captive Briton
+   // learning enough Irish to get by, out of necessity, on a cold
+   // hillside — not so different from why someone opens this app.
+   encounter: {
+     visual: 'slemish-shepherd',
+     observeTitle: 'Sliabh Mis, County Antrim — 5th century',
+     teaser: "Six years enslaved on a cold mountainside. Then, one night, a voice that isn't his master's.",
+     observeNote: "Grounded in Patrick's own Confessio, his surviving first-person account — the only detailed source for his life, written in his own admittedly rough Latin.",
+     senseOfPlace: [
+       'Wind with nothing to stop it.',
+       'Wet wool and cold hands.',
+       'A mountain that isn\'t yours, and isn\'t going anywhere.',
+     ],
+     beats: [
+       { type: 'narration', text: "Sliabh Mis. Six years since Irish raiders took you from Britain at sixteen. You tend another man's sheep now, half-starved, and you've stopped counting the days." },
+       { type: 'line', speaker: 'The chieftain, from below', irish: 'Tabhair na caoirigh isteach! Tá stoirm ag teacht.', phonetic: 'TOOR nuh KEER-ig ISH-tchuh! Taw STIR-em egg TCHAHK-tin', english: 'Bring the sheep in! A storm is coming.' },
+       { type: 'narration', text: "You understand him without thinking now — six years does that to a language. Alone with the flock again that night, the same dream returns: a voice, calling you home to a country you've never actually lived in." },
+       { type: 'narration', text: '"The ship is ready," the voice says. Two hundred miles away, at a harbour you\'ve never seen, with nothing but the clothes on your back.' },
+     ],
+     participatePrompt: "The voice said the ship is ready — two hundred miles off, through land that was never yours, with everything to lose if you're caught. What do you do?",
+     participateChoices: [
+       {
+         label: 'Leave that night, trusting the dream completely.',
+         consequence: "This is what he actually did. He walked roughly two hundred miles, found the ship, and was refused passage at first — the captain only relented after Patrick pressed him. He made it home to Britain, and years later, went back to Ireland by choice.",
+       },
+       {
+         label: 'Wait a few days to plan supplies and a safer route.',
+         consequence: "A few days pass. The chieftain notices you've gone quiet and withdrawn, and starts watching you more closely at exactly the wrong moment — the window the dream promised may not stay open.",
+       },
+       {
+         label: "Tell no one, and stay — six years is what you know now.",
+         consequence: "You stay. Whatever called you that night doesn't come back. History remembers the version where he left; this quieter version, where a nameless shepherd lived out his life on Sliabh Mis, is the one that almost happened instead.",
+       },
+     ],
+     reflectPoints: [
+       "Patrick's own account, the Confessio, is one of the only surviving personal writings from 5th-century Britain or Ireland — he apologizes in it for his rough Latin, having had his education interrupted at sixteen.",
+       'He was captured by Irish raiders at sixteen and enslaved for six years, traditionally on or near Sliabh Mis (Slemish), County Antrim, tending sheep.',
+       'He described a dream of a voice — later a letter headed "the voice of the Irish" — calling him back, and walked roughly 200 miles to reach a waiting ship after his escape.',
+       'He returned to Ireland years later by choice, this time as a missionary bishop — driven, in his own words, by that same voice.',
+       'Most of the familiar legend — driving out snakes, the shamrock explaining the Trinity — dates from centuries after his death, not from anything he wrote himself.',
+     ],
+     primarySource: {
+       text: "I read the beginning of the letter, and it contained the words, 'The voice of the Irish.' And as I read out the beginning of the letter I thought that at that moment I heard the voice of those very people who were near the wood of Foclut.",
+       attribution: 'Saint Patrick, Confessio, section 23 (5th century)',
+     },
+   }},
   {id:'c8', year:795, title:'The Vikings in Ireland', category:'History', difficulty:'intermediate',
    target:['w158','w159'],
    text:"The Lochlannaigh — Vikings — began raiding Ireland's coast in the late 8th century, starting around 795 CE. Over time they shifted from raiding to settling, founding or expanding many of Ireland's major coastal cities, including Dublin, Waterford, Wexford, Cork, and Limerick.",
@@ -192,8 +240,54 @@ export const GA_CAPSULES = [
    target:['w128','w129','w35','w98'],
    text:"Ireland's weather arrives from the Atlantic: báisteach (rain) in soft persistent forms English barely has words for, gaoth (wind) that shapes the bent trees of the west coast, and a famously changeable spéir (sky). It is rarely truly fuar (cold) — the Gulf Stream keeps winters mild — which is why the island stays green enough to earn the name 'the Emerald Isle'. Small talk about weather is a national pastime in both languages.",
    quiz:{q:'What does "báisteach" mean?', options:['Rain','Wind','Sky','Snow'], answer:0}},
-  {id:'c22', title:'A Day in the Gaeltacht', category:'Geography', difficulty:'intermediate',
+  {id:'c22', title:'A Day in the Gaeltacht', category:'Geography', difficulty:'intermediate', province:'connachta',
    target:['w123','w79','w25','w124','w23'],
    text:"In a Gaeltacht village, Irish carries the whole day: maidin (morning) greetings at the shop, tae (tea) with neighbours, obair (work) on land or sea or — increasingly — remote for a city employer, music in the pub come tráthnóna (evening), and oíche mhaith (good night) at the door. Thousands of Irish teenagers spend summer weeks boarding in these villages at Irish colleges — for many it's where the school subject first becomes a living language.",
-   quiz:{q:'What does "maidin" mean?', options:['Morning','Evening','Night','Tea'], answer:0}},
+   quiz:{q:'What does "maidin" mean?', options:['Morning','Evening','Night','Tea'], answer:0},
+   // A present-day, everyday-conversation Living Encounter — same format as
+   // Buenos Aires/Madrid, but rural Ireland, proving the format fits
+   // ordinary contemporary Gaeltacht life, not just historical drama.
+   // Structured around the five target words as the five parts of the day
+   // the capsule's own text describes.
+   encounter: {
+     visual: 'conamara-village',
+     observeTitle: 'An Cheathrú Rua, Conamara — today',
+     teaser: 'One ordinary day, five parts to it, and Irish carrying every one of them.',
+     observeNote: 'A composite, everyday day-in-the-life scene of Gaeltacht Conamara — not one specific household.',
+     senseOfPlace: [
+       'Turf smoke on cold morning air.',
+       'Irish first — English only for the odd tourist at the till.',
+       'The sea, always somewhere in view.',
+     ],
+     beats: [
+       { type: 'narration', text: 'An Cheathrú Rua, Conamara, Contae na Gaillimhe. Ten in the morning — the village shop is the first stop of the day.' },
+       { type: 'line', speaker: 'The shopkeeper', irish: 'Maidin mhaith! Cén chaoi a bhfuil tú?', phonetic: 'MOD-in wah! kayn khee uh vwil too', english: 'Good morning! How are you?' },
+       { type: 'line', speaker: 'Your neighbour, stopping by at midday', irish: 'An bhfuil tú ag iarraidh cupán tae?', phonetic: 'un vwil too egg EER-ee KUP-awn tay', english: 'Do you want a cup of tea?' },
+       { type: 'line', speaker: 'You', irish: 'Tá obair agam tráthnóna — ach tae anois, cinnte.', phonetic: 'taw UB-ir AH-gum traw-NOH-na — ahkh tay uh-NISH, KIN-cheh', english: 'I have work this afternoon — but tea now, definitely.' },
+       { type: 'narration', text: "The work is logging into a Dublin office from the gteic hub down the road — you've done it for two years now, and the broadband here beats the flat you left behind." },
+       { type: 'line', speaker: 'A voice from the pub, that evening', irish: 'Tar isteach! Tá ceol ann anocht.', phonetic: 'tar ISH-tchuh! taw kyoll on uh-NOKHT', english: "Come in! There's music tonight." },
+       { type: 'line', speaker: 'Your neighbour, at the door, later', irish: 'Oíche mhaith, agus feicfidh mé amárach thú.', phonetic: 'EE-heh wah, AH-gus FECK-hee may uh-MAW-rakh hoo', english: "Good night, and I'll see you tomorrow." },
+     ],
+     participatePrompt: "The pub has music tonight, but your neighbour mentioned needing a hand stacking turf before tomorrow's rain. What do you do?",
+     participateChoices: [
+       {
+         label: 'Help with the turf first — the music will still be there after.',
+         consequence: "You're both soaked and laughing by the time it's stacked. You get to the pub late, but your neighbour buys the first round, and everyone already knows why.",
+       },
+       {
+         label: "Go to the session — you'll help with the turf tomorrow.",
+         consequence: "The music is worth it. It rains overnight, and you spend an hour tomorrow helping re-stack turf that got wet anyway — good company either way.",
+       },
+       {
+         label: 'Do an hour of turf, then head to the session.',
+         consequence: 'You arrive at the pub with hay in your hair and turf dust on your hands. Nobody minds — half the room clearly came from somewhere similar.',
+       },
+     ],
+     reflectPoints: [
+       "Údarás na Gaeltachta's gteic network — over 30 digital hubs across every Gaeltacht region, from Donegal to Cape Clear — has drawn hundreds of remote workers back to Irish-speaking areas since 2019, drawn by broadband as much as anything else.",
+       'Communities like Conamara Láir have run active campaigns encouraging families and remote workers specifically to relocate there, citing quality of life alongside the digital infrastructure.',
+       'Thousands of Irish secondary students spend one to three summer weeks boarding with Gaeltacht families at coláistí samhraidh (summer colleges) — for many, it\'s the first time Irish feels like a living language rather than a school subject.',
+       "Conamara is one of the largest and strongest Gaeltacht regions, forming part of Connacht (Cúige Chonnachta) on Ireland's west coast.",
+     ],
+   }},
 ];
