@@ -98,6 +98,7 @@ function renderPillars() {
 
 function renderTabs() {
   const el = document.getElementById('tabs');
+  if (uiState.route === 'lesson' && lesson.isImmersiveStage()) { el.innerHTML = ''; return; }
   const section = currentSection();
   if (!section) { el.innerHTML = ''; return; }
   const active = activeTabFor(uiState.route);
@@ -122,10 +123,20 @@ function getSpokenWord() {
   return null;
 }
 
+// The Living Encounter flow is built to fit one screen per beat with no
+// scrolling — the header's wordmark/tagline is the single biggest fixed
+// chunk of chrome eating into that budget, so it compacts away while
+// Lesson is open.
+function updateHeaderCompact() {
+  const header = document.querySelector('header.top');
+  if (header) header.classList.toggle('compact', uiState.route === 'lesson');
+}
+
 function renderRoute() {
   const main = document.getElementById('main');
   const view = VIEWS[uiState.route];
   main.innerHTML = view.render();
+  updateHeaderCompact();
   const rerender = (alsoTabs) => {
     renderRoute();
     if (alsoTabs) { renderTabs(); renderPillars(); }

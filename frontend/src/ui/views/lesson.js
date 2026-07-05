@@ -77,6 +77,14 @@ function currentTeachWord() {
   return plan.teachWords[teachIndex];
 }
 
+// Read by router.js: while a Living Encounter's scene is actively playing
+// (not Practice, Quiz, or Done — those still benefit from quick sub-nav),
+// the sub-tabs row is redundant chrome eating into the one-screen-per-beat
+// budget, so it hides. The top-level pillars stay as an escape hatch.
+export function isImmersiveStage() {
+  return hasEncounter() && ['observe', 'participate', 'reflect', 'recap'].includes(stage);
+}
+
 // Lets a learner jump straight into a specific capsule's lesson (e.g. from
 // its Culture detail page) instead of waiting for the curriculum queue to
 // reach it on its own.
@@ -197,9 +205,9 @@ function beatHtml(beat, i, isLatest, { alwaysShown = false } = {}) {
     ? `<button class="chunk-tag mono" data-reveal-translation="${i}" style="cursor:pointer; border:none; background:none; margin-top:6px; font-size:10px; color:var(--text-dim); opacity:0.65; text-decoration:underline; padding:0;">translate anyway</button>`
     : `<button class="chunk-tag mono" data-reveal-translation="${i}" style="cursor:pointer; border:1px dashed rgba(201,162,75,0.35); background:none; margin-top:6px; font-size:11px;">Show translation</button>`;
   const body = `
-    <div style="font-size:15px; line-height:1.6;">${linkifyIrish(beat.irish)}</div>
+    <div style="font-size:15px; line-height:1.45;">${linkifyIrish(beat.irish)}</div>
     ${translationShown
-      ? `<div style="font-size:12.5px; color:var(--text-dim); margin-top:4px;">${beat.english}</div>`
+      ? `<div style="font-size:12.5px; color:var(--text-dim); margin-top:3px;">${beat.english}</div>`
       : translationToggle}
   `;
   return `
@@ -238,7 +246,7 @@ function senseOfPlaceHtml(lines) {
 }
 
 const AMBIENCE_KINDS = { rain: { icon: '🌧', label: 'rain', start: startRain }, wind: { icon: '💨', label: 'wind', start: startWind } };
-const VISIBLE_BEATS = 2; // cap how much of the scene stays on screen at once — the full scene reappears in Recap
+const VISIBLE_BEATS = 1; // one beat on screen at a time — no accumulation to scroll through; the full scene reappears in Recap
 
 function observeStageHtml(e) {
   const totalRevealed = beatIndex;
@@ -251,21 +259,29 @@ function observeStageHtml(e) {
   const ambienceBtn = ambienceKind
     ? `<button class="chunk-tag mono" id="toggleAmbience" style="cursor:pointer; border:1px solid rgba(201,162,75,0.35); background:none; font-size:11px; margin-top:5px;">${isAmbiencePlaying() ? `🔊 ${ambienceKind.label[0].toUpperCase()}${ambienceKind.label.slice(1)} playing — stop` : `${ambienceKind.icon} Play ${ambienceKind.label}`}</button>`
     : '';
+  // Sense-of-place is an opening flourish, not something to keep paying rent
+  // on screen — once the scene has moved past its first beat, drop it to
+  // keep the whole card fitting on one screen, no scrolling required.
+  const showSenseOfPlace = totalRevealed <= 1;
+  // The callback (invisible review) beat happens "before the scene begins" —
+  // showing the scene's own visual under it is both premature and the single
+  // biggest thing pushing this screen past no-scroll height, so skip it here.
+  const isCallbackOnly = totalRevealed === 1 && runtimeBeats[0] && runtimeBeats[0].type === 'callback';
   return `
-    <div class="card fade-in" style="padding:0; overflow:hidden;">
-      ${encounterVisualHtml(e.visual)}
-      <div style="padding:26px 24px;">
+    <div class="card fade-in observe-hero" style="padding:0; overflow:hidden;">
+      ${isCallbackOnly ? '' : encounterVisualHtml(e.visual)}
+      <div style="padding:8px 16px;">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
           <div>
             <div class="pos mono">${e.observeTitle}</div>
-            ${e.observeNote ? `<div style="font-size:11px; color:var(--text-dim); margin-top:5px; font-style:italic;">${e.observeNote}</div>` : ''}
+            ${e.observeNote && showSenseOfPlace ? `<div style="font-size:11px; color:var(--text-dim); margin-top:5px; font-style:italic;">${e.observeNote}</div>` : ''}
           </div>
           ${ambienceBtn}
         </div>
-        ${senseOfPlaceHtml(e.senseOfPlace)}
-        ${startIdx > 0 ? `<div style="text-align:center; font-size:11px; color:var(--text-dim); margin-top:16px;">· · ·</div>` : ''}
-        <div style="margin-top:${startIdx > 0 ? '8' : '18'}px; display:flex; flex-direction:column; gap:14px;">${beatsHtml}</div>
-        <div class="btn-row"><button class="btn" id="toParticipate">${done ? 'Continue' : 'Go on'}</button></div>
+        ${showSenseOfPlace ? senseOfPlaceHtml(e.senseOfPlace) : ''}
+        ${startIdx > 0 ? `<div style="text-align:center; font-size:11px; color:var(--text-dim); margin-top:8px;">· · ·</div>` : ''}
+        <div style="margin-top:${startIdx > 0 ? '4' : '10'}px; display:flex; flex-direction:column; gap:10px;">${beatsHtml}</div>
+        <div class="btn-row" style="margin-top:8px;"><button class="btn" id="toParticipate">${done ? 'Continue' : 'Go on'}</button></div>
       </div>
     </div>
   `;

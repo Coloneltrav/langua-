@@ -28,7 +28,7 @@ body{
 .display{font-family:'Cormorant Garamond',serif;}
 .mono{font-family:'IBM Plex Mono',monospace;}
 
-#app{max-width:640px;margin:0 auto;padding:0 0 90px 0;min-height:100vh;position:relative;}
+#app{max-width:640px;margin:0 auto;padding:0 0 20px 0;min-height:100vh;position:relative;}
 
 header.top{
   padding:28px 20px 17px 20px;
@@ -36,7 +36,12 @@ header.top{
   border-image:var(--flag-gradient) 1;
   background:linear-gradient(180deg, #14201a 0%, var(--bg) 100%);
   position:relative;
+  transition:padding .25s ease;
 }
+header.top.compact{padding:10px 20px 8px 20px;}
+header.top.compact .tagline{display:none;}
+header.top.compact .cap{font-size:24px;}
+header.top.compact h1{font-size:19px;}
 header.top .wordmark{
   display:flex; align-items:baseline; gap:10px;
 }
@@ -117,6 +122,7 @@ nav.tabs{
   padding:10px 20px 0 20px;
   overflow-x:auto;
 }
+nav.tabs:empty{padding:0;}
 nav.tabs button{
   background:none;
   border:1px solid var(--border);
@@ -151,8 +157,12 @@ main{padding:20px; overflow-anchor:none;}
 @media(max-width:420px){.grid2{grid-template-columns:1fr;}}
 
 .encounter-visual{width:100%; height:auto; max-height:340px; object-fit:cover; display:block;}
+/* The Observe stage stacks beats below the artwork one at a time, so it
+   needs to fit a whole screen without scrolling — a shorter image than the
+   single-screen Journey Home hero leaves room for that. */
+.observe-hero .encounter-visual{max-height:104px;}
 
-.stage-stepper{display:flex; align-items:center; justify-content:center; margin-bottom:14px; padding:0 6px;}
+.stage-stepper{display:flex; align-items:center; justify-content:center; margin-bottom:10px; padding:0 6px;}
 .stage-step{display:flex; flex-direction:column; align-items:center; gap:5px; flex-shrink:0;}
 .stage-step .dot{width:7px; height:7px; border-radius:50%; background:var(--border); transition:background .2s ease;}
 .stage-step .label{font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px; white-space:nowrap;}
@@ -161,10 +171,10 @@ main{padding:20px; overflow-anchor:none;}
 .stage-step.active .label{color:var(--gold-bright);}
 .stage-connector{flex:1; height:1px; background:var(--border); margin:0 6px; margin-bottom:16px; min-width:8px;}
 
-.sense-of-place{margin:18px 0; text-align:center;}
+.sense-of-place{margin:6px 0; text-align:center;}
 .sense-of-place div{
-  font-family:'Cormorant Garamond',serif; font-style:italic; font-size:15.5px;
-  line-height:2; letter-spacing:0.3px; color:var(--text-dim);
+  font-family:'Cormorant Garamond',serif; font-style:italic; font-size:13.5px;
+  line-height:1.4; letter-spacing:0.3px; color:var(--text-dim);
   opacity:0; animation:fadeIn .7s ease forwards;
 }
 .sense-of-place div:nth-child(1){animation-delay:.1s;}
