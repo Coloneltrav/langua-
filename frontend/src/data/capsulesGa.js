@@ -76,6 +76,10 @@ export const GA_CAPSULES = [
        'Support for Irish nationalism, previously a minority position, grew sharply after the Rising — feeding directly into the War of Independence (1919–1921).',
        "The GPO (General Post Office) on O'Connell Street, the rebels' headquarters, still bears bullet-scarred pillars today.",
      ],
+     primarySource: {
+       text: 'Irishmen and Irishwomen: In the name of God and of the dead generations from which she receives her old tradition of nationhood, Ireland, through us, summons her children to her flag and strikes for her freedom.',
+       attribution: 'Opening line, Proclamation of the Irish Republic, read outside the GPO on Easter Monday, 1916',
+     },
    }},
   {id:'c10', year:1921, title:'Northern Ireland & the Republic', category:'Northern Ireland', difficulty:'intermediate',
    target:['w163','w164','w165'],

@@ -19,6 +19,7 @@ import { WORDS } from '../../data/words.js';
 import { state, saveProgress, registerNewWordLearned } from '../../state/store.js';
 import { buildLessonPlan, planFor } from '../../engine/curriculum.js';
 import { todayDue } from '../../engine/queue.js';
+import { wordsReferencedIn } from '../../engine/wordMatch.js';
 import { sm2Update, bumpSkill, freshProgress } from '../../engine/sm2.js';
 import { wordCardHtml, bindWordCard } from '../components/wordCard.js';
 import { encounterVisualHtml } from '../components/encounterVisual.js';
@@ -35,7 +36,6 @@ let participateChoice = null;
 let runtimeBeats = []; // the encounter's beats, possibly with a "callback" beat prepended (see buildRuntimeBeats)
 let beatIndex = 0; // how many of runtimeBeats are revealed
 let spokenBeatIndex = -1; // guards against re-speaking a beat on every rerender
-let revealedText = new Set(); // indices of dialogue beats whose target-language text has been tapped into view — listen first, read second
 let revealedTranslations = new Set(); // indices of dialogue beats whose English has been tapped into view — read/guess first, translate last
 
 function hasEncounter() {
@@ -60,7 +60,6 @@ function resetEncounterState() {
   runtimeBeats = hasEncounter() ? buildRuntimeBeats(plan.capsule.encounter) : [];
   beatIndex = hasEncounter() ? 1 : 0; // reveal the first beat immediately
   spokenBeatIndex = -1;
-  revealedText = new Set();
   revealedTranslations = new Set();
   stopAmbience();
 }
@@ -169,6 +168,18 @@ function doneStageHtml() {
 
 const BEAT_LABELS = { callback: 'From your reviews' };
 
+// "The app never says congratulations — it simply stops helping as much."
+// If every word this line actually uses is already well known (SM-2
+// repetitions >= 2, the same bar the rest of the app calls "known"), the
+// translation button recedes into a quiet, optional link instead of a
+// normal affordance — earned per line, from real per-word mastery, not a
+// coarse level gate.
+function beatIsFullyKnown(beat) {
+  const refs = wordsReferencedIn(beat.irish);
+  if (!refs.length) return false; // nothing recognized — can't judge, stay helpful
+  return refs.every((w) => state.progress[w.id] && state.progress[w.id].repetitions >= 2);
+}
+
 function beatHtml(beat, i, isLatest, { alwaysShown = false } = {}) {
   const dim = isLatest || alwaysShown ? '' : 'opacity:0.55;';
   if (beat.type === 'narration') {
@@ -176,20 +187,20 @@ function beatHtml(beat, i, isLatest, { alwaysShown = false } = {}) {
   }
   const speakerLabel = BEAT_LABELS[beat.type] || beat.speaker;
   const isCallback = beat.type === 'callback';
-  // Listen first, read second, translate last: the audio autoplays the
-  // moment this beat appears (see bind()), but the text itself — not just
-  // the English — stays behind a tap (unless alwaysShown, used by the
-  // full-scene Recap) so there's a real moment to just listen and guess
-  // before falling back to the page.
-  const textShown = alwaysShown || revealedText.has(i);
+  // The target-language text shows immediately — audio autoplays alongside
+  // it (see bind()), so listening and reading happen together. Only the
+  // English translation stays behind a tap, so there's still a real moment
+  // to try understanding before falling back to it.
   const translationShown = alwaysShown || revealedTranslations.has(i);
-  const body = textShown ? `
+  const knownLine = !alwaysShown && beatIsFullyKnown(beat);
+  const translationToggle = knownLine
+    ? `<button class="chunk-tag mono" data-reveal-translation="${i}" style="cursor:pointer; border:none; background:none; margin-top:6px; font-size:10px; color:var(--text-dim); opacity:0.65; text-decoration:underline; padding:0;">translate anyway</button>`
+    : `<button class="chunk-tag mono" data-reveal-translation="${i}" style="cursor:pointer; border:1px dashed rgba(201,162,75,0.35); background:none; margin-top:6px; font-size:11px;">Show translation</button>`;
+  const body = `
     <div style="font-size:15px; line-height:1.6;">${linkifyIrish(beat.irish)}</div>
     ${translationShown
       ? `<div style="font-size:12.5px; color:var(--text-dim); margin-top:4px;">${beat.english}</div>`
-      : `<button class="chunk-tag mono" data-reveal-translation="${i}" style="cursor:pointer; border:1px dashed rgba(201,162,75,0.35); background:none; margin-top:6px; font-size:11px;">Show translation</button>`}
-  ` : `
-    <button class="chunk-tag mono" data-reveal-text="${i}" style="cursor:pointer; border:1px dashed rgba(201,162,75,0.35); background:none; font-size:12px;">Show text</button>
+      : translationToggle}
   `;
   return `
     <div style="${dim}">
@@ -308,10 +319,18 @@ export function render() {
 
   if (stage === 'reflect') {
     const points = c.encounter.reflectPoints.map((p) => `<li style="margin-bottom:8px;">${linkifyIrish(p)}</li>`).join('');
+    const ps = c.encounter.primarySource;
+    const primarySourceHtml = ps ? `
+      <div class="primary-source">
+        <div class="quote">&ldquo;${ps.text}&rdquo;</div>
+        <div class="attribution">— ${ps.attribution}</div>
+      </div>
+    ` : '';
     return stepper + `
       <div class="card fade-in">
         <div style="font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;">What actually happened</div>
         <ul style="margin:14px 0 0 0; padding-left:18px; font-size:13.5px; line-height:1.6;">${points}</ul>
+        ${primarySourceHtml}
         <div class="btn-row"><button class="btn" id="toTeach">${plan.teachWords.length ? "Learn this lesson's words" : 'Continue'}</button></div>
       </div>
     `;
@@ -344,15 +363,19 @@ function speakBeat(beat) {
   speakTargetLanguage(beat.irish, beat.phonetic).catch((e) => console.error(e));
 }
 
-// Beats are capped to the last couple on screen (see VISIBLE_BEATS), so
-// each new one lands right where the eye already is — nothing to hunt for
-// below the fold.
-function scrollLatestIntoView() {
-  setTimeout(() => {
-    const btn = document.getElementById('toParticipate') || document.getElementById('toReflect')
-      || document.getElementById('toTeach') || document.getElementById('toQuizOrDone');
-    if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, 0);
+// Re-rendering replaces #main's innerHTML (and, for full transitions, the
+// tabs/pillars nav above it too), which can otherwise leave the page
+// scrolled to wherever the browser's focus-repair lands — keep the reader
+// exactly where they were instead.
+function withScrollPreserved(action) {
+  const y = window.scrollY;
+  // Blur the clicked button *before* it's removed from the DOM — some
+  // mobile browsers scroll a focused element into view when it disappears
+  // out from under the focus, which is the more likely real cause of a
+  // jump than anything reactive happening after.
+  if (document.activeElement && typeof document.activeElement.blur === 'function') document.activeElement.blur();
+  action();
+  window.scrollTo(0, y);
 }
 
 export function bind(main, rerender) {
@@ -369,51 +392,49 @@ export function bind(main, rerender) {
     main.querySelectorAll('[data-replay-beat]').forEach((b) => {
       b.onclick = () => speakBeat(runtimeBeats[parseInt(b.dataset.replayBeat, 10)]);
     });
-    main.querySelectorAll('[data-reveal-text]').forEach((b) => {
-      b.onclick = () => { revealedText.add(parseInt(b.dataset.revealText, 10)); rerender(); };
-    });
     main.querySelectorAll('[data-reveal-translation]').forEach((b) => {
-      b.onclick = () => { revealedTranslations.add(parseInt(b.dataset.revealTranslation, 10)); rerender(); };
+      b.onclick = () => withScrollPreserved(() => {
+        revealedTranslations.add(parseInt(b.dataset.revealTranslation, 10));
+        rerender();
+      });
     });
     const ambienceBtn = main.querySelector('#toggleAmbience');
-    if (ambienceBtn) ambienceBtn.onclick = () => {
+    if (ambienceBtn) ambienceBtn.onclick = () => withScrollPreserved(() => {
       if (isAmbiencePlaying()) { stopAmbience(); } else { AMBIENCE_KINDS[e.ambience]?.start(); }
       rerender();
-    };
+    });
     const toParticipate = main.querySelector('#toParticipate');
-    if (toParticipate) toParticipate.onclick = () => {
+    if (toParticipate) toParticipate.onclick = () => withScrollPreserved(() => {
       if (beatIndex < runtimeBeats.length) { beatIndex += 1; rerender(); } else { stopAmbience(); stage = 'participate'; rerender(true); }
-      scrollLatestIntoView();
-    };
+    });
     return;
   }
 
   if (stage === 'participate') {
     main.querySelectorAll('[data-participate-choice]').forEach((b) => {
-      b.onclick = () => {
+      b.onclick = () => withScrollPreserved(() => {
         if (participateChoice != null) return;
         participateChoice = parseInt(b.dataset.participateChoice, 10);
         rerender();
-      };
+      });
     });
     const toReflect = main.querySelector('#toReflect');
-    if (toReflect) toReflect.onclick = () => { stage = 'reflect'; rerender(true); scrollLatestIntoView(); };
+    if (toReflect) toReflect.onclick = () => withScrollPreserved(() => { stage = 'reflect'; rerender(true); });
     return;
   }
 
   if (stage === 'reflect') {
     const toTeach = main.querySelector('#toTeach');
-    if (toTeach) toTeach.onclick = () => {
+    if (toTeach) toTeach.onclick = () => withScrollPreserved(() => {
       if (plan.teachWords.length) { stage = 'teach'; } else { afterTeaching(); }
       rerender(true);
-      scrollLatestIntoView();
-    };
+    });
     return;
   }
 
   if (stage === 'recap') {
     const toQuizOrDone = main.querySelector('#toQuizOrDone');
-    if (toQuizOrDone) toQuizOrDone.onclick = () => { afterRecap(); rerender(true); };
+    if (toQuizOrDone) toQuizOrDone.onclick = () => withScrollPreserved(() => { afterRecap(); rerender(true); });
     return;
   }
 
@@ -422,7 +443,7 @@ export function bind(main, rerender) {
     const hearBtn = main.querySelector('#hearBtn');
     if (hearBtn) bindHear(hearBtn, () => currentTeachWord());
     main.querySelectorAll('[data-quality]').forEach((b) => {
-      b.onclick = () => {
+      b.onclick = () => withScrollPreserved(() => {
         const quality = parseInt(b.dataset.quality, 10);
         const w = currentTeachWord();
         if (!state.progress[w.id]) {
@@ -439,30 +460,30 @@ export function bind(main, rerender) {
           else stage = 'capsule';
         }
         rerender(true);
-      };
+      });
     });
     return;
   }
 
   if (stage === 'capsule') {
     const toQuiz = main.querySelector('#toQuiz');
-    if (toQuiz) toQuiz.onclick = () => {
+    if (toQuiz) toQuiz.onclick = () => withScrollPreserved(() => {
       if (c.quiz) { stage = 'quiz'; } else { finishCapsule(); stage = 'done'; }
       rerender(true);
-    };
+    });
     return;
   }
 
   if (stage === 'quiz') {
     main.querySelectorAll('[data-lesson-choice]').forEach((b) => {
-      b.onclick = () => {
+      b.onclick = () => withScrollPreserved(() => {
         if (quizChoice != null) return;
         quizChoice = parseInt(b.dataset.lessonChoice, 10);
         rerender();
-      };
+      });
     });
     const finishBtn = main.querySelector('#finishLesson');
-    if (finishBtn) finishBtn.onclick = () => { finishCapsule(); stage = 'done'; rerender(true); };
+    if (finishBtn) finishBtn.onclick = () => withScrollPreserved(() => { finishCapsule(); stage = 'done'; rerender(true); });
     return;
   }
 
