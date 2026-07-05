@@ -80,6 +80,13 @@ export const ES_CAPSULES = [
      observeTitle: 'A café on Avenida Corrientes',
      teaser: 'Rain on the window, coffee on the table — and a whole grammar lesson hiding in how the waiter asks what you want.',
      observeNote: 'A composite, everyday scene of ordinary café Spanish in Buenos Aires — not a specific real conversation.',
+     ambience: 'rain',
+     senseOfPlace: [
+       'Rain on the glass.',
+       'Low voices, close together.',
+       'The smell of coffee, everywhere.',
+       'Nobody in a hurry.',
+     ],
      beats: [
        { type: 'narration', text: 'A café on Avenida Corrientes, Buenos Aires. Rain outside; the windows are fogged.' },
        { type: 'line', speaker: 'The waiter', irish: '¿Qué querés tomar?', phonetic: 'keh keh-ROHS toh-MAR', english: 'What do you want to drink?' },

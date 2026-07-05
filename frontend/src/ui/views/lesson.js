@@ -21,6 +21,7 @@ import { sm2Update, bumpSkill, freshProgress } from '../../engine/sm2.js';
 import { wordCardHtml, bindWordCard } from '../components/wordCard.js';
 import { encounterVisualHtml } from '../components/encounterVisual.js';
 import { speakTargetLanguage } from '../../services/tts.js';
+import { startRain, stopAmbience, isAmbiencePlaying } from '../../services/ambience.js';
 import { linkifyIrish, emptyState } from '../dom.js';
 import { bindHear } from './learn.js';
 
@@ -31,7 +32,8 @@ let quizChoice = null;
 let participateChoice = null;
 let beatIndex = 0; // how many of the current encounter's beats are revealed
 let spokenBeatIndex = -1; // guards against re-speaking a beat on every rerender
-let revealedTranslations = new Set(); // indices of dialogue beats whose English has been tapped into view
+let revealedText = new Set(); // indices of dialogue beats whose target-language text has been tapped into view — listen first, read second
+let revealedTranslations = new Set(); // indices of dialogue beats whose English has been tapped into view — read/guess first, translate last
 
 function hasEncounter() {
   return !!plan?.capsule.encounter;
@@ -42,7 +44,9 @@ function resetEncounterState() {
   participateChoice = null;
   beatIndex = hasEncounter() ? 1 : 0; // reveal the first beat immediately
   spokenBeatIndex = -1;
+  revealedText = new Set();
   revealedTranslations = new Set();
+  stopAmbience();
 }
 
 function ensurePlan() {
@@ -143,18 +147,25 @@ function beatHtml(beat, i, isLatest) {
   if (beat.type === 'narration') {
     return `<div style="font-size:13.5px; font-style:italic; color:var(--text-dim); line-height:1.7; ${dim}">${beat.text}</div>`;
   }
-  const revealed = revealedTranslations.has(i);
-  const translationHtml = revealed
-    ? `<div style="font-size:12.5px; color:var(--text-dim); margin-top:4px;">${beat.english}</div>`
-    : `<button class="chunk-tag mono" data-reveal-translation="${i}" style="cursor:pointer; border:1px dashed rgba(201,162,75,0.35); background:none; margin-top:6px; font-size:11px;">Show translation</button>`;
+  // Listen first, read second, translate last: the audio autoplays the
+  // moment this beat appears (see bind()), but the text itself — not just
+  // the English — stays behind a tap so there's a real moment to just listen
+  // and guess before falling back to the page.
+  const textShown = revealedText.has(i);
+  const translationShown = revealedTranslations.has(i);
+  const body = textShown ? `
+    <div style="font-size:15px; line-height:1.6;">${linkifyIrish(beat.irish)}</div>
+    ${translationShown
+      ? `<div style="font-size:12.5px; color:var(--text-dim); margin-top:4px;">${beat.english}</div>`
+      : `<button class="chunk-tag mono" data-reveal-translation="${i}" style="cursor:pointer; border:1px dashed rgba(201,162,75,0.35); background:none; margin-top:6px; font-size:11px;">Show translation</button>`}
+  ` : `
+    <button class="chunk-tag mono" data-reveal-text="${i}" style="cursor:pointer; border:1px dashed rgba(201,162,75,0.35); background:none; font-size:12px;">Show text</button>
+  `;
   return `
     <div style="${dim}">
       <div style="font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:3px;">${beat.speaker}</div>
       <div class="example-box" style="border-left-color:var(--flag-orange); display:flex; align-items:baseline; gap:8px; justify-content:space-between;">
-        <div>
-          <div style="font-size:15px; line-height:1.6;">${linkifyIrish(beat.irish)}</div>
-          ${translationHtml}
-        </div>
+        <div>${body}</div>
         <button class="chunk-tag mono" data-replay-beat="${i}" style="cursor:pointer; border:1px solid rgba(201,162,75,0.35); background:none; flex-shrink:0;">🔊</button>
       </div>
     </div>
@@ -175,16 +186,34 @@ function encounterStepperHtml(currentStage) {
   `;
 }
 
+function senseOfPlaceHtml(lines) {
+  if (!lines?.length) return '';
+  return `
+    <div class="sense-of-place">
+      ${lines.map((l) => `<div>${l}</div>`).join('')}
+    </div>
+  `;
+}
+
 function observeStageHtml(e) {
   const revealed = e.beats.slice(0, beatIndex);
   const beatsHtml = revealed.map((b, i) => beatHtml(b, i, i === revealed.length - 1)).join('<div style="height:14px;"></div>');
   const done = beatIndex >= e.beats.length;
+  const ambienceBtn = e.ambience === 'rain'
+    ? `<button class="chunk-tag mono" id="toggleAmbience" style="cursor:pointer; border:1px solid rgba(201,162,75,0.35); background:none; font-size:11px; margin-top:5px;">${isAmbiencePlaying() ? '🔊 Rain playing — stop' : '🌧 Play rain'}</button>`
+    : '';
   return `
     <div class="card fade-in" style="padding:0; overflow:hidden;">
       ${encounterVisualHtml(e.visual)}
       <div style="padding:26px 24px;">
-        <div class="pos mono">${e.observeTitle}</div>
-        ${e.observeNote ? `<div style="font-size:11px; color:var(--text-dim); margin-top:5px; font-style:italic;">${e.observeNote}</div>` : ''}
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+          <div>
+            <div class="pos mono">${e.observeTitle}</div>
+            ${e.observeNote ? `<div style="font-size:11px; color:var(--text-dim); margin-top:5px; font-style:italic;">${e.observeNote}</div>` : ''}
+          </div>
+          ${ambienceBtn}
+        </div>
+        ${senseOfPlaceHtml(e.senseOfPlace)}
         <div style="margin-top:18px; display:flex; flex-direction:column; gap:14px;">${beatsHtml}</div>
         <div class="btn-row"><button class="btn" id="toParticipate">${done ? 'Continue' : 'Go on'}</button></div>
       </div>
@@ -277,13 +306,21 @@ export function bind(main, rerender) {
     main.querySelectorAll('[data-replay-beat]').forEach((b) => {
       b.onclick = () => speakBeat(e.beats[parseInt(b.dataset.replayBeat, 10)]);
     });
+    main.querySelectorAll('[data-reveal-text]').forEach((b) => {
+      b.onclick = () => { revealedText.add(parseInt(b.dataset.revealText, 10)); rerender(); };
+    });
     main.querySelectorAll('[data-reveal-translation]').forEach((b) => {
       b.onclick = () => { revealedTranslations.add(parseInt(b.dataset.revealTranslation, 10)); rerender(); };
     });
+    const ambienceBtn = main.querySelector('#toggleAmbience');
+    if (ambienceBtn) ambienceBtn.onclick = () => {
+      if (isAmbiencePlaying()) stopAmbience(); else startRain();
+      rerender();
+    };
     const toParticipate = main.querySelector('#toParticipate');
     if (toParticipate) toParticipate.onclick = () => {
       if (beatIndex < e.beats.length) { beatIndex += 1; rerender(); }
-      else { stage = 'participate'; rerender(true); }
+      else { stopAmbience(); stage = 'participate'; rerender(true); }
     };
     return;
   }
