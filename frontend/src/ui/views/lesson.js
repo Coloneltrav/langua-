@@ -25,6 +25,8 @@ import { wordCardHtml, bindWordCard } from '../components/wordCard.js';
 import { encounterVisualHtml } from '../components/encounterVisual.js';
 import { speakTargetLanguage } from '../../services/tts.js';
 import { startRain, startWind, stopAmbience, isAmbiencePlaying } from '../../services/ambience.js';
+import { startRecording, stopRecording, recordingActive } from '../../services/pronunciation.js';
+import { activePack } from '../../data/languagePacks.js';
 import { linkifyIrish, emptyState } from '../dom.js';
 import { bindHear } from './learn.js';
 
@@ -287,6 +289,53 @@ function observeStageHtml(e) {
   `;
 }
 
+// "Speaking as creation": at the moment of a real narrative decision, ask
+// the learner to produce their own sentence explaining it — not pick from a
+// list, not repeat a reference word. There's no ASR grammar for open
+// sentences (the pronunciation engine only scores single known words
+// against a reference), so this is honestly scoped as record-and-hear-
+// yourself-back, same honesty pattern as the pronunciation widget's "no
+// engine available" fallback — no fabricated correctness score.
+function bindSpeakingCreation(main) {
+  const toggleBtn = main.querySelector('#toggleCreation');
+  const panel = main.querySelector('#creationPanel');
+  if (toggleBtn && panel) {
+    toggleBtn.onclick = () => {
+      const showing = panel.style.display !== 'none';
+      panel.style.display = showing ? 'none' : 'block';
+      toggleBtn.style.display = showing ? '' : 'none';
+    };
+  }
+  const recBtn = main.querySelector('#creationRecBtn');
+  const statusEl = main.querySelector('#creationStatus');
+  if (!recBtn) return;
+  recBtn.onclick = async () => {
+    if (!recordingActive()) {
+      try {
+        await startRecording();
+        recBtn.textContent = '⏹️ Stop recording';
+        statusEl.innerHTML = `<span class="rec-indicator"><span class="rec-dot"></span>Recording — tap again to stop</span>`;
+      } catch (e) {
+        statusEl.innerHTML = `<span style="color:#e2a494; font-size:13px;">Mic unavailable here (${e.message}).</span>`;
+      }
+      return;
+    }
+    const blob = await stopRecording();
+    recBtn.textContent = '🎙️ Record yourself';
+    statusEl.innerHTML = `<span class="loading-dots" style="font-size:13px; color:var(--text-dim);">Preparing playback</span>`;
+    try {
+      const { decodeToMono16k } = await import('../../services/audio/decode.js');
+      const { trimSilence, encodeWav } = await import('../../services/audio/trim.js');
+      const samples = await decodeToMono16k(await blob.arrayBuffer());
+      const { samples: trimmed } = trimSilence(samples, 16000);
+      const url = URL.createObjectURL(encodeWav(trimmed, 16000));
+      statusEl.innerHTML = `<audio controls src="${url}" style="width:100%;"></audio>`;
+    } catch {
+      statusEl.innerHTML = `<audio controls src="${URL.createObjectURL(blob)}" style="width:100%;"></audio>`;
+    }
+  };
+}
+
 function recapStageHtml() {
   const rows = runtimeBeats.map((b, i) => beatHtml(b, i, false, { alwaysShown: true })).join('<div style="height:12px;"></div>');
   return `
@@ -315,19 +364,29 @@ export function render() {
   if (stage === 'participate') {
     const e = c.encounter;
     const chosen = participateChoice != null ? e.participateChoices[participateChoice] : null;
-    const choicesHtml = e.participateChoices.map((ch, i) => `
-      <button class="quiz-option ${participateChoice === i ? 'correct' : ''}" data-participate-choice="${i}" ${participateChoice != null ? 'disabled' : ''} style="text-align:left; height:auto; line-height:1.5; padding:12px 16px;">${ch.label}</button>
-    `).join('');
+    // Once a choice is made, the roads not taken don't need to keep eating
+    // screen space at full size — collapse to just what was chosen.
+    const choicesHtml = chosen
+      ? `<div style="font-size:13px; color:var(--text-dim);">You chose: <span style="color:var(--text);">${chosen.label}</span></div>`
+      : e.participateChoices.map((ch, i) => `
+        <button class="quiz-option" data-participate-choice="${i}" style="text-align:left; height:auto; line-height:1.35; padding:9px 14px;">${ch.label}</button>
+      `).join('');
     return stepper + `
       <div class="card fade-in">
         <div style="font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;">A decision</div>
         <div style="margin-top:10px; font-size:19px; font-family:'Cormorant Garamond',serif; line-height:1.4;">${e.participatePrompt}</div>
         <div style="margin-top:16px; display:flex; flex-direction:column; gap:8px;">${choicesHtml}</div>
         ${chosen ? `
-          <div class="example-box fade-in" style="margin-top:16px; border-left-color:var(--flag-orange);">
-            <div style="font-size:14px; line-height:1.7;">${linkifyIrish(chosen.consequence)}</div>
+          <div class="example-box fade-in" style="margin-top:12px; border-left-color:var(--flag-orange);">
+            <div style="font-size:13.5px; line-height:1.5;">${linkifyIrish(chosen.consequence)}</div>
           </div>
-          <div class="btn-row"><button class="btn" id="toReflect">Continue</button></div>
+          <button class="chunk-tag mono" id="toggleCreation" style="cursor:pointer; border:1px dashed rgba(201,162,75,0.35); background:none; margin-top:8px; font-size:11px;">🎙️ Say it yourself, in ${activePack().name} (optional)</button>
+          <div id="creationPanel" style="display:none; margin-top:8px;">
+            <div style="font-size:12.5px; color:var(--text-dim); line-height:1.4;">Out loud: why would you choose this? Use whatever words you know — no scoring on a free sentence, this is just for your own ear.</div>
+            <div class="btn-row" style="margin-top:6px;"><button class="btn secondary" id="creationRecBtn">🎙️ Record yourself</button></div>
+            <div id="creationStatus" style="margin-top:6px;"></div>
+          </div>
+          <div class="btn-row" style="margin-top:10px;"><button class="btn" id="toReflect">Continue</button></div>
         ` : ''}
       </div>
     `;
@@ -434,6 +493,7 @@ export function bind(main, rerender) {
         rerender();
       });
     });
+    bindSpeakingCreation(main);
     const toReflect = main.querySelector('#toReflect');
     if (toReflect) toReflect.onclick = () => withScrollPreserved(() => { stage = 'reflect'; rerender(true); });
     return;
