@@ -5,11 +5,27 @@
 // country you're looking at — see data/accentsEs.js.
 import { irelandMapHtml, provincePanelHtml } from '../components/irelandMap.js';
 import { WORDS } from '../../data/words.js';
+import { CULTURE_CAPSULES } from '../../data/capsules.js';
 import { speakWord } from '../../services/tts.js';
 import { activePack, activeAccentCode } from '../../data/languagePacks.js';
 import { setAccent } from '../packSwitch.js';
+import { uiState } from '../uiState.js';
 
 let activeProvince = 'connachta';
+
+// Museum-style cross-link: a province and its culture capsules aren't
+// separate tabs, they're the same place — tap through from the map straight
+// into the history/culture written about it.
+function provinceCapsulesHtml(provinceId) {
+  const related = CULTURE_CAPSULES.filter((c) => c.province === provinceId);
+  if (!related.length) return '';
+  return `
+    <div style="margin-top:14px; font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;">Culture set here</div>
+    <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
+      ${related.map((c) => `<button class="chunk-tag mono" data-province-capsule="${c.id}" style="cursor:pointer; text-align:left; border:1px solid rgba(201,162,75,0.25); background:none; padding:10px 12px; font-size:13px;">${c.title}</button>`).join('')}
+    </div>
+  `;
+}
 
 function irelandGeographyHtml() {
   return `
@@ -17,7 +33,7 @@ function irelandGeographyHtml() {
       <div style="font-family:'Cormorant Garamond',serif; font-size:20px; margin-bottom:4px;">Léarscáil — the map</div>
       <div style="font-size:12.5px; color:var(--text-dim); margin-bottom:14px;">Tap a province for its dialect, its Gaeltacht communities, what its place names mean, and the words of its landscape — each one plays real Irish audio.</div>
       ${irelandMapHtml(activeProvince)}
-      <div id="provincePanel">${provincePanelHtml(activeProvince)}</div>
+      <div id="provincePanel">${provincePanelHtml(activeProvince)}${provinceCapsulesHtml(activeProvince)}</div>
     </div>
   `;
 }
@@ -71,6 +87,16 @@ export function bind(main, rerender) {
     btn.onclick = () => {
       if (btn.dataset.geoAccent === activeAccentCode()) return;
       setAccent(btn.dataset.geoAccent);
+      rerender(true);
+    };
+  });
+  main.querySelectorAll('[data-province-capsule]').forEach((btn) => {
+    btn.onclick = () => {
+      const c = CULTURE_CAPSULES.find((x) => x.id === btn.dataset.provinceCapsule);
+      if (!c) return;
+      uiState.activeCapsule = c;
+      uiState.capsuleQuizChoice = null;
+      uiState.route = 'capsuleDetail';
       rerender(true);
     };
   });
