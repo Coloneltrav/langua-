@@ -2,12 +2,12 @@
 //
 // Capsules with a full `encounter` (see data/capsulesGa.js for the
 // blueprint, engine/curriculum.js for how a capsule is chosen) get the
-// richer Living-Encounter flow: Observe (a glossed narrative passage,
-// self-contained comprehensible input — no pre-teaching flashcards
-// first) -> Participate (a real decision with a consequence, not a
-// translation drill) -> Reflect (brief factual context) -> Practice
-// (the words just encountered, now formalized into spaced repetition) ->
-// a quick comprehension check -> done.
+// richer Living-Encounter flow: Observe (a short scene, one beat at a
+// time — narration and dialogue between real people, each line spoken
+// aloud, comprehensible input rather than a wall of text) -> Participate
+// (a real decision with a consequence, not a translation drill) -> Reflect
+// (brief factual context) -> Practice (the words just encountered, now
+// formalized into spaced repetition) -> a quick comprehension check -> done.
 //
 // Capsules without an `encounter` fall back to the simpler flow: teach
 // whatever vocabulary is missing first, then read, then check, then
@@ -20,6 +20,7 @@ import { buildLessonPlan, planFor } from '../../engine/curriculum.js';
 import { sm2Update, bumpSkill, freshProgress } from '../../engine/sm2.js';
 import { wordCardHtml, bindWordCard } from '../components/wordCard.js';
 import { encounterVisualHtml } from '../components/encounterVisual.js';
+import { speakTargetLanguage } from '../../services/tts.js';
 import { linkifyIrish, emptyState } from '../dom.js';
 import { bindHear } from './learn.js';
 
@@ -28,18 +29,26 @@ let teachIndex = 0;
 let stage = 'teach'; // 'observe'/'participate'/'reflect' (encounter only) -> 'teach' -> 'capsule' -> 'quiz' -> 'done'
 let quizChoice = null;
 let participateChoice = null;
+let beatIndex = 0; // how many of the current encounter's beats are revealed
+let spokenBeatIndex = -1; // guards against re-speaking a beat on every rerender
 
 function hasEncounter() {
   return !!plan?.capsule.encounter;
+}
+
+function resetEncounterState() {
+  quizChoice = null;
+  participateChoice = null;
+  beatIndex = hasEncounter() ? 1 : 0; // reveal the first beat immediately
+  spokenBeatIndex = -1;
 }
 
 function ensurePlan() {
   if (plan) return;
   plan = buildLessonPlan(CULTURE_CAPSULES, state.progress, state.settings.completedCapsules);
   teachIndex = 0;
-  quizChoice = null;
-  participateChoice = null;
   if (!plan) return;
+  resetEncounterState();
   stage = hasEncounter() ? 'observe' : (plan.teachWords.length ? 'teach' : 'capsule');
 }
 
@@ -53,8 +62,7 @@ function currentTeachWord() {
 export function startCapsule(capsule) {
   plan = planFor(capsule, state.progress);
   teachIndex = 0;
-  quizChoice = null;
-  participateChoice = null;
+  resetEncounterState();
   stage = hasEncounter() ? 'observe' : (plan.teachWords.length ? 'teach' : 'capsule');
 }
 
@@ -80,8 +88,7 @@ export function resetLesson() {
   plan = null;
   teachIndex = 0;
   stage = 'teach';
-  quizChoice = null;
-  participateChoice = null;
+  resetEncounterState();
 }
 
 function teachStageHtml() {
@@ -129,6 +136,42 @@ function doneStageHtml() {
   `;
 }
 
+function beatHtml(beat, i, isLatest) {
+  const dim = isLatest ? '' : 'opacity:0.55;';
+  if (beat.type === 'narration') {
+    return `<div style="font-size:13.5px; font-style:italic; color:var(--text-dim); line-height:1.7; ${dim}">${beat.text}</div>`;
+  }
+  return `
+    <div style="${dim}">
+      <div style="font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:3px;">${beat.speaker}</div>
+      <div class="example-box" style="border-left-color:var(--flag-orange); display:flex; align-items:baseline; gap:8px; justify-content:space-between;">
+        <div>
+          <div style="font-size:15px; line-height:1.6;">${linkifyIrish(beat.irish)}</div>
+          <div style="font-size:12.5px; color:var(--text-dim); margin-top:4px;">${beat.english}</div>
+        </div>
+        <button class="chunk-tag mono" data-replay-beat="${i}" style="cursor:pointer; border:1px solid rgba(201,162,75,0.35); background:none; flex-shrink:0;">🔊</button>
+      </div>
+    </div>
+  `;
+}
+
+function observeStageHtml(e) {
+  const revealed = e.beats.slice(0, beatIndex);
+  const beatsHtml = revealed.map((b, i) => beatHtml(b, i, i === revealed.length - 1)).join('<div style="height:12px;"></div>');
+  const done = beatIndex >= e.beats.length;
+  return `
+    <div class="card" style="padding:0; overflow:hidden;">
+      ${encounterVisualHtml(e.visual)}
+      <div style="padding:20px;">
+        <div class="pos mono">${e.observeTitle}</div>
+        ${e.observeNote ? `<div style="font-size:11px; color:var(--text-dim); margin-top:4px; font-style:italic;">${e.observeNote}</div>` : ''}
+        <div style="margin-top:14px; display:flex; flex-direction:column; gap:12px;">${beatsHtml}</div>
+        <div class="btn-row"><button class="btn" id="toParticipate">${done ? 'Continue' : 'Go on'}</button></div>
+      </div>
+    </div>
+  `;
+}
+
 export function render() {
   ensurePlan();
   if (!plan) {
@@ -140,20 +183,7 @@ export function render() {
 
   const c = plan.capsule;
 
-  if (stage === 'observe') {
-    const e = c.encounter;
-    return `
-      <div class="card" style="padding:0; overflow:hidden;">
-        ${encounterVisualHtml(e.visual)}
-        <div style="padding:20px;">
-          <div class="pos mono">${e.observeTitle}</div>
-          <div style="font-size:15.5px; line-height:1.8; margin-top:12px;">${linkifyIrish(e.observe)}</div>
-          ${e.observeNote ? `<div style="font-size:11px; color:var(--text-dim); margin-top:12px; font-style:italic;">${e.observeNote}</div>` : ''}
-          <div class="btn-row"><button class="btn" id="toParticipate">Continue</button></div>
-        </div>
-      </div>
-    `;
-  }
+  if (stage === 'observe') return observeStageHtml(c.encounter);
 
   if (stage === 'participate') {
     const e = c.encounter;
@@ -177,10 +207,11 @@ export function render() {
   }
 
   if (stage === 'reflect') {
+    const points = c.encounter.reflectPoints.map((p) => `<li style="margin-bottom:8px;">${linkifyIrish(p)}</li>`).join('');
     return `
       <div class="card">
         <div style="font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;">What actually happened</div>
-        <div style="margin-top:10px; font-size:14.5px; line-height:1.75;">${linkifyIrish(c.encounter.reflect)}</div>
+        <ul style="margin:12px 0 0 0; padding-left:18px; font-size:13.5px; line-height:1.6;">${points}</ul>
         <div class="btn-row"><button class="btn" id="toTeach">${plan.teachWords.length ? "Learn this lesson's words" : 'Continue'}</button></div>
       </div>
     `;
@@ -206,13 +237,30 @@ export function render() {
   return doneStageHtml();
 }
 
+function speakBeat(beat) {
+  if (beat.type !== 'line') return;
+  speakTargetLanguage(beat.irish, beat.phonetic).catch((e) => console.error(e));
+}
+
 export function bind(main, rerender) {
   if (!plan) return;
   const c = plan.capsule;
 
   if (stage === 'observe') {
+    const e = c.encounter;
+    const latest = e.beats[beatIndex - 1];
+    if (latest && spokenBeatIndex !== beatIndex - 1) {
+      spokenBeatIndex = beatIndex - 1;
+      setTimeout(() => speakBeat(latest), 200);
+    }
+    main.querySelectorAll('[data-replay-beat]').forEach((b) => {
+      b.onclick = () => speakBeat(e.beats[parseInt(b.dataset.replayBeat, 10)]);
+    });
     const toParticipate = main.querySelector('#toParticipate');
-    if (toParticipate) toParticipate.onclick = () => { stage = 'participate'; rerender(true); };
+    if (toParticipate) toParticipate.onclick = () => {
+      if (beatIndex < e.beats.length) { beatIndex += 1; rerender(); }
+      else { stage = 'participate'; rerender(true); }
+    };
     return;
   }
 

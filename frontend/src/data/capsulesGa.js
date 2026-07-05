@@ -68,23 +68,40 @@ export const GA_CAPSULES = [
      visual: 'famine-coast',
      observeTitle: 'Spring, 1847 — near Skibbereen',
      observeNote: 'An illustrative scene grounded in real, well-documented patterns of the time — not a specific historical record.',
-     observe: "It is the spring of 1847 — ‘Black ’47,’ people already call it. For the second year running, the potato crop has rotted in the ground. Ocras (hunger) has become the shape of every day in your family's cottage. Your mother has said little since your youngest brother died last month; the parish coffin was reused, as it so often is now. Down at the harbour, ships are taking those who can afford passage to Sasana (England) or, dearer still, to Meiriceá (America) — neighbours call them ‘coffin ships,’ for how many don't survive the crossing. An Gorta Mór has already emptied three cottages on your boreen. Your family has scraped together just enough for one ticket.",
+     // A short scene, one beat at a time — narration sets the moment,
+     // dialogue carries the target words in an actual exchange between
+     // people, each line spoken aloud as it appears. Deliberately short:
+     // comprehensible input means small, digestible pieces, not a wall
+     // of text read all at once.
+     beats: [
+       { type: 'narration', text: "Your family's cottage. The potato crop has failed for the second year running." },
+       { type: 'line', speaker: 'Your little sister', irish: 'Tá ocras orm.', phonetic: 'taw UK-russ orm', english: "I'm hungry." },
+       { type: 'line', speaker: 'Your mother', irish: 'Tá ocras ar gach duine, a stór.', phonetic: 'taw UK-russ air gokh DIN-eh, uh stohr', english: 'Everyone is hungry, love.' },
+       { type: 'narration', text: 'A letter has come from a cousin in Boston — enough money for exactly one ticket.' },
+       { type: 'line', speaker: 'Your father', irish: 'Caithfidh duine againn dul ar imirce.', phonetic: 'KAH-hee DIN-eh AH-gin dull air IM-ir-keh', english: 'One of us has to emigrate.' },
+       { type: 'narration', text: 'Nobody speaks for a moment. Everyone is thinking the same thing: which one of us?' },
+     ],
      participatePrompt: 'Only one ticket. Who goes?',
      participateChoices: [
        {
          label: 'Send the eldest son — strongest, most likely to survive the crossing and send money back.',
-         consequence: "He survives the crossing and finds dock work in Boston. Within two years he sends home enough to bring over one more sister. Many families who chose this never saw that son again — yours did, decades later, briefly, a grown man with an accent you no longer recognized.",
+         consequence: 'He survives the crossing and finds dock work in Boston. Two years on, he sends home enough to bring over one more sister — but it will be decades before you see him again.',
        },
        {
          label: 'Send the youngest daughter — a cousin in New York has already offered to take her in.',
-         consequence: "She is twelve. She cries the whole way to Cobh and is seasick for most of the six weeks at sea. She arrives frightened and alone, but the cousin keeps her word. It will be nineteen years before any of you see her again — in a photograph, sent home with a letter.",
+         consequence: 'She is twelve, seasick for most of the six-week crossing, and arrives frightened and alone. The cousin keeps her word — but it will be nineteen years before any of you see her again.',
        },
        {
          label: 'Keep everyone together and stay — sell what remains, try to hold on until the next harvest.',
-         consequence: "You stay. The next harvest is better, but by then two more of the family are gone — to ocras, to fever, to the emigrant ship after all, just a season later than you'd hoped. Staying together didn't mean staying whole.",
+         consequence: "You stay. The next harvest is better — but by then two more of the family are gone anyway, to hunger, to fever, to the emigrant ship after all. Staying together didn't mean staying whole.",
        },
      ],
-     reflect: "An Gorta Mór (1845–1852) killed roughly one million people and drove over a million more to imirce — around a quarter of Ireland's population, gone within a decade. Some counties, including Cork and Mayo, lost more than a third of their people. The blight struck much of Europe, but only in Ireland did it become mass starvation on this scale — a result of British government policy as much as the crop failure itself, including the continued export of other Irish-grown food during the worst famine years. Ireland's population still hasn't recovered to its pre-Famine level.",
+     reflectPoints: [
+       "An Gorta Mór (1845–1852) killed roughly one million people and drove over a million more to imirce — about a quarter of Ireland's population, gone within a decade.",
+       'Some counties, including Cork and Mayo, lost more than a third of their people.',
+       'Blight struck much of Europe, but only in Ireland did it become mass starvation on this scale — British government policy was as responsible as the crop failure, including the continued export of other Irish-grown food during the worst years.',
+       "Ireland's population still hasn't recovered to its pre-Famine level.",
+     ],
    }},
   {id:'c15', year:1919, title:'The War of Independence', category:'History', difficulty:'intermediate',
    target:['w174','w181'],

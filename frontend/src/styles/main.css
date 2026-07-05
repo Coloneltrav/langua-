@@ -70,10 +70,51 @@ header.top .tagline{
 }
 
 
+nav.pillars{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:16px 20px 0 20px;
+}
+nav.pillars button{
+  background:none;
+  border:none;
+  color:var(--text-dim);
+  padding:9px 4px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:17px;
+  font-weight:600;
+  letter-spacing:0.3px;
+  cursor:pointer;
+  position:relative;
+  transition:color .15s ease;
+}
+nav.pillars button + button{margin-left:14px;}
+nav.pillars button.active{color:var(--gold-bright);}
+nav.pillars button.active::after{
+  content:'';
+  position:absolute;
+  left:0; right:0; bottom:-1px;
+  height:2px;
+  background:var(--gold-bright);
+}
+nav.pillars button:hover:not(.active):not(.gear){color:var(--text);}
+nav.pillars button.gear{
+  margin-left:auto !important;
+  color:var(--text-dim);
+  font-size:16px;
+  font-family:inherit;
+  font-weight:400;
+  padding:6px 8px;
+}
+nav.pillars button.gear.active,
+nav.pillars button.gear:hover{color:var(--gold-bright);}
+nav.pillars button.gear.active::after{display:none;}
+
 nav.tabs{
   display:flex;
   gap:4px;
-  padding:14px 20px 0 20px;
+  padding:10px 20px 0 20px;
   overflow-x:auto;
 }
 nav.tabs button{

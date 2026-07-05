@@ -27,21 +27,33 @@ import * as settings from './views/settings.js';
 
 const VIEWS = { home, lesson, learn, review, input, vocab, wordDetail, quiz, culture, geography, capsuleDetail, tutor, stats, settings };
 
+// Three pillars instead of a flat wall of tabs: Journey is the guided path
+// (what to do today), Workshop is practice you choose for yourself, Library
+// is reference/exploration + progress. Settings lives outside all three as
+// a header icon — it's configuration, not a place you "go" to learn.
+const SECTIONS = [
+  ['journey', 'Journey'],
+  ['workshop', 'Workshop'],
+  ['library', 'Library'],
+];
+
 // The AI Tutor needs a personal Anthropic key (settings.js) on this
 // backend-less static site — hide its tab until one is set up, rather
 // than showing a feature that just errors for most visitors.
-const TUTOR_TAB = ['tutor', 'AI Tutor'];
-const TAIL_TABS = [['stats', 'Stats'], ['settings', 'Settings']];
-
-function currentTabs() {
+function sectionTabs(section) {
   const cultureLabel = activePack().cultureTabLabel || 'Culture';
-  const baseTabs = [
-    ['home', 'Home'], ['lesson', 'Lesson'], ['learn', 'New Word'], ['review', 'Review'], ['input', 'Input'], ['quiz', 'Listen'],
-    ['culture', cultureLabel], ['geography', 'Geography'], ['vocab', 'Vocabulary'],
-  ];
   const tutorReady = !!state.settings.anthropicKey;
-  return [...baseTabs, ...(tutorReady ? [TUTOR_TAB] : []), ...TAIL_TABS];
+  if (section === 'journey') return [['home', 'Overview'], ['lesson', 'Lesson'], ['review', 'Review']];
+  if (section === 'workshop') return [['learn', 'New Word'], ['input', 'Input'], ['quiz', 'Listen'], ...(tutorReady ? [['tutor', 'AI Tutor']] : [])];
+  return [['culture', cultureLabel], ['geography', 'Geography'], ['vocab', 'Vocabulary'], ['stats', 'Stats']];
 }
+
+const ROUTE_SECTION = {
+  home: 'journey', lesson: 'journey', review: 'journey',
+  learn: 'workshop', input: 'workshop', quiz: 'workshop', tutor: 'workshop',
+  culture: 'library', geography: 'library', vocab: 'library', stats: 'library',
+  wordDetail: 'library', capsuleDetail: 'library',
+};
 
 function activeTabFor(route) {
   if (route === 'wordDetail') return 'vocab';
@@ -49,10 +61,45 @@ function activeTabFor(route) {
   return route;
 }
 
+function currentSection() {
+  return ROUTE_SECTION[uiState.route] || null;
+}
+
+function renderPillars() {
+  const el = document.getElementById('pillars');
+  const active = currentSection();
+  el.innerHTML = `
+    ${SECTIONS.map(([id, label]) => `<button class="${active === id ? 'active' : ''}" data-section="${id}">${label}</button>`).join('')}
+    <button class="gear" id="settingsGear" aria-label="Settings" title="Settings">⚙</button>
+  `;
+  el.querySelectorAll('[data-section]').forEach((b) => {
+    b.onclick = () => {
+      const [firstRoute] = sectionTabs(b.dataset.section)[0];
+      uiState.route = firstRoute;
+      uiState.revealAnswer = false;
+      uiState.overrideCap = false;
+      uiState.quizTarget = null;
+      renderRoute();
+      renderTabs();
+      renderPillars();
+    };
+  });
+  const gear = el.querySelector('#settingsGear');
+  gear.classList.toggle('active', uiState.route === 'settings');
+  gear.onclick = () => {
+    uiState.route = 'settings';
+    renderRoute();
+    renderTabs();
+    renderPillars();
+  };
+}
+
 function renderTabs() {
   const el = document.getElementById('tabs');
+  const section = currentSection();
+  if (!section) { el.innerHTML = ''; return; }
   const active = activeTabFor(uiState.route);
-  el.innerHTML = currentTabs().map(([id, label]) => `<button class="${active === id ? 'active' : ''}" data-route="${id}">${label}</button>`).join('');
+  el.innerHTML = sectionTabs(section).map(([id, label]) => `<button class="${active === id ? 'active' : ''}" data-route="${id}">${label}</button>`).join('');
   el.querySelectorAll('button').forEach((b) => {
     b.onclick = () => {
       uiState.route = b.dataset.route;
@@ -79,7 +126,7 @@ function renderRoute() {
   main.innerHTML = view.render();
   const rerender = (alsoTabs) => {
     renderRoute();
-    if (alsoTabs) renderTabs();
+    if (alsoTabs) { renderTabs(); renderPillars(); }
   };
   view.bind(main, rerender);
 
@@ -103,13 +150,15 @@ export function renderApp() {
       </div>
       <div class="tagline">A personal language learning system — no streaks, no ads, just the words.</div>
     </header>
+    <nav class="pillars" id="pillars"></nav>
     <nav class="tabs" id="tabs"></nav>
     <main id="main"></main>
     ${wordPopupHtml()}
   `;
+  renderPillars();
   renderTabs();
   renderRoute();
-  bindWordPopup(() => { renderRoute(); renderTabs(); });
+  bindWordPopup(() => { renderRoute(); renderTabs(); renderPillars(); });
 }
 
-export { renderRoute, renderTabs };
+export { renderRoute, renderTabs, renderPillars };
