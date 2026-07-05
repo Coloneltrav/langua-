@@ -22,6 +22,47 @@ export const ES_CAPSULES = [
    target:['s86'],
    text:"El tango nació en los barrios portuarios de Buenos Aires a finales del siglo XIX, mezclando influencias africanas, europeas y criollas. Hoy se baila en milongas (salones de baile) por toda la ciudad, y la UNESCO lo declaró Patrimonio Cultural Inmaterial de la Humanidad en 2009.",
    quiz:{q:'In which city did tango originate?', options:['Buenos Aires','Madrid','Bogotá','Santiago'], answer:0}},
+  {id:'es-c9', title:'Un café en Buenos Aires', category:'Language', difficulty:'beginner', country:'es-AR',
+   target:['sr-ar-1'],
+   text:"In Argentina and Uruguay, you'll rarely hear tú in daily conversation — vos has taken over completely, with its own verb endings: vos tenés (not tú tienes), vos querés (not tú quieres). It's such a core part of rioplatense identity that using tú instead marks you as a foreigner instantly.",
+   quiz:{q:'What does "vos tenés" use instead of standard "tú tienes"?', options:['vos + its own verb ending','usted + a formal verb','tú with no change','ustedes'], answer:0},
+   // Third Living Encounter, and the first built around an everyday
+   // conversation rather than a historical event — proving the format
+   // also fits ordinary moments, not just big/heavy ones. Directly
+   // demonstrates the vos conjugation the capsule teaches, in use.
+   encounter: {
+     visual: 'buenos-aires-cafe',
+     observeTitle: 'A café on Avenida Corrientes',
+     observeNote: 'A composite, everyday scene of ordinary café Spanish in Buenos Aires — not a specific real conversation.',
+     beats: [
+       { type: 'narration', text: 'A café on Avenida Corrientes, Buenos Aires. Rain outside; the windows are fogged.' },
+       { type: 'line', speaker: 'The waiter', irish: '¿Qué querés tomar?', phonetic: 'keh keh-ROHS toh-MAR', english: 'What do you want to drink?' },
+       { type: 'line', speaker: 'You', irish: 'Quiero un café con leche, por favor.', phonetic: 'kee-EH-roh oon kah-FEH kon LEH-cheh, por fah-VOR', english: 'I want a coffee with milk, please.' },
+       { type: 'line', speaker: 'The waiter', irish: '¿Vos tenés hambre también? Hay medialunas.', phonetic: 'bohs teh-NEHS AHM-breh tam-bee-EN? eye meh-dee-ah-LOO-nahs', english: 'Are you hungry too? We have croissants.' },
+       { type: 'narration', text: "You've just heard vos twice — tenés, querés — verb endings you'd never hear in Madrid or Mexico City." },
+     ],
+     participatePrompt: 'The waiter asks if you want anything else. What do you say?',
+     participateChoices: [
+       {
+         label: 'Sí, dale, una medialuna más. ("Yes, go on, one more croissant.")',
+         consequence: 'He laughs — dale is pure Argentine filler, and you\'ve just ordered like a local.',
+       },
+       {
+         label: 'No, así está bien, gracias. ("No, that\'s fine, thanks.")',
+         consequence: 'Perfectly polite, perfectly correct — and just a touch too formal for a neighbourhood café like this one.',
+       },
+       {
+         label: '¿Qué me recomendás vos? ("What do you recommend?")',
+         consequence: "He grins — you used vos right back at him, unprompted. For the rest of the visit, he treats you like a regular, not a tourist.",
+       },
+     ],
+     reflectPoints: [
+       'Vos replaced tú almost entirely in Argentina, Uruguay, and parts of Central America — it\'s not slang there, it\'s the standard second-person singular.',
+       'Vos verb forms drop a syllable from the standard tú conjugation and stress the last syllable: tenés (not tienes), querés (not quieres), sos (not eres).',
+       'Rioplatense Spanish also pronounces ll and y like the "sh" in "shoe" — so calle sounds closer to "cashe" than "kaye".',
+       'Medialunas ("half moons") are Argentina\'s answer to croissants — a standard breakfast and café order.',
+     ],
+   }},
   {id:'es-c6', title:'Café de Colombia', category:'Culture', difficulty:'beginner', country:'es-CO',
    target:['s76'],
    text:"Colombia es uno de los mayores productores de café del mundo, especialmente en la región del Eje Cafetero. El paisaje cultural cafetero fue declarado Patrimonio de la Humanidad por la UNESCO en 2011, gracias al esfuerzo de generaciones de familias cafeteras en las montañas.",

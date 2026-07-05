@@ -38,7 +38,44 @@ export const GA_CAPSULES = [
   {id:'c9', year:1916, title:'The Easter Rising', category:'History', difficulty:'intermediate',
    target:['w160','w161','w162'],
    text:"Éirí Amach na Cásca — the Easter Rising — was an armed uprising against British rule in Dublin during Easter week, 1916. It was militarily defeated within a week, but the British response hardened public support for saoirse — freedom — and full independence in the years that followed.",
-   quiz:{q:'In what year did Éirí Amach na Cásca happen?', options:['1916','1921','1949','1845'], answer:0}},
+   quiz:{q:'In what year did Éirí Amach na Cásca happen?', options:['1916','1921','1949','1845'], answer:0},
+   // Second Living Encounter for the Irish pack — same beat-by-beat scene
+   // format as An Gorta Mór, applied to a different kind of moment
+   // (a single Easter Monday, not a years-long catastrophe) to test that
+   // the pattern flexes rather than only fitting one story shape.
+   encounter: {
+     visual: 'dublin-1916',
+     observeTitle: 'Dublin, Easter Monday, 1916',
+     observeNote: 'An illustrative household scene grounded in real, well-documented events of Easter Week — not a specific verified family.',
+     beats: [
+       { type: 'narration', text: 'Dublin, Easter Monday, 1916. Church bells still ring, but gunfire has already started near the GPO.' },
+       { type: 'line', speaker: 'Your brother', irish: 'Caithfidh mé dul. Tá mé ag troid ar son saoirse.', phonetic: 'KAH-hee meh dull. Taw meh egg TRID air suhn SEER-sheh', english: "I have to go. I'm fighting for freedom." },
+       { type: 'line', speaker: 'Your mother', irish: 'Fan anseo, le do thoil.', phonetic: 'fon un-SHOH, leh duh HULL', english: 'Stay here, please.' },
+       { type: 'narration', text: 'He goes anyway. By Saturday, the Rising is over — crushed within a week.' },
+       { type: 'line', speaker: 'Your brother, from Kilmainham Gaol, days later', irish: 'Ní bhfuaireamar an phoblacht an tseachtain seo. Ach gheobhaimid saoirse fós.', phonetic: 'nee VOO-ur-a-mar un FUB-lukht un CHAHK-tin shuh. Ahkh YOH-vim-id SEER-sheh fohss', english: "We didn't win the republic this week. But we'll still win freedom." },
+     ],
+     participatePrompt: 'Soldiers are searching houses on your street. What do you do with the rifle he left behind?',
+     participateChoices: [
+       {
+         label: 'Hide it under the floorboards and say nothing.',
+         consequence: "The search passes over your house. Weeks later, executions at Kilmainham Gaol turn public opinion your brother's way — the very opinion he'd hoped for.",
+       },
+       {
+         label: 'Bury it in the garden overnight.',
+         consequence: "You bury it before dawn. It isn't found for sixty years, when a new owner digs up the garden and hands it to a local museum.",
+       },
+       {
+         label: 'Turn it in and tell the soldiers everything you know.',
+         consequence: 'The soldiers take the rifle and note your name. Neighbours whisper about it for years — but your brother comes home eventually anyway; the executions did more for saoirse than any single rifle.',
+       },
+     ],
+     reflectPoints: [
+       'Éirí Amach na Cásca lasted six days (24–29 April 1916) and was militarily defeated — the rebel leaders surrendered unconditionally.',
+       "British forces executed 16 of the Rising's leaders by firing squad over the following weeks, which shocked Irish public opinion and hardened support for full independence.",
+       'Support for Irish nationalism, previously a minority position, grew sharply after the Rising — feeding directly into the War of Independence (1919–1921).',
+       "The GPO (General Post Office) on O'Connell Street, the rebels' headquarters, still bears bullet-scarred pillars today.",
+     ],
+   }},
   {id:'c10', year:1921, title:'Northern Ireland & the Republic', category:'Northern Ireland', difficulty:'intermediate',
    target:['w163','w164','w165'],
    text:"Ireland's island today has two jurisdictions: Poblacht na hÉireann, the Republic of Ireland, and Tuaisceart Éireann, Northern Ireland, which is part of the United Kingdom. This partition dates to 1921, following the Anglo-Irish Treaty. Both remain distinct stáit today, and the relationship between them continues to be an active, sometimes contested, political topic.",
