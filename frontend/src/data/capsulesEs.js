@@ -14,6 +14,47 @@ export const ES_CAPSULES = [
    target:['s74'],
    text:"Madrid es la capital de España desde 1561, cuando el rey Felipe II trasladó la corte allí. Está justo en el centro de la península ibérica, la ciudad más alta de Europa Occidental entre las grandes capitales. El Museo del Prado, uno de los mejores museos de arte del mundo, está en Madrid.",
    quiz:{q:'What is the capital of Spain?', options:['Madrid','Barcelona','Sevilla','Valencia'], answer:0}},
+  {id:'es-c10', title:'Tapas en Madrid', category:'Language', difficulty:'beginner', country:'es-ES',
+   target:['sr-es-6'],
+   text:"Peninsular Spanish has two features Latin America doesn't: distinción — pronouncing c (before e/i) and z like the \"th\" in \"think\" — and vosotros, the everyday informal \"you all\" (with its own verb endings: queréis, sois, tenéis), used instead of ustedes for casual groups.",
+   quiz:{q:'What does distinción refer to in Peninsular Spanish?', options:['Pronouncing c/z like "th"','A verb tense','A regional accent name only','A type of tapa'], answer:0},
+   // Fourth Living Encounter — another everyday-conversation scene (like
+   // Buenos Aires), this time built around Spain's two most distinctive,
+   // learnable features: distinción and vosotros, heard directly in the
+   // dialogue rather than just described.
+   encounter: {
+     visual: 'madrid-tapas-bar',
+     observeTitle: 'A tapas bar near Plaza Mayor',
+     observeNote: 'A composite, everyday scene of ordinary bar Spanish in Madrid — not a specific real conversation.',
+     beats: [
+       { type: 'narration', text: 'A tapas bar near Plaza Mayor, Madrid. Saturday evening, the bar three-deep with people.' },
+       { type: 'line', speaker: 'Your friend', irish: '¿Qué queréis vosotros?', phonetic: 'keh keh-REH-ees boh-SOH-trohs', english: 'What do you all want?' },
+       { type: 'line', speaker: 'You', irish: 'Yo quiero un zumo de naranja.', phonetic: 'yoh kee-EH-roh oon THOO-moh deh nah-RAHN-hah', english: 'I want an orange juice.' },
+       { type: 'line', speaker: 'The bartender', irish: '¿Un zumo? Aquí solo tenemos cerveza y vino — ¡qué gracioso!', phonetic: 'oon THOO-moh? ah-KEE SOH-loh teh-NEH-mohs ther-VEH-sah ee VEE-noh, keh grah-see-OH-soh', english: "A juice? We've only got beer and wine here — that's a first!" },
+       { type: 'narration', text: 'Everyone laughs. Zumo, cerveza — both carry that "th" sound distinción gives peninsular Spanish.' },
+     ],
+     participatePrompt: 'The bartender is waiting. What do you order instead?',
+     participateChoices: [
+       {
+         label: 'Una caña, por favor. ("A small beer, please.")',
+         consequence: 'Perfect Madrid order — a caña is the default small-beer size across the city\'s bars.',
+       },
+       {
+         label: 'Un vino tinto. ("A red wine.")',
+         consequence: "A solid choice — Spain's wine culture runs deep, and nobody blinks at ordering wine before food arrives.",
+       },
+       {
+         label: 'Nada, gracias — solo agua. ("Nothing, thanks — just water.")',
+         consequence: 'The bartender obliges, though asking for just water at a packed tapas bar draws a curious look from your friends.',
+       },
+     ],
+     reflectPoints: [
+       'Distinción: c (before e/i) and z are pronounced like the "th" in "think" in Spain — so zumo, cerveza, and gracias all carry that sound. Latin American Spanish doesn\'t make this distinction.',
+       'Vosotros is the everyday informal "you all" in Spain, conjugated uniquely (queréis, sois, tenéis) — Latin America dropped it centuries ago in favor of ustedes for every "you all".',
+       'Tapas culture means small plates shared over drinks, often standing at the bar — a caña (small draft beer) is the classic order.',
+       'Some Spanish cities, especially in the south like Granada, still serve a free tapa with every drink ordered — though this varies by region and is increasingly rare in big cities.',
+     ],
+   }},
   {id:'es-c4', title:'Ciudad de México, la megaciudad', category:'Geography', difficulty:'beginner', country:'es-MX',
    target:['s70'],
    text:"Ciudad de México fue construida sobre Tenochtitlan, la capital azteca, en un lago que ya no existe. Hoy es una de las ciudades más grandes del mundo, con más de 20 millones de personas en su área metropolitana. El Zócalo, su plaza central, es una de las plazas públicas más grandes del planeta.",

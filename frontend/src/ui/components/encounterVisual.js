@@ -120,6 +120,36 @@ const MOTIFS = {
       </g>
     </svg>
   `,
+  'madrid-tapas-bar': `
+    <svg viewBox="0 0 400 190" class="encounter-visual" role="img" aria-label="A silhouette of a crowded tapas bar counter with hanging cured hams and glasses">
+      <defs>
+        <linearGradient id="sky5" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1c140f"/>
+          <stop offset="100%" stop-color="#2e2016"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="400" height="190" fill="url(#sky5)"/>
+      <g fill="#140d09" opacity="0.85">
+        <path d="M60,20 L80,55 L76,60 L64,60 L60,55 Z"/>
+        <path d="M110,20 L130,55 L126,60 L114,60 L110,55 Z"/>
+        <path d="M160,20 L180,55 L176,60 L164,60 L160,55 Z"/>
+      </g>
+      <g stroke="#140d09" stroke-width="1.4" opacity="0.7">
+        <line x1="70" y1="5" x2="70" y2="20"/>
+        <line x1="120" y1="5" x2="120" y2="20"/>
+        <line x1="170" y1="5" x2="170" y2="20"/>
+      </g>
+      <path d="M0,120 L400,120 L400,190 L0,190 Z" fill="#0f0a07"/>
+      <rect x="0" y="112" width="400" height="10" fill="#1c140f"/>
+      <g fill="#1c140f" opacity="0.9">
+        <rect x="30" y="90" width="16" height="24" rx="2"/>
+        <rect x="60" y="85" width="16" height="29" rx="2"/>
+        <rect x="300" y="88" width="14" height="26" rx="2"/>
+        <rect x="330" y="92" width="14" height="22" rx="2"/>
+      </g>
+      <ellipse cx="200" cy="100" rx="130" ry="10" fill="#0f0a07" opacity="0.6"/>
+    </svg>
+  `,
 };
 
 export function encounterVisualHtml(motif) {
