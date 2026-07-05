@@ -58,7 +58,34 @@ export const GA_CAPSULES = [
   {id:'c14', year:1845, title:'An Gorta Mór — The Great Famine', category:'History', difficulty:'intermediate',
    target:['w171','w172','w173'],
    text:"An Gorta Mór — the Great Famine, or Great Hunger — devastated Ireland from 1845 to 1852 after potato blight destroyed the crop most of the rural poor depended on. Around one million people died of ocras (hunger) and disease, and over a million more left on imirce — emigration. Ireland's population has still not returned to its pre-famine level, and the Famine dealt a heavy blow to the Irish language, which was strongest in the poorest regions.",
-   quiz:{q:'What does imirce mean?', options:['Emigration','Hunger','A potato','A government'], answer:0}},
+   quiz:{q:'What does imirce mean?', options:['Emigration','Hunger','A potato','A government'], answer:0},
+   // A fuller "Living Encounter" treatment for this one capsule, as a
+   // blueprint — see ui/views/lesson.js. Illustrative composite grounded in
+   // well-documented historical patterns (coffin ships, chain migration,
+   // workhouse and famine-road mortality), not a specific verified family;
+   // said so explicitly in the UI rather than implying it's a real account.
+   encounter: {
+     visual: 'famine-coast',
+     observeTitle: 'Spring, 1847 — near Skibbereen',
+     observeNote: 'An illustrative scene grounded in real, well-documented patterns of the time — not a specific historical record.',
+     observe: "It is the spring of 1847 — ‘Black ’47,’ people already call it. For the second year running, the potato crop has rotted in the ground. Ocras (hunger) has become the shape of every day in your family's cottage. Your mother has said little since your youngest brother died last month; the parish coffin was reused, as it so often is now. Down at the harbour, ships are taking those who can afford passage to Sasana (England) or, dearer still, to Meiriceá (America) — neighbours call them ‘coffin ships,’ for how many don't survive the crossing. An Gorta Mór has already emptied three cottages on your boreen. Your family has scraped together just enough for one ticket.",
+     participatePrompt: 'Only one ticket. Who goes?',
+     participateChoices: [
+       {
+         label: 'Send the eldest son — strongest, most likely to survive the crossing and send money back.',
+         consequence: "He survives the crossing and finds dock work in Boston. Within two years he sends home enough to bring over one more sister. Many families who chose this never saw that son again — yours did, decades later, briefly, a grown man with an accent you no longer recognized.",
+       },
+       {
+         label: 'Send the youngest daughter — a cousin in New York has already offered to take her in.',
+         consequence: "She is twelve. She cries the whole way to Cobh and is seasick for most of the six weeks at sea. She arrives frightened and alone, but the cousin keeps her word. It will be nineteen years before any of you see her again — in a photograph, sent home with a letter.",
+       },
+       {
+         label: 'Keep everyone together and stay — sell what remains, try to hold on until the next harvest.',
+         consequence: "You stay. The next harvest is better, but by then two more of the family are gone — to ocras, to fever, to the emigrant ship after all, just a season later than you'd hoped. Staying together didn't mean staying whole.",
+       },
+     ],
+     reflect: "An Gorta Mór (1845–1852) killed roughly one million people and drove over a million more to imirce — around a quarter of Ireland's population, gone within a decade. Some counties, including Cork and Mayo, lost more than a third of their people. The blight struck much of Europe, but only in Ireland did it become mass starvation on this scale — a result of British government policy as much as the crop failure itself, including the continued export of other Irish-grown food during the worst famine years. Ireland's population still hasn't recovered to its pre-Famine level.",
+   }},
   {id:'c15', year:1919, title:'The War of Independence', category:'History', difficulty:'intermediate',
    target:['w174','w181'],
    text:"Cogadh na Saoirse — the War of Independence — was fought between Irish republican forces and British forces from 1919 to 1921. It ended with the Anglo-Irish Treaty, which created the Irish Free State but also led to partition and a bitter civil war among former comrades over the treaty's terms. The word síocháin (peace) carries weight in Irish history precisely because it was so hard-won.",
