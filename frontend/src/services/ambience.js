@@ -16,6 +16,7 @@ const MAX_DURATION_MS = 120000;
 let ctx = null;
 let noiseSource = null;
 let gainNode = null;
+let extraNodes = []; // e.g. an LFO oscillator modulating gain, stopped alongside noiseSource
 let autoStopTimer = null;
 
 function ensureContext() {
@@ -42,8 +43,8 @@ export function startRain() {
   noise.buffer = makeNoiseBuffer(context);
   noise.loop = true;
 
-  // Bandpass + gentle highpass shapes white noise into a rain-like hiss
-  // rather than a flat static wall.
+  // Bandpass shapes white noise into a rain-like hiss rather than a flat
+  // static wall.
   const bandpass = context.createBiquadFilter();
   bandpass.type = 'bandpass';
   bandpass.frequency.value = 3400;
@@ -59,13 +60,51 @@ export function startRain() {
   autoStopTimer = setTimeout(stopAmbience, MAX_DURATION_MS);
 }
 
+export function startWind() {
+  if (noiseSource) return;
+  const context = ensureContext();
+  const noise = context.createBufferSource();
+  noise.buffer = makeNoiseBuffer(context);
+  noise.loop = true;
+
+  // Lowpass gives a duller, breathier texture than rain's bandpass hiss.
+  const lowpass = context.createBiquadFilter();
+  lowpass.type = 'lowpass';
+  lowpass.frequency.value = 480;
+
+  gainNode = context.createGain();
+  gainNode.gain.value = 0;
+
+  // A slow LFO on the gain gives gentle gusting instead of a flat drone.
+  const lfo = context.createOscillator();
+  lfo.frequency.value = 0.09;
+  const lfoDepth = context.createGain();
+  lfoDepth.gain.value = 0.018;
+  lfo.connect(lfoDepth).connect(gainNode.gain);
+  lfo.start();
+
+  noise.connect(lowpass).connect(gainNode).connect(context.destination);
+  noise.start();
+  gainNode.gain.linearRampToValueAtTime(0.045, context.currentTime + 1.8);
+  noiseSource = noise;
+  extraNodes = [lfo];
+
+  autoStopTimer = setTimeout(stopAmbience, MAX_DURATION_MS);
+}
+
 export function stopAmbience() {
   if (autoStopTimer) { clearTimeout(autoStopTimer); autoStopTimer = null; }
   if (!noiseSource || !gainNode || !ctx) return;
   const context = ctx;
   const toStop = noiseSource;
+  const toStopExtra = extraNodes;
+  gainNode.gain.cancelScheduledValues(context.currentTime);
   gainNode.gain.linearRampToValueAtTime(0, context.currentTime + 0.8);
-  setTimeout(() => { try { toStop.stop(); } catch { /* already stopped */ } }, 900);
+  setTimeout(() => {
+    try { toStop.stop(); } catch { /* already stopped */ }
+    toStopExtra.forEach((n) => { try { n.stop(); } catch { /* already stopped */ } });
+  }, 900);
   noiseSource = null;
   gainNode = null;
+  extraNodes = [];
 }

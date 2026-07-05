@@ -15,22 +15,25 @@
 // treatment. This is additive: Learn/Review/Input/Listen still exist
 // standalone while this unified flow gets validated.
 import { CULTURE_CAPSULES } from '../../data/capsules.js';
+import { WORDS } from '../../data/words.js';
 import { state, saveProgress, registerNewWordLearned } from '../../state/store.js';
 import { buildLessonPlan, planFor } from '../../engine/curriculum.js';
+import { todayDue } from '../../engine/queue.js';
 import { sm2Update, bumpSkill, freshProgress } from '../../engine/sm2.js';
 import { wordCardHtml, bindWordCard } from '../components/wordCard.js';
 import { encounterVisualHtml } from '../components/encounterVisual.js';
 import { speakTargetLanguage } from '../../services/tts.js';
-import { startRain, stopAmbience, isAmbiencePlaying } from '../../services/ambience.js';
+import { startRain, startWind, stopAmbience, isAmbiencePlaying } from '../../services/ambience.js';
 import { linkifyIrish, emptyState } from '../dom.js';
 import { bindHear } from './learn.js';
 
 let plan = null; // {capsule, teachWords, prerequisiteCount} — see engine/curriculum.js
 let teachIndex = 0;
-let stage = 'teach'; // 'observe'/'participate'/'reflect' (encounter only) -> 'teach' -> 'capsule' -> 'quiz' -> 'done'
+let stage = 'teach'; // 'observe'/'participate'/'reflect'/'recap' (encounter only) -> 'teach' -> 'capsule' -> 'quiz' -> 'done'
 let quizChoice = null;
 let participateChoice = null;
-let beatIndex = 0; // how many of the current encounter's beats are revealed
+let runtimeBeats = []; // the encounter's beats, possibly with a "callback" beat prepended (see buildRuntimeBeats)
+let beatIndex = 0; // how many of runtimeBeats are revealed
 let spokenBeatIndex = -1; // guards against re-speaking a beat on every rerender
 let revealedText = new Set(); // indices of dialogue beats whose target-language text has been tapped into view — listen first, read second
 let revealedTranslations = new Set(); // indices of dialogue beats whose English has been tapped into view — read/guess first, translate last
@@ -39,9 +42,22 @@ function hasEncounter() {
   return !!plan?.capsule.encounter;
 }
 
+// "Invisible review": if anything is due, one due word's chunk quietly
+// resurfaces as the first thing in the scene — not a graded drill, just a
+// phrase drifting back before the story starts. Ungraded on purpose; formal
+// review still lives in Workshop.
+function buildRuntimeBeats(e) {
+  const due = todayDue(WORDS, state.progress);
+  if (!due.length) return e.beats;
+  const w = due[Math.floor(Math.random() * due.length)];
+  const callback = { type: 'callback', speaker: 'From your reviews', irish: w.chunk || w.irish, phonetic: w.phonetic, english: w.example_en || w.english };
+  return [callback, ...e.beats];
+}
+
 function resetEncounterState() {
   quizChoice = null;
   participateChoice = null;
+  runtimeBeats = hasEncounter() ? buildRuntimeBeats(plan.capsule.encounter) : [];
   beatIndex = hasEncounter() ? 1 : 0; // reveal the first beat immediately
   spokenBeatIndex = -1;
   revealedText = new Set();
@@ -83,7 +99,16 @@ function finishCapsule() {
   saveProgress();
 }
 
+// Always called for encounter capsules (the plain-capsule fallback flow
+// goes teach -> capsule -> quiz instead). Routes through a "recap" of the
+// full scene, now with everything visible, before the comprehension check —
+// vocabulary emerged from the dialogue, so the dialogue gets to make total
+// sense once more before moving on.
 function afterTeaching() {
+  stage = 'recap';
+}
+
+function afterRecap() {
   stage = plan.capsule.quiz ? 'quiz' : 'done';
   if (!plan.capsule.quiz) finishCapsule();
 }
@@ -142,17 +167,22 @@ function doneStageHtml() {
   `;
 }
 
-function beatHtml(beat, i, isLatest) {
-  const dim = isLatest ? '' : 'opacity:0.55;';
+const BEAT_LABELS = { callback: 'From your reviews' };
+
+function beatHtml(beat, i, isLatest, { alwaysShown = false } = {}) {
+  const dim = isLatest || alwaysShown ? '' : 'opacity:0.55;';
   if (beat.type === 'narration') {
     return `<div style="font-size:13.5px; font-style:italic; color:var(--text-dim); line-height:1.7; ${dim}">${beat.text}</div>`;
   }
+  const speakerLabel = BEAT_LABELS[beat.type] || beat.speaker;
+  const isCallback = beat.type === 'callback';
   // Listen first, read second, translate last: the audio autoplays the
   // moment this beat appears (see bind()), but the text itself — not just
-  // the English — stays behind a tap so there's a real moment to just listen
-  // and guess before falling back to the page.
-  const textShown = revealedText.has(i);
-  const translationShown = revealedTranslations.has(i);
+  // the English — stays behind a tap (unless alwaysShown, used by the
+  // full-scene Recap) so there's a real moment to just listen and guess
+  // before falling back to the page.
+  const textShown = alwaysShown || revealedText.has(i);
+  const translationShown = alwaysShown || revealedTranslations.has(i);
   const body = textShown ? `
     <div style="font-size:15px; line-height:1.6;">${linkifyIrish(beat.irish)}</div>
     ${translationShown
@@ -163,8 +193,9 @@ function beatHtml(beat, i, isLatest) {
   `;
   return `
     <div style="${dim}">
-      <div style="font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:3px;">${beat.speaker}</div>
-      <div class="example-box" style="border-left-color:var(--flag-orange); display:flex; align-items:baseline; gap:8px; justify-content:space-between;">
+      ${isCallback ? `<div style="font-size:12px; font-style:italic; color:var(--text-dim); margin-bottom:6px;">Before the scene begins, a phrase drifts back to you.</div>` : ''}
+      <div style="font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:3px;">${speakerLabel}</div>
+      <div class="example-box" style="border-left-color:${isCallback ? 'var(--gold-dim)' : 'var(--flag-orange)'}; display:flex; align-items:baseline; gap:8px; justify-content:space-between;">
         <div>${body}</div>
         <button class="chunk-tag mono" data-replay-beat="${i}" style="cursor:pointer; border:1px solid rgba(201,162,75,0.35); background:none; flex-shrink:0;">🔊</button>
       </div>
@@ -175,7 +206,7 @@ function beatHtml(beat, i, isLatest) {
 const ENCOUNTER_STEPS = [['observe', 'Observe'], ['participate', 'Participate'], ['reflect', 'Reflect'], ['teach', 'Practice']];
 
 function encounterStepperHtml(currentStage) {
-  const effectiveStage = ['quiz', 'done'].includes(currentStage) ? 'teach' : currentStage;
+  const effectiveStage = ['recap', 'quiz', 'done'].includes(currentStage) ? 'teach' : currentStage;
   const currentIdx = ENCOUNTER_STEPS.findIndex(([id]) => id === effectiveStage);
   return `
     <div class="stage-stepper">
@@ -195,12 +226,19 @@ function senseOfPlaceHtml(lines) {
   `;
 }
 
+const AMBIENCE_KINDS = { rain: { icon: '🌧', label: 'rain', start: startRain }, wind: { icon: '💨', label: 'wind', start: startWind } };
+const VISIBLE_BEATS = 2; // cap how much of the scene stays on screen at once — the full scene reappears in Recap
+
 function observeStageHtml(e) {
-  const revealed = e.beats.slice(0, beatIndex);
-  const beatsHtml = revealed.map((b, i) => beatHtml(b, i, i === revealed.length - 1)).join('<div style="height:14px;"></div>');
-  const done = beatIndex >= e.beats.length;
-  const ambienceBtn = e.ambience === 'rain'
-    ? `<button class="chunk-tag mono" id="toggleAmbience" style="cursor:pointer; border:1px solid rgba(201,162,75,0.35); background:none; font-size:11px; margin-top:5px;">${isAmbiencePlaying() ? '🔊 Rain playing — stop' : '🌧 Play rain'}</button>`
+  const totalRevealed = beatIndex;
+  const startIdx = Math.max(0, totalRevealed - VISIBLE_BEATS);
+  const beatsHtml = Array.from({ length: totalRevealed - startIdx }, (_, k) => startIdx + k)
+    .map((idx) => beatHtml(runtimeBeats[idx], idx, idx === totalRevealed - 1))
+    .join('<div style="height:14px;"></div>');
+  const done = beatIndex >= runtimeBeats.length;
+  const ambienceKind = AMBIENCE_KINDS[e.ambience];
+  const ambienceBtn = ambienceKind
+    ? `<button class="chunk-tag mono" id="toggleAmbience" style="cursor:pointer; border:1px solid rgba(201,162,75,0.35); background:none; font-size:11px; margin-top:5px;">${isAmbiencePlaying() ? `🔊 ${ambienceKind.label[0].toUpperCase()}${ambienceKind.label.slice(1)} playing — stop` : `${ambienceKind.icon} Play ${ambienceKind.label}`}</button>`
     : '';
   return `
     <div class="card fade-in" style="padding:0; overflow:hidden;">
@@ -214,9 +252,21 @@ function observeStageHtml(e) {
           ${ambienceBtn}
         </div>
         ${senseOfPlaceHtml(e.senseOfPlace)}
-        <div style="margin-top:18px; display:flex; flex-direction:column; gap:14px;">${beatsHtml}</div>
+        ${startIdx > 0 ? `<div style="text-align:center; font-size:11px; color:var(--text-dim); margin-top:16px;">· · ·</div>` : ''}
+        <div style="margin-top:${startIdx > 0 ? '8' : '18'}px; display:flex; flex-direction:column; gap:14px;">${beatsHtml}</div>
         <div class="btn-row"><button class="btn" id="toParticipate">${done ? 'Continue' : 'Go on'}</button></div>
       </div>
+    </div>
+  `;
+}
+
+function recapStageHtml() {
+  const rows = runtimeBeats.map((b, i) => beatHtml(b, i, false, { alwaysShown: true })).join('<div style="height:12px;"></div>');
+  return `
+    <div class="card fade-in">
+      <div style="font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;">The scene, now that you understand it</div>
+      <div style="margin-top:14px; display:flex; flex-direction:column; gap:12px;">${rows}</div>
+      <div class="btn-row"><button class="btn" id="toQuizOrDone">Continue</button></div>
     </div>
   `;
 }
@@ -269,6 +319,8 @@ export function render() {
 
   if (stage === 'teach') return stepper + teachStageHtml();
 
+  if (stage === 'recap') return stepper + recapStageHtml();
+
   if (stage === 'capsule') {
     return `
       <div class="card fade-in">
@@ -288,8 +340,19 @@ export function render() {
 }
 
 function speakBeat(beat) {
-  if (beat.type !== 'line') return;
+  if (beat.type !== 'line' && beat.type !== 'callback') return;
   speakTargetLanguage(beat.irish, beat.phonetic).catch((e) => console.error(e));
+}
+
+// Beats are capped to the last couple on screen (see VISIBLE_BEATS), so
+// each new one lands right where the eye already is — nothing to hunt for
+// below the fold.
+function scrollLatestIntoView() {
+  setTimeout(() => {
+    const btn = document.getElementById('toParticipate') || document.getElementById('toReflect')
+      || document.getElementById('toTeach') || document.getElementById('toQuizOrDone');
+    if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 0);
 }
 
 export function bind(main, rerender) {
@@ -298,13 +361,13 @@ export function bind(main, rerender) {
 
   if (stage === 'observe') {
     const e = c.encounter;
-    const latest = e.beats[beatIndex - 1];
+    const latest = runtimeBeats[beatIndex - 1];
     if (latest && spokenBeatIndex !== beatIndex - 1) {
       spokenBeatIndex = beatIndex - 1;
       setTimeout(() => speakBeat(latest), 200);
     }
     main.querySelectorAll('[data-replay-beat]').forEach((b) => {
-      b.onclick = () => speakBeat(e.beats[parseInt(b.dataset.replayBeat, 10)]);
+      b.onclick = () => speakBeat(runtimeBeats[parseInt(b.dataset.replayBeat, 10)]);
     });
     main.querySelectorAll('[data-reveal-text]').forEach((b) => {
       b.onclick = () => { revealedText.add(parseInt(b.dataset.revealText, 10)); rerender(); };
@@ -314,13 +377,13 @@ export function bind(main, rerender) {
     });
     const ambienceBtn = main.querySelector('#toggleAmbience');
     if (ambienceBtn) ambienceBtn.onclick = () => {
-      if (isAmbiencePlaying()) stopAmbience(); else startRain();
+      if (isAmbiencePlaying()) { stopAmbience(); } else { AMBIENCE_KINDS[e.ambience]?.start(); }
       rerender();
     };
     const toParticipate = main.querySelector('#toParticipate');
     if (toParticipate) toParticipate.onclick = () => {
-      if (beatIndex < e.beats.length) { beatIndex += 1; rerender(); }
-      else { stopAmbience(); stage = 'participate'; rerender(true); }
+      if (beatIndex < runtimeBeats.length) { beatIndex += 1; rerender(); } else { stopAmbience(); stage = 'participate'; rerender(true); }
+      scrollLatestIntoView();
     };
     return;
   }
@@ -334,7 +397,7 @@ export function bind(main, rerender) {
       };
     });
     const toReflect = main.querySelector('#toReflect');
-    if (toReflect) toReflect.onclick = () => { stage = 'reflect'; rerender(true); };
+    if (toReflect) toReflect.onclick = () => { stage = 'reflect'; rerender(true); scrollLatestIntoView(); };
     return;
   }
 
@@ -343,7 +406,14 @@ export function bind(main, rerender) {
     if (toTeach) toTeach.onclick = () => {
       if (plan.teachWords.length) { stage = 'teach'; } else { afterTeaching(); }
       rerender(true);
+      scrollLatestIntoView();
     };
+    return;
+  }
+
+  if (stage === 'recap') {
+    const toQuizOrDone = main.querySelector('#toQuizOrDone');
+    if (toQuizOrDone) toQuizOrDone.onclick = () => { afterRecap(); rerender(true); };
     return;
   }
 

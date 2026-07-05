@@ -107,6 +107,12 @@ export const GA_CAPSULES = [
      observeTitle: 'Spring, 1847 — near Skibbereen',
      teaser: "One ticket. One family. An impossible choice in the spring they were already calling Black '47.",
      observeNote: 'An illustrative scene grounded in real, well-documented patterns of the time — not a specific historical record.',
+     ambience: 'wind',
+     senseOfPlace: [
+       'Wind off the water.',
+       'Turf smoke, thin as it burns.',
+       'A silence where a conversation used to be.',
+     ],
      // A short scene, one beat at a time — narration sets the moment,
      // dialogue carries the target words in an actual exchange between
      // people, each line spoken aloud as it appears. Deliberately short:
