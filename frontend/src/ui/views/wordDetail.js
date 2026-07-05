@@ -1,6 +1,7 @@
 import { state } from '../../state/store.js';
 import { linkifyIrish } from '../dom.js';
 import { activePack } from '../../data/languagePacks.js';
+import { CULTURE_CAPSULES } from '../../data/capsules.js';
 import { uiState } from '../uiState.js';
 import { bindHear } from './learn.js';
 
@@ -10,6 +11,20 @@ function nativeSpeakerLinkHtml(word) {
   const pack = activePack();
   if (!pack.fuaimLink) return '';
   return `<a class="audio-ref" href="${pack.fuaimLink(word)}" target="_blank" rel="noopener">🔊 Hear native speakers on ${pack.dictName} ↗</a>`;
+}
+
+// Museum-style cross-link, the other direction: from a word back to
+// whichever capsule(s) actually taught it, instead of vocabulary living in
+// its own silo separate from where you met it.
+function taughtInHtml(wordId) {
+  const capsules = CULTURE_CAPSULES.filter((c) => c.target?.includes(wordId));
+  if (!capsules.length) return '';
+  return `
+    <div style="margin-top:18px; font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;">You met this word in</div>
+    <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
+      ${capsules.map((c) => `<button class="chunk-tag mono" data-taught-in-capsule="${c.id}" style="cursor:pointer; text-align:left; border:1px solid rgba(201,162,75,0.25); background:none; padding:10px 12px; font-size:13px;">${c.title}</button>`).join('')}
+    </div>
+  `;
 }
 
 export function render() {
@@ -43,6 +58,7 @@ export function render() {
         </div>
         <div style="font-size:11.5px; color:var(--text-dim); margin-top:10px;">Reviewed ${p.repetitions} time${p.repetitions === 1 ? '' : 's'} · next due ${new Date(p.dueDate).toLocaleDateString()} · ease ${p.ease.toFixed(2)}</div>
       ` : `<div style="margin-top:18px; font-size:13px; color:var(--text-dim);">Not started yet — it'll show up on the New Word tab in frequency order.</div>`}
+      ${taughtInHtml(w.id)}
     </div>
   `;
 }
@@ -52,4 +68,14 @@ export function bind(main, rerender) {
   if (backToVocab) backToVocab.onclick = () => { uiState.route = 'vocab'; rerender(true); };
   const hearBtn = main.querySelector('#hearBtn');
   if (hearBtn) bindHear(hearBtn, () => uiState.detailWord);
+  main.querySelectorAll('[data-taught-in-capsule]').forEach((btn) => {
+    btn.onclick = () => {
+      const c = CULTURE_CAPSULES.find((x) => x.id === btn.dataset.taughtInCapsule);
+      if (!c) return;
+      uiState.activeCapsule = c;
+      uiState.capsuleQuizChoice = null;
+      uiState.route = 'capsuleDetail';
+      rerender(true);
+    };
+  });
 }
