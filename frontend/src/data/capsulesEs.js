@@ -30,4 +30,45 @@ export const ES_CAPSULES = [
    target:['s82'],
    text:"Chile es un país extremadamente largo y delgado — más de 4.000 kilómetros de norte a sur — atrapado entre los Andes y el océano Pacífico. En el norte está el desierto de Atacama, el más seco del mundo; en el sur, glaciares y fiordos de la Patagonia. Pocos países tienen tanta variedad geográfica en un solo territorio.",
    quiz:{q:"What is Chile's shape known for?", options:['Extremely long and narrow','Perfectly round','Very small','Mostly islands'], answer:0}},
+  {id:'es-c8', title:'Día de los Muertos', category:'Culture', difficulty:'beginner', country:'es-MX',
+   target:['s137','s136'],
+   text:"El Día de los Muertos (November 1–2) honra a los familiares que han fallecido — not a sad occasion, but a celebration of remembering them. Families build ofrendas (altars) with photos, food, and cempasúchil (marigold) flowers, whose scent is said to guide spirits home for the night. UNESCO declared it Intangible Cultural Heritage in 2008.",
+   quiz:{q:'What does an ofrenda (altar) usually include?', options:['Photos, food, and marigold flowers','Just candles','Nothing, it stays empty','Presents for the living'], answer:0},
+   // Second Living Encounter, first for the Spanish pack — same
+   // beat-by-beat scene format as An Gorta Mór (see capsulesGa.js/
+   // lesson.js), proving the pattern isn't Irish-specific.
+   encounter: {
+     visual: 'ofrenda-table',
+     observeTitle: 'The night before Día de Muertos',
+     observeNote: 'A composite, everyday scene of a tradition practiced across Mexico — not one specific family.',
+     beats: [
+       { type: 'narration', text: "Your family's kitchen table, the night before Día de Muertos. Marigold petals cover the floor." },
+       { type: 'line', speaker: 'Your abuela', irish: 'Vamos a recordar a tu abuelo esta noche.', phonetic: 'BAH-mohs ah reh-kor-DAR ah too ah-BWEH-loh EHS-tah NOH-cheh', english: "We're going to remember your grandfather tonight." },
+       { type: 'line', speaker: 'You', irish: '¿Por qué ponemos su foto en el altar?', phonetic: 'por keh poh-NEH-mohs soo FOH-toh en el al-TAR', english: 'Why do we put his photo on the altar?' },
+       { type: 'line', speaker: 'Your abuela', irish: 'Para que su familia nunca lo olvide.', phonetic: 'PAH-rah keh soo fah-MEE-lyah NOON-kah loh ol-VEE-deh', english: 'So his family never forgets him.' },
+       { type: 'narration', text: 'She lights a candle and sets out his favorite comida — pan de muerto and dark coffee.' },
+       { type: 'line', speaker: 'Your abuela', irish: 'La muerte no es el final si lo recordamos.', phonetic: 'lah MWER-teh noh ehs el fee-NAL see loh reh-kor-DAH-mohs', english: 'Death is not the end if we remember him.' },
+     ],
+     participatePrompt: 'What do you add to the altar?',
+     participateChoices: [
+       {
+         label: 'A handwritten letter to him, telling him about this past year.',
+         consequence: 'Your abuela reads it over your shoulder and cries a little, smiling. She tucks it under his photo — she says he always liked hearing about family news.',
+       },
+       {
+         label: 'His favorite food — the tamales he always asked for.',
+         consequence: 'The kitchen fills with the smell of the tamales he loved. Your abuela says the smell alone brings back more memories of him than anything else could.',
+       },
+       {
+         label: 'A marigold flower collage the kids made at school.',
+         consequence: 'Your abuela pins it above the altar. She says cempasúchil have marked this night for generations — old enough that nobody remembers when it started, only that it never stopped.',
+       },
+     ],
+     reflectPoints: [
+       'Día de los Muertos (Nov 1–2) honors deceased family members — it is a celebration of remembering them, not a mourning ritual.',
+       "Ofrendas (altars) hold photos, favorite foods, and cempasúchil (marigold) flowers, whose scent is believed to guide spirits home for the night.",
+       'Despite the calendar proximity to Halloween, the two have separate origins — this tradition blends Indigenous Mexica (Aztec) practices with Catholic All Souls\' Day.',
+       'UNESCO declared it Intangible Cultural Heritage of Humanity in 2008.',
+     ],
+   }},
 ];

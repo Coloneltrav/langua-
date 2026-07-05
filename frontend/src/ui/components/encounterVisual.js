@@ -32,6 +32,37 @@ const MOTIFS = {
       </g>
     </svg>
   `,
+  'ofrenda-table': `
+    <svg viewBox="0 0 400 190" class="encounter-visual" role="img" aria-label="A silhouette of a home altar with candles, marigold flowers, and a framed photo">
+      <defs>
+        <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#241a14"/>
+          <stop offset="100%" stop-color="#3d2a1a"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="400" height="190" fill="url(#sky2)"/>
+      <path d="M0,150 L400,150 L400,190 L0,190 Z" fill="#1c130e"/>
+      <rect x="60" y="140" width="280" height="10" fill="#1c130e"/>
+      <g opacity="0.9">
+        <path d="M180,138 L200,80 L220,138 Z" fill="#140d09"/>
+        <rect x="196" y="90" width="8" height="48" fill="#241a14"/>
+      </g>
+      <g fill="#c97a2b" opacity="0.85">
+        <circle cx="90" cy="132" r="7"/><circle cx="106" cy="136" r="7"/><circle cx="122" cy="130" r="7"/>
+        <circle cx="278" cy="130" r="7"/><circle cx="294" cy="136" r="7"/><circle cx="310" cy="132" r="7"/>
+      </g>
+      <g transform="translate(140,105)" opacity="0.85">
+        <rect x="0" y="0" width="30" height="9" rx="1.5" fill="#140d09"/>
+        <rect x="2" y="-16" width="3" height="17" fill="#e8a23f"/>
+        <circle cx="3.5" cy="-18" r="3" fill="#e8a23f" opacity="0.6"/>
+      </g>
+      <g transform="translate(230,105)" opacity="0.85">
+        <rect x="0" y="0" width="30" height="9" rx="1.5" fill="#140d09"/>
+        <rect x="24" y="-16" width="3" height="17" fill="#e8a23f"/>
+        <circle cx="25.5" cy="-18" r="3" fill="#e8a23f" opacity="0.6"/>
+      </g>
+    </svg>
+  `,
 };
 
 export function encounterVisualHtml(motif) {

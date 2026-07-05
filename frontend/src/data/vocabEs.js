@@ -141,4 +141,6 @@ export const ES_WORDS = [
   {id:'s133', irish:'¿cómo estás?', english:'how are you?', pos:'phrase', example_ga:'Hola, ¿cómo estás?', example_en:'Hi, how are you?', chunk:'¿cómo estás?', freq:133, phonetic:'KOH-moh es-TAHS'},
   {id:'s134', irish:'mucho gusto', english:'nice to meet you', pos:'phrase', example_ga:'Mucho gusto, me llamo Ana.', example_en:"Nice to meet you, I'm Ana.", chunk:'mucho gusto', freq:134, phonetic:'MOO-choh GOOS-toh'},
   {id:'s135', irish:'de nada', english:"you're welcome", pos:'phrase', example_ga:'—Gracias. —De nada.', example_en:"'Thanks.' 'You're welcome.'", chunk:'de nada', freq:135, phonetic:'deh NAH-dah'},
+  {id:'s136', irish:'recordar', english:'to remember', pos:'verb', example_ga:'Siempre la voy a recordar.', example_en:"I will always remember her.", chunk:'recordar a alguien', freq:136, phonetic:'reh-kor-DAR'},
+  {id:'s137', irish:'abuela', english:'grandmother', pos:'noun', example_ga:'Mi abuela cocina muy bien.', example_en:'My grandmother cooks very well.', chunk:'mi abuela', freq:137, phonetic:'ah-BWEH-lah'},
 ];

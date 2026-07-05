@@ -119,7 +119,7 @@ export const ES_REGIONAL_VOCAB = {
     {concept:'guy/dude', term:'parce', note:'very Colombian, roughly "buddy/mate"'},
     {concept:'car', term:'carro', note:'like most of Latin America, not "coche"'},
     {concept:'money (slang)', term:'plata', note:'widely used informally for money'},
-    {concept:'thanks a lot', term:'muchas gracias', note:'often shortened to just "gracias, pues"'},
+    {concept:'sorry / excuse me', term:'qué pena', note:'the standard Colombian way to apologize — not "lo siento"'},
   ],
   'es-CL': [
     {concept:'you know? (filler)', term:'cachai', note:'from "cachar" — extremely characteristic of Chilean speech'},

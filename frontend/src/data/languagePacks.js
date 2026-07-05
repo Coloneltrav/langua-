@@ -11,6 +11,7 @@
 import rawGaWords from '../../../shared/vocab.json';
 import { GA_CAPSULES } from './capsulesGa.js';
 import { ES_WORDS } from './vocabEs.js';
+import { ES_REGIONAL_WORDS } from './vocabEsRegional.js';
 import { ES_CAPSULES } from './capsulesEs.js';
 import { ES_ACCENTS, ES_ACCENT_ORDER, ES_DEFAULT_ACCENT, ES_REGIONAL_VOCAB } from './accentsEs.js';
 import { state } from '../state/store.js';
@@ -56,7 +57,10 @@ export const LANGUAGE_PACKS = {
     dictName: 'WordReference',
     dictLink: (word) => `https://www.wordreference.com/es/en/translation.asp?spen=${encodeURIComponent(word.toLowerCase())}`,
     fuaimLink: null, // no single native-speaker audio site we can link reliably per country
-    getWords: () => ES_WORDS,
+    // Every accent shares the core list, plus a handful of words that
+    // genuinely only exist (or only mean this) in that country — so
+    // switching country changes what you're taught, not just how it sounds.
+    getWords: (accentCode) => [...ES_WORDS, ...(ES_REGIONAL_WORDS[accentCode] || [])],
     getCapsules: (accentCode) => ES_CAPSULES.filter((c) => !c.country || c.country === accentCode),
     getTheme: (accentCode) => (ES_ACCENTS[accentCode] || ES_ACCENTS[ES_DEFAULT_ACCENT]).theme,
   },
