@@ -27,6 +27,11 @@ export const ES_CAPSULES = [
      observeTitle: 'A tapas bar near Plaza Mayor',
      teaser: "Order wrong, laugh it off, and find out why Madrid sounds like nowhere else in the Spanish-speaking world.",
      observeNote: 'A composite, everyday scene of ordinary bar Spanish in Madrid — not a specific real conversation.',
+     senseOfPlace: [
+       'Glasses clinking, three deep at the bar.',
+       'The smell of frying and spilled beer.',
+       "A stranger's shoulder against yours — there's no room to stand alone.",
+     ],
      beats: [
        { type: 'narration', text: 'A tapas bar near Plaza Mayor, Madrid. Saturday evening, the bar three-deep with people.' },
        { type: 'line', speaker: 'Your friend', irish: '¿Qué queréis vosotros?', phonetic: 'keh keh-REH-ees boh-SOH-trohs', english: 'What do you all want?' },
@@ -136,6 +141,11 @@ export const ES_CAPSULES = [
      observeTitle: 'The night before Día de Muertos',
      teaser: 'A grandmother lights candles for the grandfather you never met — and tells you why remembering is the whole point.',
      observeNote: 'A composite, everyday scene of a tradition practiced across Mexico — not one specific family.',
+     senseOfPlace: [
+       'Candlelight, and marigold petals underfoot.',
+       'The smell of pan de muerto, still warm.',
+       'A photograph, looking back at you.',
+     ],
      beats: [
        { type: 'narration', text: "Your family's kitchen table, the night before Día de Muertos. Marigold petals cover the floor." },
        { type: 'line', speaker: 'Your abuela', irish: 'Vamos a recordar a tu abuelo esta noche.', phonetic: 'BAH-mohs ah reh-kor-DAR ah too ah-BWEH-loh EHS-tah NOH-cheh', english: "We're going to remember your grandfather tonight." },

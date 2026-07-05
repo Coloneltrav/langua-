@@ -48,6 +48,11 @@ export const GA_CAPSULES = [
      observeTitle: 'Dublin, Easter Monday, 1916',
      teaser: "Gunfire on the streets outside. A brother who won't stay, and a mother who can't stop him.",
      observeNote: 'An illustrative household scene grounded in real, well-documented events of Easter Week — not a specific verified family.',
+     senseOfPlace: [
+       'Bells, then gunfire, then bells again.',
+       'Boots on cobblestone, somewhere close.',
+       'A pot of tea going cold on the table.',
+     ],
      beats: [
        { type: 'narration', text: 'Dublin, Easter Monday, 1916. Church bells still ring, but gunfire has already started near the GPO.' },
        { type: 'line', speaker: 'Your brother', irish: 'Caithfidh mé dul. Tá mé ag troid ar son saoirse.', phonetic: 'KAH-hee meh dull. Taw meh egg TRID air suhn SEER-sheh', english: "I have to go. I'm fighting for freedom." },
