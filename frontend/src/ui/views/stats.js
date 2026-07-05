@@ -1,10 +1,54 @@
 import { WORDS } from '../../data/words.js';
-import { SAMPLE_TEXTS } from '../../data/sampleTexts.js';
 import { state } from '../../state/store.js';
+import { activePackCode } from '../../data/languagePacks.js';
 import { startedWords, knownCount } from '../../engine/queue.js';
-import { knownWordSet, calcReadiness } from '../../engine/readiness.js';
+import { nextLevel, requirementsFor, currentStats, eligibleForTest } from '../../engine/level.js';
+import { uiState } from '../uiState.js';
 
 const SKILLS = [['recognition', 'Recognition'], ['listening', 'Listening'], ['pronunciation', 'Pronunciation'], ['recall', 'Recall']];
+
+function levelCardHtml() {
+  const confirmed = state.settings.confirmedLevels[activePackCode()] || null;
+  const target = nextLevel(confirmed);
+  if (!target) {
+    return `
+      <div class="card">
+        <div style="font-family:'Cormorant Garamond',serif; font-size:19px;">Level</div>
+        <div style="font-size:24px; margin-top:6px; color:var(--gold-bright);">${confirmed}</div>
+        <div style="font-size:12px; color:var(--text-dim); margin-top:4px;">Top of the current ladder — well done.</div>
+      </div>
+    `;
+  }
+  const req = requirementsFor(target);
+  const stats = currentStats(WORDS, state.progress, state.settings.inputStats);
+  const eligible = eligibleForTest(confirmed, stats);
+  const progressRow = (label, have, need) => {
+    const pct = Math.min(100, Math.round((have / need) * 100));
+    return `
+      <div class="skill-bar-row" style="margin-top:8px;">
+        <div class="label" style="width:120px;">${label}</div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="width:${pct}%"></div></div>
+        <div style="font-size:11.5px; color:var(--text-dim); width:90px; text-align:right;">${have}/${need}</div>
+      </div>`;
+  };
+  return `
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:baseline;">
+        <div style="font-family:'Cormorant Garamond',serif; font-size:19px;">Level</div>
+        <div style="font-size:20px; color:var(--gold-bright);">${confirmed || 'Pre-A1'}</div>
+      </div>
+      <div style="font-size:12px; color:var(--text-dim); margin-top:4px;">Confirmed only by passing an actual test — not just crossing a word count. Progress toward the ${target} test:</div>
+      ${progressRow('Known words', stats.knownWords, req.knownWords)}
+      ${progressRow('Skill average', stats.avgSkill.toFixed(1), req.avgSkill)}
+      ${progressRow('Listening', Math.round(stats.listenMinutes) + 'm', req.listenMinutes + 'm')}
+      <div class="btn-row">
+        ${eligible
+          ? `<button class="btn" id="startLevelTest">Take the ${target} test</button>`
+          : `<span style="font-size:12.5px; color:var(--text-dim);">Keep practicing — the test unlocks once all three are met.</span>`}
+      </div>
+    </div>
+  `;
+}
 
 export function render() {
   const started = startedWords(WORDS, state.progress);
@@ -13,19 +57,13 @@ export function render() {
     const sum = started.reduce((a, w) => a + (state.progress[w.id].skills[skill] || 0), 0);
     return sum / started.length;
   };
-  const known = knownWordSet(WORDS, state.progress);
-  const readinessRows = SAMPLE_TEXTS.map((t) => {
-    const pct = calcReadiness(t.text, known);
-    const cls = pct >= 90 ? 'r-high' : pct >= 70 ? 'r-mid' : 'r-low';
-    return `<div style="margin-top:12px;"><div style="font-family:'Cormorant Garamond',serif; font-size:16px;">${t.title}</div><div style="font-size:12.5px; color:var(--text-dim); margin-top:2px;">${t.text}</div><span class="readiness-pill ${cls}">${pct}% known words</span></div>`;
-  }).join('');
 
   const input = state.settings.inputStats || { listenPlays: 0, listenSeconds: 0, dictationDone: 0, dictationCorrect: 0, shadowDone: 0 };
   const listenMin = input.listenSeconds / 60;
   const dictPct = input.dictationDone ? Math.round((input.dictationCorrect / input.dictationDone) * 100) : null;
 
-  // Coverage by frequency band: how much of everyday Irish (as sampled by
-  // this vocabulary's frequency ordering) the learner already knows.
+  // Coverage by frequency band: how much of the active pack's everyday
+  // vocabulary (as sampled by its frequency ordering) the learner already knows.
   const bands = [
     ['Top 50 most frequent', (w) => w.freq <= 50],
     ['51–100', (w) => w.freq > 50 && w.freq <= 100],
@@ -51,6 +89,7 @@ export function render() {
       <div class="stat"><div class="n">${listenMin >= 60 ? (listenMin / 60).toFixed(1) + 'h' : Math.round(listenMin) + 'm'}</div><div class="l">listening input (${input.listenPlays} plays)</div></div>
       <div class="stat"><div class="n">${dictPct === null ? '—' : dictPct + '%'}</div><div class="l">dictation accuracy (${input.dictationDone} tries) · ${input.shadowDone} shadows</div></div>
     </div>
+    ${levelCardHtml()}
     <div class="card">
       <div style="font-family:'Cormorant Garamond',serif; font-size:19px; margin-bottom:4px;">Coverage by frequency band</div>
       <div style="font-size:12px; color:var(--text-dim); margin-bottom:6px;">The most frequent words do the most work in real speech — fill the top bands first.</div>
@@ -68,14 +107,10 @@ export function render() {
       </div>
       <div style="font-size:11.5px; color:var(--text-dim); margin-top:10px;">Each skill is tracked independently — you can recognize a word by ear before you can produce it, and this app treats those as separate facts rather than one "mastery" number.</div>
     </div>
-    <div class="card">
-      <div style="font-family:'Cormorant Garamond',serif; font-size:19px;">Content readiness (Known Vocabulary Engine)</div>
-      <div style="font-size:12.5px; color:var(--text-dim); margin-top:4px;">Demo against two hand-built sample texts. In the real system this scores against a real graded-reader / dialogue library — sourcing that is the v2 content task.</div>
-      ${readinessRows}
-    </div>
   `;
 }
 
-export function bind() {
-  // Read-only view — nothing to bind.
+export function bind(main, rerender) {
+  const startLevelTest = main.querySelector('#startLevelTest');
+  if (startLevelTest) startLevelTest.onclick = () => { uiState.route = 'levelTest'; rerender(true); };
 }

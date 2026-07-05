@@ -32,11 +32,9 @@ export function render() {
         <span class="readiness-pill ${cls}">${r}% known</span>
       </div>
       <div style="font-family:'Cormorant Garamond',serif; font-size:26px; margin:8px 0 14px 0; color:var(--gold-bright);">${c.title}</div>
-      ${c.encounter ? `
-        <div class="btn-row" style="margin:0 0 16px 0;">
-          <button class="btn" id="startEncounterBtn">Step into this Living Encounter →</button>
-        </div>
-      ` : ''}
+      <div class="btn-row" style="margin:0 0 16px 0;">
+        <button class="btn" id="startEncounterBtn">${c.encounter ? 'Step into this Living Encounter →' : (state.settings.completedCapsules[c.id] ? 'Revisit this lesson' : 'Start this lesson')}</button>
+      </div>
       <div class="example-box" style="border-left-color:var(--flag-orange);">
         <div style="font-size:15px; line-height:1.75;">${linkifyIrish(c.text)}</div>
       </div>

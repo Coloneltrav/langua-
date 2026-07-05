@@ -23,9 +23,10 @@ import * as geography from './views/geography.js';
 import * as capsuleDetail from './views/capsuleDetail.js';
 import * as tutor from './views/tutor.js';
 import * as stats from './views/stats.js';
+import * as levelTest from './views/levelTest.js';
 import * as settings from './views/settings.js';
 
-const VIEWS = { home, lesson, learn, review, input, vocab, wordDetail, quiz, culture, geography, capsuleDetail, tutor, stats, settings };
+const VIEWS = { home, lesson, learn, review, input, vocab, wordDetail, quiz, culture, geography, capsuleDetail, tutor, stats, levelTest, settings };
 
 // Three pillars instead of a flat wall of tabs: Journey is the guided path
 // (what to do today), Workshop is practice you choose for yourself, Library
@@ -52,12 +53,13 @@ const ROUTE_SECTION = {
   home: 'journey', lesson: 'journey', review: 'journey',
   learn: 'workshop', input: 'workshop', quiz: 'workshop', tutor: 'workshop',
   culture: 'library', geography: 'library', vocab: 'library', stats: 'library',
-  wordDetail: 'library', capsuleDetail: 'library',
+  wordDetail: 'library', capsuleDetail: 'library', levelTest: 'library',
 };
 
 function activeTabFor(route) {
   if (route === 'wordDetail') return 'vocab';
   if (route === 'capsuleDetail') return 'culture';
+  if (route === 'levelTest') return 'stats';
   return route;
 }
 

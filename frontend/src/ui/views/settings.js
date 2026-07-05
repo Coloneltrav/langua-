@@ -3,6 +3,7 @@ import { azureAvailableSync, audioDbCoversActivePack } from '../../services/tts.
 import { uiState } from '../uiState.js';
 import { LANGUAGE_PACKS, activePack, activeAccentCode } from '../../data/languagePacks.js';
 import { setPack, setAccent } from '../packSwitch.js';
+import { resetLesson } from './lesson.js';
 
 function languageCardHtml() {
   const pack = activePack();
@@ -162,6 +163,10 @@ export function bind(main, rerender) {
     if (confirm('This clears all learning progress. Are you sure?')) {
       state.progress = {};
       state.settings.newWordsToday = { date: todayKey(), count: 0 };
+      state.settings.completedCapsules = {};
+      state.settings.savedCapsules = {};
+      state.settings.confirmedLevels = {};
+      resetLesson();
       saveProgress();
       uiState.route = 'home';
       rerender(true);

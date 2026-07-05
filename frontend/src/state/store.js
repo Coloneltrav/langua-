@@ -14,6 +14,7 @@ export const state = {
     azureVoice: 'ga-IE-ColmNeural',
     savedCapsules: {},
     completedCapsules: {}, // capsuleId -> true, once its lesson has been finished (engine/curriculum.js)
+    confirmedLevels: {}, // packCode -> 'A1'|'A2'|... , only set once its advancement test is passed (engine/level.js)
     voiceCardDismissed: false,
     apiToken: '', // bearer token for the backend, if the deployment requires one
     anthropicKey: '', // device-only Anthropic key for the static build's direct tutor calls
