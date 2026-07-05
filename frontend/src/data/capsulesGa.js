@@ -46,6 +46,7 @@ export const GA_CAPSULES = [
    encounter: {
      visual: 'dublin-1916',
      observeTitle: 'Dublin, Easter Monday, 1916',
+     teaser: "Gunfire on the streets outside. A brother who won't stay, and a mother who can't stop him.",
      observeNote: 'An illustrative household scene grounded in real, well-documented events of Easter Week — not a specific verified family.',
      beats: [
        { type: 'narration', text: 'Dublin, Easter Monday, 1916. Church bells still ring, but gunfire has already started near the GPO.' },
@@ -104,6 +105,7 @@ export const GA_CAPSULES = [
    encounter: {
      visual: 'famine-coast',
      observeTitle: 'Spring, 1847 — near Skibbereen',
+     teaser: "One ticket. One family. An impossible choice in the spring they were already calling Black '47.",
      observeNote: 'An illustrative scene grounded in real, well-documented patterns of the time — not a specific historical record.',
      // A short scene, one beat at a time — narration sets the moment,
      // dialogue carries the target words in an actual exchange between

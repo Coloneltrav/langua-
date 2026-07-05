@@ -1,52 +1,107 @@
-import { WORDS } from '../../data/words.js';
+// JOURNEY HOME — the cover of the book, not a stats dashboard. Opening the
+// app should surface the next Living Encounter (artwork, title, place/time,
+// a one-line hook) and a single way to continue it. Review/practice numbers
+// still matter, but they're secondary here — that's what Workshop is for.
 import { state, saveProgress } from '../../state/store.js';
-import { todayDue, newAvailable, startedWords, knownCount } from '../../engine/queue.js';
+import { CULTURE_CAPSULES } from '../../data/capsules.js';
+import { buildLessonPlan } from '../../engine/curriculum.js';
+import { todayDue } from '../../engine/queue.js';
+import { WORDS } from '../../data/words.js';
+import { encounterVisualHtml } from '../components/encounterVisual.js';
 import { azureAvailableSync, audioDbCoversActivePack } from '../../services/tts.js';
 import { activePack } from '../../data/languagePacks.js';
 import { uiState } from '../uiState.js';
 
-export function render() {
-  const due = todayDue(WORDS, state.progress).length;
-  const fresh = newAvailable(WORDS, state.progress).length;
-  const known = knownCount(WORDS, state.progress);
-  const started = startedWords(WORDS, state.progress).length;
-  // This card is about Irish's specific situation (no real browser voice
-  // exists, so it falls back to a phonetic-respelling approximation until
-  // the static audio DB is generated) — Spanish's browser-voice fallback is
-  // a genuine native voice, not an approximation, so it doesn't apply.
-  const voiceCard = (activePack().code === 'ga' && !audioDbCoversActivePack() && !azureAvailableSync() && !state.settings.voiceCardDismissed) ? `
-    <div class="card" style="border-color:var(--flag-orange);">
-      <div style="font-family:'Cormorant Garamond',serif; font-size:18px; margin-bottom:6px;">🔊 True Irish pronunciation</div>
-      <div style="font-size:13px; color:var(--text-dim); line-height:1.65;">
-        Right now words are spoken with an <b>approximate</b> voice reading the phonetic respelling. Once this site's <b>pronunciation audio database</b> is generated (real ga-IE Irish neural audio for every word — see the repo's "Generate pronunciation audio" workflow), playback and pronunciation scoring switch to it automatically.
-      </div>
-      <div class="btn-row">
-        <button class="btn secondary" id="dismissVoiceCard">Got it</button>
-      </div>
-    </div>` : '';
+function journeyProgressHtml() {
+  const total = CULTURE_CAPSULES.length;
+  const done = CULTURE_CAPSULES.filter((c) => state.settings.completedCapsules[c.id]).length;
+  const pct = total ? Math.round((done / total) * 100) : 0;
   return `
-    ${voiceCard}
-    <div class="grid2">
-      <div class="stat"><div class="n">${due}</div><div class="l">due for review</div></div>
-      <div class="stat"><div class="n">${Math.min(5, fresh)}</div><div class="l">new words ready today</div></div>
-      <div class="stat"><div class="n">${known}</div><div class="l">words known (rep ≥ 2)</div></div>
-      <div class="stat"><div class="n">${started}</div><div class="l">words started</div></div>
-    </div>
-    <div class="card">
-      <div style="font-family:'Cormorant Garamond',serif; font-size:20px; margin-bottom:8px;">Today's 15 minutes</div>
-      <div style="color:var(--text-dim); font-size:13.5px; line-height:1.6;">
-        Warm‑up review → 5 new words → pronunciation self‑check → mixed review. That's the whole loop — everything else in this app supports it.
+    <div style="margin-top:18px;">
+      <div style="display:flex; justify-content:space-between; font-size:11.5px; color:var(--text-dim);">
+        <span>${done} of ${total} moments explored</span>
+        <span>${pct}%</span>
       </div>
-      <div class="btn-row">
-        ${due > 0 ? `<button class="btn" data-nav="review">Start review (${due})</button>` : ''}
-        ${fresh > 0 ? `<button class="btn ${due > 0 ? 'secondary' : ''}" data-nav="learn">Learn new words</button>` : ''}
-        ${due === 0 && fresh === 0 ? `<span style="color:var(--text-dim); font-size:13.5px;">All caught up — check back later, or browse the AI Tutor.</span>` : ''}
+      <div class="skill-bar-track" style="margin-top:5px;"><div class="skill-bar-fill" style="width:${pct}%"></div></div>
+    </div>
+  `;
+}
+
+function encounterHeroHtml(c) {
+  const e = c.encounter;
+  return `
+    <div class="card fade-in" style="padding:0; overflow:hidden;">
+      ${encounterVisualHtml(e.visual)}
+      <div style="padding:24px;">
+        <div class="pos mono">${e.observeTitle}</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:28px; margin:10px 0 12px 0; color:var(--gold-bright); line-height:1.2;">${c.title}</div>
+        <div style="font-size:15px; line-height:1.7; color:var(--text);">${e.teaser || ''}</div>
+        <div class="btn-row"><button class="btn btn-large" id="continueJourney">Continue the Encounter →</button></div>
+        ${journeyProgressHtml()}
       </div>
     </div>
   `;
 }
 
+function plainLessonHeroHtml(c) {
+  const excerpt = c.text.length > 160 ? c.text.slice(0, 160).trim() + '…' : c.text;
+  return `
+    <div class="card fade-in">
+      <div class="pos mono">${c.category} · ${c.difficulty}</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:26px; margin:10px 0 12px 0; color:var(--gold-bright); line-height:1.2;">${c.title}</div>
+      <div style="font-size:14px; line-height:1.7; color:var(--text-dim);">${excerpt}</div>
+      <div class="btn-row"><button class="btn btn-large" id="continueJourney">Continue the Lesson →</button></div>
+      ${journeyProgressHtml()}
+    </div>
+  `;
+}
+
+function completeStateHtml() {
+  return `
+    <div class="card fade-in" style="text-align:center; padding:40px 20px;">
+      <div class="glyph display" style="font-size:38px; color:var(--gold); margin-bottom:10px;">✓</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:22px; margin-bottom:8px;">Every moment explored</div>
+      <div style="font-size:13.5px; color:var(--text-dim); line-height:1.6;">You've walked through every capsule this pack has. Deepen what you know in Workshop, or check back once more Encounters are added.</div>
+    </div>
+  `;
+}
+
+function secondaryCardHtml() {
+  const due = todayDue(WORDS, state.progress).length;
+  const voiceCard = (activePack().code === 'ga' && !audioDbCoversActivePack() && !azureAvailableSync() && !state.settings.voiceCardDismissed) ? `
+    <div class="card" style="border-color:var(--flag-orange); margin-top:14px;">
+      <div style="font-family:'Cormorant Garamond',serif; font-size:16px; margin-bottom:6px;">🔊 True Irish pronunciation</div>
+      <div style="font-size:12.5px; color:var(--text-dim); line-height:1.6;">
+        Words are currently spoken with an <b>approximate</b> voice reading a phonetic respelling. Once this site's pronunciation audio database is generated, playback switches to real ga-IE audio automatically.
+      </div>
+      <div class="btn-row"><button class="btn secondary" id="dismissVoiceCard">Got it</button></div>
+    </div>` : '';
+  return `
+    <div style="margin-top:18px; padding-top:4px; font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;">Also waiting</div>
+    <div class="card" style="margin-top:8px; padding:16px 20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-size:13.5px;">${due > 0 ? `${due} review${due === 1 ? '' : 's'} due` : 'Nothing due for review'}</div>
+        ${due > 0 ? `<button class="btn secondary" data-nav="review">Review</button>` : ''}
+      </div>
+    </div>
+    ${voiceCard}
+  `;
+}
+
+export function render() {
+  const plan = buildLessonPlan(CULTURE_CAPSULES, state.progress, state.settings.completedCapsules);
+  if (!plan) return completeStateHtml() + secondaryCardHtml();
+  const c = plan.capsule;
+  const hero = c.encounter ? encounterHeroHtml(c) : plainLessonHeroHtml(c);
+  return hero + secondaryCardHtml();
+}
+
 export function bind(main, rerender) {
+  const continueBtn = main.querySelector('#continueJourney');
+  if (continueBtn) continueBtn.onclick = () => {
+    uiState.route = 'lesson';
+    rerender(true);
+  };
   const dismissVoiceCard = main.querySelector('#dismissVoiceCard');
   if (dismissVoiceCard) dismissVoiceCard.onclick = () => {
     state.settings.voiceCardDismissed = true;

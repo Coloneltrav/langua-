@@ -98,7 +98,7 @@ function teachStageHtml() {
   const isPrereq = teachIndex < plan.prerequisiteCount;
   const label = hasEncounter() ? 'Now that you\'ve met it in context' : (isPrereq ? 'Needed first' : "Today's new word");
   return `
-    <div class="card" style="margin-bottom:0; padding:14px 18px;">
+    <div class="card fade-in" style="margin-bottom:0; padding:14px 18px;">
       <div style="font-size:11.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;">
         ${label} · word ${teachIndex + 1} of ${plan.teachWords.length} · from &ldquo;${plan.capsule.title}&rdquo;
       </div>
@@ -118,7 +118,7 @@ function quizStageHtml() {
     return `<button class="quiz-option ${cls}" data-lesson-choice="${i}" ${quizChoice != null ? 'disabled' : ''}>${opt}</button>`;
   }).join('');
   return `
-    <div class="card">
+    <div class="card fade-in">
       <div style="font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;">Quick check</div>
       <div style="margin-top:8px; font-size:15px;">${q.q}</div>
       <div style="margin-top:10px;">${optsHtml}</div>
@@ -129,7 +129,7 @@ function quizStageHtml() {
 
 function doneStageHtml() {
   return `
-    <div class="card" style="text-align:center; padding:34px 20px;">
+    <div class="card fade-in" style="text-align:center; padding:34px 20px;">
       <div class="glyph display" style="font-size:38px; color:var(--gold); margin-bottom:8px;">✓</div>
       <div style="font-size:18px; margin-bottom:6px;">Lesson complete — &ldquo;${plan.capsule.title}&rdquo;</div>
       <div style="font-size:13px; color:var(--text-dim); margin-bottom:16px; line-height:1.6;">${plan.teachWords.length} word${plan.teachWords.length === 1 ? '' : 's'} started, one capsule unlocked. They'll keep coming back in Review.</div>
@@ -161,17 +161,31 @@ function beatHtml(beat, i, isLatest) {
   `;
 }
 
+const ENCOUNTER_STEPS = [['observe', 'Observe'], ['participate', 'Participate'], ['reflect', 'Reflect'], ['teach', 'Practice']];
+
+function encounterStepperHtml(currentStage) {
+  const effectiveStage = ['quiz', 'done'].includes(currentStage) ? 'teach' : currentStage;
+  const currentIdx = ENCOUNTER_STEPS.findIndex(([id]) => id === effectiveStage);
+  return `
+    <div class="stage-stepper">
+      ${ENCOUNTER_STEPS.map(([, label], i) => `
+        <div class="stage-step ${i === currentIdx ? 'active' : ''} ${i < currentIdx ? 'done' : ''}"><span class="dot"></span><span class="label">${label}</span></div>
+      `).join('<span class="stage-connector"></span>')}
+    </div>
+  `;
+}
+
 function observeStageHtml(e) {
   const revealed = e.beats.slice(0, beatIndex);
-  const beatsHtml = revealed.map((b, i) => beatHtml(b, i, i === revealed.length - 1)).join('<div style="height:12px;"></div>');
+  const beatsHtml = revealed.map((b, i) => beatHtml(b, i, i === revealed.length - 1)).join('<div style="height:14px;"></div>');
   const done = beatIndex >= e.beats.length;
   return `
-    <div class="card" style="padding:0; overflow:hidden;">
+    <div class="card fade-in" style="padding:0; overflow:hidden;">
       ${encounterVisualHtml(e.visual)}
-      <div style="padding:20px;">
+      <div style="padding:26px 24px;">
         <div class="pos mono">${e.observeTitle}</div>
-        ${e.observeNote ? `<div style="font-size:11px; color:var(--text-dim); margin-top:4px; font-style:italic;">${e.observeNote}</div>` : ''}
-        <div style="margin-top:14px; display:flex; flex-direction:column; gap:12px;">${beatsHtml}</div>
+        ${e.observeNote ? `<div style="font-size:11px; color:var(--text-dim); margin-top:5px; font-style:italic;">${e.observeNote}</div>` : ''}
+        <div style="margin-top:18px; display:flex; flex-direction:column; gap:14px;">${beatsHtml}</div>
         <div class="btn-row"><button class="btn" id="toParticipate">${done ? 'Continue' : 'Go on'}</button></div>
       </div>
     </div>
@@ -188,8 +202,9 @@ export function render() {
   }
 
   const c = plan.capsule;
+  const stepper = hasEncounter() ? encounterStepperHtml(stage) : '';
 
-  if (stage === 'observe') return observeStageHtml(c.encounter);
+  if (stage === 'observe') return stepper + observeStageHtml(c.encounter);
 
   if (stage === 'participate') {
     const e = c.encounter;
@@ -197,13 +212,13 @@ export function render() {
     const choicesHtml = e.participateChoices.map((ch, i) => `
       <button class="quiz-option ${participateChoice === i ? 'correct' : ''}" data-participate-choice="${i}" ${participateChoice != null ? 'disabled' : ''} style="text-align:left; height:auto; line-height:1.5; padding:12px 16px;">${ch.label}</button>
     `).join('');
-    return `
-      <div class="card">
+    return stepper + `
+      <div class="card fade-in">
         <div style="font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;">A decision</div>
-        <div style="margin-top:8px; font-size:16px; font-family:'Cormorant Garamond',serif;">${e.participatePrompt}</div>
-        <div style="margin-top:12px; display:flex; flex-direction:column; gap:8px;">${choicesHtml}</div>
+        <div style="margin-top:10px; font-size:19px; font-family:'Cormorant Garamond',serif; line-height:1.4;">${e.participatePrompt}</div>
+        <div style="margin-top:16px; display:flex; flex-direction:column; gap:8px;">${choicesHtml}</div>
         ${chosen ? `
-          <div class="example-box" style="margin-top:16px; border-left-color:var(--flag-orange);">
+          <div class="example-box fade-in" style="margin-top:16px; border-left-color:var(--flag-orange);">
             <div style="font-size:14px; line-height:1.7;">${linkifyIrish(chosen.consequence)}</div>
           </div>
           <div class="btn-row"><button class="btn" id="toReflect">Continue</button></div>
@@ -214,20 +229,20 @@ export function render() {
 
   if (stage === 'reflect') {
     const points = c.encounter.reflectPoints.map((p) => `<li style="margin-bottom:8px;">${linkifyIrish(p)}</li>`).join('');
-    return `
-      <div class="card">
+    return stepper + `
+      <div class="card fade-in">
         <div style="font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;">What actually happened</div>
-        <ul style="margin:12px 0 0 0; padding-left:18px; font-size:13.5px; line-height:1.6;">${points}</ul>
+        <ul style="margin:14px 0 0 0; padding-left:18px; font-size:13.5px; line-height:1.6;">${points}</ul>
         <div class="btn-row"><button class="btn" id="toTeach">${plan.teachWords.length ? "Learn this lesson's words" : 'Continue'}</button></div>
       </div>
     `;
   }
 
-  if (stage === 'teach') return teachStageHtml();
+  if (stage === 'teach') return stepper + teachStageHtml();
 
   if (stage === 'capsule') {
     return `
-      <div class="card">
+      <div class="card fade-in">
         <div class="pos mono">${c.category} · ${c.difficulty}</div>
         <div style="font-family:'Cormorant Garamond',serif; font-size:26px; margin:8px 0 14px 0; color:var(--gold-bright);">${c.title}</div>
         <div class="example-box" style="border-left-color:var(--flag-orange);">
@@ -238,9 +253,9 @@ export function render() {
     `;
   }
 
-  if (stage === 'quiz' && c.quiz) return quizStageHtml();
+  if (stage === 'quiz' && c.quiz) return stepper + quizStageHtml();
 
-  return doneStageHtml();
+  return stepper + doneStageHtml();
 }
 
 function speakBeat(beat) {

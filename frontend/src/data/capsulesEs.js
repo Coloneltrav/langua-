@@ -25,6 +25,7 @@ export const ES_CAPSULES = [
    encounter: {
      visual: 'madrid-tapas-bar',
      observeTitle: 'A tapas bar near Plaza Mayor',
+     teaser: "Order wrong, laugh it off, and find out why Madrid sounds like nowhere else in the Spanish-speaking world.",
      observeNote: 'A composite, everyday scene of ordinary bar Spanish in Madrid — not a specific real conversation.',
      beats: [
        { type: 'narration', text: 'A tapas bar near Plaza Mayor, Madrid. Saturday evening, the bar three-deep with people.' },
@@ -77,6 +78,7 @@ export const ES_CAPSULES = [
    encounter: {
      visual: 'buenos-aires-cafe',
      observeTitle: 'A café on Avenida Corrientes',
+     teaser: 'Rain on the window, coffee on the table — and a whole grammar lesson hiding in how the waiter asks what you want.',
      observeNote: 'A composite, everyday scene of ordinary café Spanish in Buenos Aires — not a specific real conversation.',
      beats: [
        { type: 'narration', text: 'A café on Avenida Corrientes, Buenos Aires. Rain outside; the windows are fogged.' },
@@ -125,6 +127,7 @@ export const ES_CAPSULES = [
    encounter: {
      visual: 'ofrenda-table',
      observeTitle: 'The night before Día de Muertos',
+     teaser: 'A grandmother lights candles for the grandfather you never met — and tells you why remembering is the whole point.',
      observeNote: 'A composite, everyday scene of a tradition practiced across Mexico — not one specific family.',
      beats: [
        { type: 'narration', text: "Your family's kitchen table, the night before Día de Muertos. Marigold petals cover the floor." },
