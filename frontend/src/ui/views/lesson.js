@@ -16,7 +16,7 @@
 // standalone while this unified flow gets validated.
 import { CULTURE_CAPSULES } from '../../data/capsules.js';
 import { state, saveProgress, registerNewWordLearned } from '../../state/store.js';
-import { buildLessonPlan } from '../../engine/curriculum.js';
+import { buildLessonPlan, planFor } from '../../engine/curriculum.js';
 import { sm2Update, bumpSkill, freshProgress } from '../../engine/sm2.js';
 import { wordCardHtml, bindWordCard } from '../components/wordCard.js';
 import { encounterVisualHtml } from '../components/encounterVisual.js';
@@ -45,6 +45,17 @@ function ensurePlan() {
 
 function currentTeachWord() {
   return plan.teachWords[teachIndex];
+}
+
+// Lets a learner jump straight into a specific capsule's lesson (e.g. from
+// its Culture detail page) instead of waiting for the curriculum queue to
+// reach it on its own.
+export function startCapsule(capsule) {
+  plan = planFor(capsule, state.progress);
+  teachIndex = 0;
+  quizChoice = null;
+  participateChoice = null;
+  stage = hasEncounter() ? 'observe' : (plan.teachWords.length ? 'teach' : 'capsule');
 }
 
 // Read by router.js so the "teach" stage auto-plays its word the same way

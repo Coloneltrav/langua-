@@ -74,6 +74,14 @@ export function nextCapsule(capsules, progress, completed = {}) {
 export function buildLessonPlan(capsules, progress, completed = {}) {
   const capsule = nextCapsule(capsules, progress, completed);
   if (!capsule) return null;
+  return planFor(capsule, progress);
+}
+
+// Same plan shape as buildLessonPlan, but for a specific capsule rather
+// than one chosen by the queue — lets a learner jump straight into a
+// capsule (e.g. from its Culture detail page) instead of waiting for
+// nextCapsule() to reach it.
+export function planFor(capsule, progress) {
   const { missingPrereq, missingTarget } = missingWords(capsule, progress);
   const teachWords = [...missingPrereq, ...missingTarget].map((id) => findWord(id)).filter(Boolean);
   return { capsule, teachWords, prerequisiteCount: missingPrereq.length };

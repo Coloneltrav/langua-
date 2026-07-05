@@ -5,6 +5,7 @@ import { freshProgress } from '../../engine/sm2.js';
 import { linkifyIrish } from '../dom.js';
 import { speakWord } from '../../services/tts.js';
 import { uiState } from '../uiState.js';
+import { startCapsule } from './lesson.js';
 
 export function render() {
   const c = uiState.activeCapsule;
@@ -31,6 +32,11 @@ export function render() {
         <span class="readiness-pill ${cls}">${r}% known</span>
       </div>
       <div style="font-family:'Cormorant Garamond',serif; font-size:26px; margin:8px 0 14px 0; color:var(--gold-bright);">${c.title}</div>
+      ${c.encounter ? `
+        <div class="btn-row" style="margin:0 0 16px 0;">
+          <button class="btn" id="startEncounterBtn">Step into this Living Encounter →</button>
+        </div>
+      ` : ''}
       <div class="example-box" style="border-left-color:var(--flag-orange);">
         <div style="font-size:15px; line-height:1.75;">${linkifyIrish(c.text)}</div>
       </div>
@@ -53,6 +59,13 @@ export function render() {
 export function bind(main, rerender) {
   const backToCulture = main.querySelector('#backToCulture');
   if (backToCulture) backToCulture.onclick = () => { uiState.route = 'culture'; uiState.capsuleQuizChoice = null; rerender(true); };
+
+  const startEncounterBtn = main.querySelector('#startEncounterBtn');
+  if (startEncounterBtn) startEncounterBtn.onclick = () => {
+    startCapsule(uiState.activeCapsule);
+    uiState.route = 'lesson';
+    rerender(true);
+  };
 
   main.querySelectorAll('[data-hear-word]').forEach((chip) => {
     chip.onclick = (e) => {
