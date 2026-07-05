@@ -137,6 +137,13 @@ function renderRoute() {
   const view = VIEWS[uiState.route];
   main.innerHTML = view.render();
   updateHeaderCompact();
+  // A tiny, consistent entrance for every screen — not just the Living
+  // Encounter's hand-tuned card transitions. Re-triggering a CSS animation
+  // on the same element needs a reflow between removing and re-adding the
+  // class, since the browser only replays it on a genuine class change.
+  main.classList.remove('fade-in');
+  void main.offsetWidth;
+  main.classList.add('fade-in');
   const rerender = (alsoTabs) => {
     renderRoute();
     if (alsoTabs) { renderTabs(); renderPillars(); }
