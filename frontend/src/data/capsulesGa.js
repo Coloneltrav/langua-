@@ -57,6 +57,7 @@ export const GA_CAPSULES = [
        { type: 'narration', text: 'Dublin, Easter Monday, 1916. Church bells still ring, but gunfire has already started near the GPO.' },
        { type: 'line', speaker: 'Your brother', irish: 'Caithfidh mé dul. Tá mé ag troid ar son saoirse.', phonetic: 'KAH-hee meh dull. Taw meh egg TRID air suhn SEER-sheh', english: "I have to go. I'm fighting for freedom." },
        { type: 'line', speaker: 'Your mother', irish: 'Fan anseo, le do thoil.', phonetic: 'fon un-SHOH, leh duh HULL', english: 'Stay here, please.' },
+       { type: 'narration', text: "He presses something wrapped in an old coat into your hands before he leaves — his rifle. 'Keep it safe,' he says, and is gone." },
        { type: 'narration', text: 'He goes anyway. By Saturday, the Rising is over — crushed within a week.' },
        { type: 'line', speaker: 'Your brother, from Kilmainham Gaol, days later', irish: 'Ní bhfuaireamar an phoblacht an tseachtain seo. Ach gheobhaimid saoirse fós.', phonetic: 'nee VOO-ur-a-mar un FUB-lukht un CHAHK-tin shuh. Ahkh YOH-vim-id SEER-sheh fohss', english: "We didn't win the republic this week. But we'll still win freedom." },
      ],
@@ -156,6 +157,10 @@ export const GA_CAPSULES = [
        'Blight struck much of Europe, but only in Ireland did it become mass starvation on this scale — British government policy was as responsible as the crop failure, including the continued export of other Irish-grown food during the worst years.',
        "Ireland's population still hasn't recovered to its pre-Famine level.",
      ],
+     primarySource: {
+       text: 'In the first, six famished and ghastly skeletons, to all appearance dead, were huddled in a corner on some filthy straw, their sole covering what seemed a ragged horse-cloth, naked above the knees.',
+       attribution: 'Nicholas Cummins, magistrate, letter describing Skibbereen — published in The Times, 24 December 1846',
+     },
    }},
   {id:'c15', year:1919, title:'The War of Independence', category:'History', difficulty:'intermediate',
    target:['w174','w181'],

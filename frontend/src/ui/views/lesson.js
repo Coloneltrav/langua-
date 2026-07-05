@@ -398,6 +398,7 @@ export function render() {
     const primarySourceHtml = ps ? `
       <div class="primary-source">
         <div class="quote">&ldquo;${ps.text}&rdquo;</div>
+        ${ps.translation ? `<div class="translation">${ps.translation}</div>` : ''}
         <div class="attribution">— ${ps.attribution}</div>
       </div>
     ` : '';

@@ -96,6 +96,7 @@ export const ES_CAPSULES = [
        { type: 'narration', text: 'A café on Avenida Corrientes, Buenos Aires. Rain outside; the windows are fogged.' },
        { type: 'line', speaker: 'The waiter', irish: '¿Qué querés tomar?', phonetic: 'keh keh-ROHS toh-MAR', english: 'What do you want to drink?' },
        { type: 'line', speaker: 'You', irish: 'Quiero un café con leche, por favor.', phonetic: 'kee-EH-roh oon kah-FEH kon LEH-cheh, por fah-VOR', english: 'I want a coffee with milk, please.' },
+       { type: 'narration', text: "It arrives with a small glass of soda water on the side — nobody asked for it. That's just how café con leche comes here, to clear the palate before the first sip." },
        { type: 'line', speaker: 'The waiter', irish: '¿Vos tenés hambre también? Hay medialunas.', phonetic: 'bohs teh-NEHS AHM-breh tam-bee-EN? eye meh-dee-ah-LOO-nahs', english: 'Are you hungry too? We have croissants.' },
        { type: 'narration', text: "You've just heard vos twice — tenés, querés — verb endings you'd never hear in Madrid or Mexico City." },
      ],
@@ -175,5 +176,10 @@ export const ES_CAPSULES = [
        'Despite the calendar proximity to Halloween, the two have separate origins — this tradition blends Indigenous Mexica (Aztec) practices with Catholic All Souls\' Day.',
        'UNESCO declared it Intangible Cultural Heritage of Humanity in 2008.',
      ],
+     primarySource: {
+       text: 'El mexicano frecuenta a la muerte, la burla, la acaricia, duerme con ella, la festeja, es uno de sus juguetes favoritos y su amor permanente.',
+       translation: 'The Mexican is on familiar terms with death, jokes about it, caresses it, sleeps with it, celebrates it; it is one of his favorite toys and his most steadfast love.',
+       attribution: 'Octavio Paz, El laberinto de la soledad (1950)',
+     },
    }},
 ];
