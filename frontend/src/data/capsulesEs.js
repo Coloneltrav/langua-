@@ -48,7 +48,46 @@ export const ES_CAPSULES = [
   {id:'es-c2', title:'21 Countries, One Language', category:'Geography', difficulty:'beginner', country:null,
    target:['s75'],
    text:"Spanish is an official language in 21 países (countries) across four continents — most of Latin America, Spain, and Equatorial Guinea in Africa. It's the world's second most-spoken native language after Mandarin. Accents, slang, and even some grammar (like vos vs. tú) vary widely, but a Spanish speaker from Madrid and one from Mexico City can understand each other easily.",
-   quiz:{q:'Roughly how many countries have Spanish as an official language?', options:['21','5','50','12'], answer:0}},
+   quiz:{q:'Roughly how many countries have Spanish as an official language?', options:['21','5','50','12'], answer:0},
+   // This capsule has no fixed country — the encounter is a language-
+   // exchange meetup where speakers from several países collide over real,
+   // verified regional vocabulary gaps (guagua's two completely different
+   // meanings is the most striking, genuine example) rather than a
+   // generic "Spanish has accents" statement.
+   encounter: {
+     visual: 'intercambio-meetup',
+     observeTitle: 'An intercambio, language exchange night',
+     teaser: 'One word, two completely different meanings — and a table full of people from four countries to prove it.',
+     observeNote: 'A composite language-exchange scene — the specific speakers and event are illustrative, though every word difference described is real.',
+     beats: [
+       { type: 'narration', text: 'An intercambio — a language exchange night — with native Spanish speakers from four different países around one table.' },
+       { type: 'line', speaker: 'A speaker from Cuba', irish: 'Tengo que salir ya, se me va la guagua.', phonetic: 'TEHN-goh keh sah-LEER yah, seh meh vah lah GWAH-gwah', english: "I have to go now, I'll miss the bus." },
+       { type: 'line', speaker: 'A speaker from Chile', irish: '¿Tu guagua? ¿Tienes un bebé?', phonetic: 'too GWAH-gwah? tee-EH-nehs oon beh-BEH', english: 'Your baby? You have a baby?' },
+       { type: 'narration', text: 'The table erupts — guagua means "bus" in Cuba and the Canary Islands, and "baby" in Chile and Ecuador. Same word, two countries, nothing in common at all.' },
+       { type: 'line', speaker: 'A speaker from Mexico', irish: 'Y no hablemos de cómo le decimos al popote — aquí hay como ocho palabras distintas.', phonetic: 'ee noh ah-BLEH-mohs deh KOH-moh leh deh-SEE-mohs al poh-POH-teh — ah-KEE eye KOH-moh OH-choh pah-LAH-brahs dees-TEEN-tahs', english: "And let's not even get into what we call a drinking straw — there are about eight different words at this table alone." },
+     ],
+     participatePrompt: 'Everyone at the table has a different word for the same everyday things. What do you do?',
+     participateChoices: [
+       {
+         label: 'Ask specifically which word your own country of interest uses.',
+         consequence: "Practical, and exactly the right instinct — the word that actually matters for you is whichever one is standard where you're headed, not the other seven.",
+       },
+       {
+         label: 'Try to follow along by context instead of asking directly.',
+         consequence: 'You mostly manage — guagua-as-bus and guagua-as-baby really are that different in context, which is exactly why this kind of mix-up rarely causes real confusion for long.',
+       },
+       {
+         label: 'Just start mentally collecting every regional word you hear tonight.',
+         consequence: "A good habit — this is exactly what this app's own Geography tab tracks per country, for exactly this reason: the same core language, with real local vocabulary layered on top.",
+       },
+     ],
+     reflectPoints: [
+       'Spanish is an official language in 21 countries across four continents, and the world\'s second most-spoken native language after Mandarin.',
+       'Guagua genuinely means two unrelated things depending on the country: "bus" in Cuba, the Dominican Republic, Puerto Rico, and the Canary Islands, but "baby" in Chile, Ecuador, and parts of northern Argentina.',
+       'A drinking straw alone has at least eight common regional names across the Spanish-speaking world — popote, pajita, bombilla, sorbete, pitillo, caña, carrizo, and calimete among them.',
+       'Despite all this local variation, a Spanish speaker from Madrid and one from Mexico City still understand each other easily in ordinary conversation — the differences are real, but they sit on top of one shared language, not underneath separate ones.',
+     ],
+   }},
   {id:'es-c3', title:'Madrid, capital de España', category:'Geography', difficulty:'beginner', country:'es-ES',
    target:['s74'],
    text:"Madrid es la capital de España desde 1561, cuando el rey Felipe II trasladó la corte allí. Está justo en el centro de la península ibérica, la ciudad más alta de Europa Occidental entre las grandes capitales. El Museo del Prado, uno de los mejores museos de arte del mundo, está en Madrid.",

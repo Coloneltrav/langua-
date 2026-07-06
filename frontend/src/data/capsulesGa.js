@@ -180,7 +180,45 @@ export const GA_CAPSULES = [
   {id:'c11', year:1893, title:'The Irish Language Revival', category:'Language', difficulty:'intermediate',
    target:['w166','w167'],
    text:"By the early 1900s, Irish had declined sharply as a spoken language, accelerated by the Great Famine of the 1840s and decades of English-only schooling. Athbheochan na Gaeilge — the Irish language revival — began with groups like Conradh na Gaeilge (founded 1893) and continues today: Irish is an official EU language, compulsory in Irish schools, and the first language of Gaeltacht communities.",
-   quiz:{q:'What does “athbheochan” refer to here?', options:['The revival of the Irish language','A type of county','A Viking settlement','An Irish province'], answer:0}},
+   quiz:{q:'What does “athbheochan” refer to here?', options:['The revival of the Irish language','A type of county','A Viking settlement','An Irish province'], answer:0},
+   // Living Encounter built on a real generational tension: the same
+   // year Conradh na Gaeilge was founded (1893), many older Irish
+   // speakers still carried genuine shame from being punished for the
+   // language as children — documented first-hand in folklore archive
+   // accounts, not just a general claim.
+   encounter: {
+     visual: 'kitchen-1893',
+     observeTitle: 'A family kitchen, 1893',
+     teaser: "You come home excited about a new Irish class in town. Your grandmother's reaction isn't what you expected.",
+     observeNote: 'Grounded in the real founding of Conradh na Gaeilge (1893) and documented first-hand accounts of school punishment for speaking Irish — this household is illustrative, not a verified family.',
+     beats: [
+       { type: 'narration', text: "A family kitchen, 1893. You've just come from a new class run by a group called Conradh na Gaeilge, founded in Dublin only weeks ago." },
+       { type: 'line', speaker: 'You', irish: "D'fhoghlaim mé teanga inniu — an Ghaeilge!", phonetic: "GHOH-lim may TANG-a in-YOO — un GAY-lig", english: 'I learned a language today — Irish!' },
+       { type: 'narration', text: 'Your grandmother goes quiet. She grew up hearing Irish at home — and hearing, from her own father, exactly what it cost him as a boy in school to be caught speaking it.' },
+       { type: 'line', speaker: 'Your grandmother', irish: 'Buaileadh m\'athair as an teanga sin, agus anois tá tusa á foghlaim arís.', phonetic: 'BOO-uh-lah MAH-hir ahss un TANG-a shin, AH-gus uh-NISH taw TUSS-uh aw GHOH-lim uh-REESH', english: 'They beat my father over that language, and now you\'re learning it again.' },
+     ],
+     participatePrompt: "Your grandmother has gone quiet. What does she do next?",
+     participateChoices: [
+       {
+         label: 'She starts teaching you the old songs she still remembers.',
+         consequence: "This is what the revival actually looked like in thousands of households — grandparents becoming the last living link to words their own children had been taught to be ashamed of.",
+       },
+       {
+         label: "She warns you it only ever brought her family trouble.",
+         consequence: "Her caution is real and earned — for her generation, the language was genuinely tied to punishment and shame, not yet to pride. Both things can be true of the same word at once.",
+       },
+       {
+         label: 'She says nothing at all — but you hear her humming an old song later that night.',
+         consequence: "Nothing is resolved out loud, but something shifts anyway. Revivals like this one often moved through households exactly this quietly, one hummed verse at a time.",
+       },
+     ],
+     reflectPoints: [
+       'Conradh na Gaeilge (the Gaelic League) was founded in Dublin on 31 July 1893, by Douglas Hyde along with Eugene O\'Growney, Eoin Mac Néill, and others.',
+       'It followed directly from Hyde\'s influential 1892 speech, "The Necessity for De-Anglicising Ireland," delivered to the Irish National Literary Society that November.',
+       'First-hand accounts collected decades later in Ireland\'s folklore archives describe real tally-stick punishments — a notch cut into a stick for each Irish word a child was overheard speaking, with a strike given for every notch — used in some 19th-century National Schools, though historians caution this wasn\'t one single, uniform government policy.',
+       "Today Irish is an official EU language, compulsory in Irish schools, and the first language of Gaeltacht communities — the revival that began in rooms like this one never fully stopped.",
+     ],
+   }},
   {id:'c12', year:-500, title:'The Celts', category:'History', difficulty:'intermediate',
    target:['w170','w168'],
    text:"The Ceiltigh — the Celts — arrived in Ireland during the Iron Age, roughly 2,500 years ago, bringing the language family that Irish descends from. Celtic Ireland was never one kingdom: it was a patchwork of small territories, each with its own rí (king), bound together by shared law, language, and mythology rather than a single state.",
@@ -368,7 +406,46 @@ export const GA_CAPSULES = [
   {id:'c16', year:1921, title:'Partition', category:'Northern Ireland', difficulty:'intermediate',
    target:['w175'],
    text:"The chríochdheighilt — partition — of Ireland in 1921 divided the island into two jurisdictions: what became the Republic of Ireland, and Northern Ireland, which remained part of the United Kingdom. Partition and its consequences shaped the century that followed, including the Troubles in Northern Ireland (late 1960s–1998), which ended with the Good Friday Agreement. It remains a defining fact of Irish politics, and views on the island's constitutional future continue to differ across communities.",
-   quiz:{q:'What does críochdheighilt mean?', options:['Partition','Freedom','Peace','Republic'], answer:0}},
+   quiz:{q:'What does críochdheighilt mean?', options:['Partition','Freedom','Peace','Republic'], answer:0},
+   // A deliberately non-partisan Living Encounter: the human, practical
+   // consequence of a border drawn along old county lines rather than
+   // around actual communities — grounded in the real Drummully salient
+   // and Clones cases — rather than any argument for or against partition
+   // itself, which the base capsule already notes remains genuinely
+   // contested.
+   encounter: {
+     visual: 'border-farm',
+     observeTitle: 'A farm near the new border, 1921',
+     teaser: "The line on the map follows an old county boundary. It doesn't follow your family's actual farm.",
+     observeNote: "Grounded in real, documented cases like the Drummully salient and Clones, where the new border split communities from their own farmland and markets — this household is illustrative.",
+     beats: [
+       { type: 'narration', text: "A farm near the new border, 1921. Word has come that the line follows the old county boundary — straight through land your family has worked for generations." },
+       { type: 'line', speaker: 'Your father', irish: 'Tá an chríochdheighilt ag dul díreach tríd an bportach s\'againne.', phonetic: 'taw un KREEKH-eye-iltch egg gul JEER-ukh tree un BOR-tukh SAH-gin-yeh', english: "The partition line goes straight through our own bog." },
+       { type: 'narration', text: "Your family's usual market town — where you've sold cattle and bought supplies your whole life — is now across that same line, in the other jurisdiction entirely." },
+       { type: 'line', speaker: 'Your mother', irish: 'Beidh custaim le híoc anois, díreach le dul chuig an margadh.', phonetic: 'bay KUS-tim leh EE-ock uh-NISH, JEER-ukh leh gul hig un MOR-uh-guh', english: 'There will be customs to pay now, just to get to the market.' },
+     ],
+     participatePrompt: "Your family's market town is now across the new border. What do you do?",
+     participateChoices: [
+       {
+         label: 'Keep trading there anyway, despite the new customs stops.',
+         consequence: "This is what plenty of border families actually did — accepting the delay and the paperwork rather than giving up trading relationships built over generations.",
+       },
+       {
+         label: 'Start selling to a town on your own side instead, even though it\'s farther.',
+         consequence: "Also common, and it slowly reshaped which towns thrived and which declined — Clones, cut off from its natural hinterland in Fermanagh, is the case historians point to most.",
+       },
+       {
+         label: 'Submit a petition to the Boundary Commission when it convenes, asking for your area to be reassigned.',
+         consequence: "You join thousands of others doing exactly this in 1925. It changes nothing in the end — the governments involved bury the commission's findings entirely rather than act on them.",
+       },
+     ],
+     reflectPoints: [
+       "The 1921 border mostly followed old county lines, not any survey of where communities, roads, or farms actually sat — it cut through houses, farms, and at least one village.",
+       "The Drummully salient, a pocket of Free State territory home to 63 families and over 400 people, ended up reachable only by passing through Northern Ireland — one of many such anomalies.",
+       'Customs posts appeared on the border in April 1923, limited to just sixteen crossing points for the entire boundary, and farmers had to pay duties simply to move produce across it.',
+       "A Boundary Commission convened in 1925 to review the line, gathering petitions from thousands of affected residents — but its final report was leaked, then buried by agreement of all three governments involved, and wasn't made public until 1968.",
+     ],
+   }},
   {id:'c17', year:2026, title:'How Ireland Is Governed', category:'Politics', difficulty:'intermediate',
    target:['w176','w177','w178','w179'],
    text:"The Republic of Ireland is a parliamentary democracy. The rialtas (government) is led by the Taoiseach — the head of government, comparable to a prime minister. Laws are made in the Dáil (Dáil Éireann), the main chamber of parliament, whose members are called TDs. The uachtarán (president) is the directly elected head of state, with a largely ceremonial and constitutional role. Nearly all Irish political vocabulary is used in Irish even in English-language news — Taoiseach, Dáil, and TD are everyday words in Ireland.",
@@ -382,7 +459,44 @@ export const GA_CAPSULES = [
   {id:'c19', title:'The Wild Western Edge', category:'Geography', difficulty:'beginner',
    target:['w99','w100','w144','w101'],
    text:"Ireland's west coast — where the Gaeltacht mostly survives — is a landscape of farraige (sea), sliabh (mountain) and abhainn (river). Connemara's bogs run down to the Atlantic, and offshore sit islands like the Aran Islands, each an oileán where Irish is the daily language. The rougher, remoter land is part of why the language held on here when it faded in the east.",
-   quiz:{q:'What does "farraige" mean?', options:['Sea','Mountain','River','Island'], answer:0}},
+   quiz:{q:'What does "farraige" mean?', options:['Sea','Mountain','River','Island'], answer:0},
+   // A crossing-to-the-island Living Encounter structured around the
+   // capsule's own four target words in sequence — mountains and a river
+   // on the mainland, the sea crossing, then arrival on the oileán — built
+   // around the real, still-standing Dún Aonghasa fort.
+   encounter: {
+     visual: 'dun-aonghasa-cliff',
+     observeTitle: 'Crossing to Inis Mór',
+     teaser: "A prehistoric fort, three thousand years old, standing right at the edge of a hundred-metre drop — with no fence to stop you going closer.",
+     observeNote: 'A composite crossing-and-visit scene of the real Dún Aonghasa site — the boatman and the specific crossing are illustrative.',
+     beats: [
+       { type: 'narration', text: 'The Connemara coast, where a small abhainn meets the sea. Behind you, the sliabh of Na Beanna Beola — the Twelve Bens — fade into cloud.' },
+       { type: 'line', speaker: 'The boatman', irish: 'Tá an fharraige garbh inniu, ach ní stopfaidh sé sinn.', phonetic: 'taw un AR-i-geh GAR-uv in-YOO, ahkh nee STOP-hee shay shin', english: "The sea is rough today, but it won't stop us." },
+       { type: 'narration', text: "Forty minutes out, the oileán rises out of the water ahead — Inis Mór, largest of the Aran Islands, where Irish is still the language of the shop, the pub, and the schoolyard." },
+       { type: 'line', speaker: 'Your guide, on the island', irish: 'Sin é Dún Aonghasa — trí mhíle bliain d\'aois, agus gan aon fhál ag an imeall.', phonetic: 'shin ay DOON AYN-goo-sah — tree veel BLEE-un DEESH, AH-gus gon ayn AWL egg un IM-al', english: "That's Dún Aonghasa — three thousand years old, and no fence at the edge." },
+     ],
+     participatePrompt: "The path leads right to Dún Aonghasa's cliff edge — a hundred-metre drop, and nothing between you and it. How close do you go?",
+     participateChoices: [
+       {
+         label: 'Right up to the edge, to look straight down.',
+         consequence: "The view is exactly as dramatic as promised — and exactly as unguarded as your guide warned. Thousands of visitors do this safely every year, but the site keeps it deliberately, historically bare.",
+       },
+       {
+         label: 'Close enough to see the drop, but staying well back from the actual lip.',
+         consequence: "You still get the view — a hundred metres of sheer limestone straight to the Atlantic — without testing exactly where the edge gives way.",
+       },
+       {
+         label: "You stay with the inner stone walls and skip the cliff edge entirely.",
+         consequence: "No less real a visit for it — the fort's concentric walls and the stone spikes of its ancient defences are worth the trip on their own.",
+       },
+     ],
+     reflectPoints: [
+       "Dún Aonghasa's first stone enclosure dates to around 1100 BC — Bronze Age construction, added to through the Iron Age.",
+       "It sits on a cliff roughly 100 metres above the Atlantic — with no fence or barrier at the edge, by deliberate choice, to preserve the site as it's always been.",
+       "Its outer defences include a cheval de frise — a field of upright, closely-set limestone spikes — one of the more unusual defensive features surviving from prehistoric Europe.",
+       "The Aran Islands remain part of the Gaeltacht today, where Irish survived as the everyday language in part because the west's rougher, more remote geography — sea, mountain, and island together — slowed the same decline that reached the east far earlier.",
+     ],
+   }},
   {id:'c20', title:'What Place Names Say', category:'Geography', difficulty:'beginner',
    target:['w24','w159','w151','w153'],
    text:"Nearly every place name in Ireland is Irish wearing an English spelling. Baile (town/home) begins hundreds of them — anglicised as 'Bally'. Dublin's Irish name, Baile Átha Cliath, means 'town of the hurdled ford'; Gaillimh (Galway) is a cathair (city) named for its stony river. Reading place names in Irish turns any road sign into a tiny history lesson — signs in the Republic show both languages.",
