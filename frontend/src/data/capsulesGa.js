@@ -6,7 +6,46 @@ export const GA_CAPSULES = [
   {id:'c1', title:'Éire — Ireland', category:'Geography', difficulty:'beginner',
    target:['w143','w144'],
    text:"Éire is the Irish name for Ireland. Ireland is an oileán — an island — sitting in the Atlantic just west of Great Britain. Irish speakers use Éire constantly: it's on coins, passports, and is simply the country's own name for itself.",
-   quiz:{q:'What does “oileán” mean?', options:['Island','County','River','King'], answer:0}},
+   quiz:{q:'What does “oileán” mean?', options:['Island','County','River','King'], answer:0},
+   // A mythology Living Encounter for the most foundational capsule of
+   // all — the actual origin story of the target word "Éire" itself,
+   // from the Lebor Gabála Érenn. Framed explicitly as legend, matching
+   // this pack's established honesty about myth vs. verified history
+   // (see c7 Saint Patrick's own note on the snakes legend).
+   encounter: {
+     visual: 'three-goddesses',
+     observeTitle: 'The Milesians land, in legend',
+     teaser: "Three goddesses, each asking for the same honor — and the choice that gave this island its name.",
+     observeNote: 'This is legend, not verified history — drawn from the Lebor Gabála Érenn, a medieval synthesis of Irish origin myth, not a historical record.',
+     beats: [
+       { type: 'narration', text: "In legend, the Milesians land on this oileán, led by the poet Amhairgin. Before they've gone far, they meet the island's own goddesses, one after another." },
+       { type: 'line', speaker: 'Banba, first to greet them', irish: 'Ainmnígí an t-oileán seo i m\'onóir.', phonetic: 'AN-mee-nee-gee un TIL-awn shuh ih MOH-noor', english: 'Name this island in my honour.' },
+       { type: 'narration', text: 'Amhairgin promises he will remember her. Further on, a second goddess, Fódla, makes the very same request — and gets the very same promise.' },
+       { type: 'line', speaker: 'Ériu, greatest of the three', irish: 'Beidh an t-oileán seo faoi m\'ainmse go deo.', phonetic: 'bay un TIL-awn shuh fway MAN-im-sheh guh joh', english: 'This island will carry my name forever.' },
+     ],
+     participatePrompt: "In the legend, Amhairgin must answer all three goddesses. What does he actually promise?",
+     participateChoices: [
+       {
+         label: "Give the island Ériu's name above the others.",
+         consequence: "This is exactly what the legend says happened — Éire becomes the island's primary name, and centuries later, by way of Old Norse and English, gives us the word \"Ireland\" itself.",
+       },
+       {
+         label: "Give the island Banba's name instead.",
+         consequence: "Not what the legend records — but Banba never fully disappears either. It survives today as a real, still-used poetic name for Ireland, much as \"Albion\" is for Britain.",
+       },
+       {
+         label: 'Promise something to all three, rather than choosing just one.',
+         consequence: "This is closest to what the legend actually says: all three sisters were honoured. Éire simply became the name people reached for first — Banba and Fódla live on as its poetic understudies.",
+       },
+     ],
+     reflectPoints: [
+       "Éire comes from Ériu, one of three sovereignty goddesses — with Banba and Fódla — of the Tuatha Dé Danann in Irish mythology.",
+       "The source for this story is the Lebor Gabála Érenn (\"The Book of the Taking of Ireland\"), a medieval synthesis of legend and pseudo-history, not a historical record.",
+       'Banba and Fódla both survive today as real, still-used poetic names for Ireland, in the same way "Albion" is sometimes used for Britain.',
+       'The English word "Ireland" itself ultimately derives from Ériu, combined with the Germanic word for "land."',
+       "Ireland genuinely is an oileán — an island — sitting in the Atlantic just west of Great Britain.",
+     ],
+   }},
   {id:'c2', title:'The Four Provinces', category:'Geography', difficulty:'beginner',
    target:['w146','w147','w148','w149','w150'],
    text:"Ireland has traditionally been divided into four cúigí — provinces: Cúige Uladh (Ulster) in the north, Cúige Chonnacht (Connacht) in the west, Cúige Laighean (Leinster) in the east, and Cúige Mumhan (Munster) in the south. They aren't official administrative units today, but they're still everywhere — especially in sport, where county teams compete within their cúige.",
@@ -176,7 +215,46 @@ export const GA_CAPSULES = [
   {id:'c10', year:1921, title:'Northern Ireland & the Republic', category:'Northern Ireland', difficulty:'intermediate',
    target:['w163','w164','w165'],
    text:"Ireland's island today has two jurisdictions: Poblacht na hÉireann, the Republic of Ireland, and Tuaisceart Éireann, Northern Ireland, which is part of the United Kingdom. This partition dates to 1921, following the Anglo-Irish Treaty. Both remain distinct stáit today, and the relationship between them continues to be an active, sometimes contested, political topic.",
-   quiz:{q:'What is Tuaisceart Éireann in English?', options:['Northern Ireland','The Republic of Ireland','A Gaeltacht region','A Viking city'], answer:0}},
+   quiz:{q:'What is Tuaisceart Éireann in English?', options:['Northern Ireland','The Republic of Ireland','A Gaeltacht region','A Viking city'], answer:0},
+   // Deliberately present-day and apolitical, unlike c16 Partition's
+   // historical framing — this is what living near the actual line looks
+   // like now: currency, units, and phone networks switching mid-journey,
+   // not a debate about the border's legitimacy, which the base capsule
+   // already flags as genuinely contested rather than something to relitigate.
+   encounter: {
+     visual: 'border-town-today',
+     observeTitle: 'A border town, today',
+     teaser: "Your phone just buzzed \"Welcome to the UK.\" You didn't even notice you'd crossed.",
+     observeNote: 'A composite scene of ordinary cross-border life today — the town and specific person are illustrative.',
+     beats: [
+       { type: 'narration', text: "A border town, present day. You're driving over for petrol, like most weeks — there's no checkpoint, no passport check, just a sign changing from km to mph." },
+       { type: 'line', speaker: 'Your phone', irish: 'Fáilte go dtí an Ríocht Aontaithe. Seans go mbeidh táillí fánaíochta i gceist.', phonetic: 'FAWL-cheh guh jee un REE-okht AYN-tee-heh. shans guh may TAWL-ee FAWN-ee-okh-ta ih GESH-tchin', english: 'Welcome to the United Kingdom. Roaming charges may apply.' },
+       { type: 'narration', text: 'At the pump, prices are posted in pounds sterling, not euro — and the till takes both, though never at quite the rate you\'d like.' },
+       { type: 'line', speaker: 'The cashier', irish: 'Airgead reatha ar bith agat — tógfaidh mé ceachtar acu.', phonetic: 'AR-i-gud RAH-huh air BIH AH-gut — TOHG-hee may KAKH-tar AH-koo', english: "Whatever cash you have — I'll take either." },
+     ],
+     participatePrompt: 'Fuel is noticeably cheaper on this side today. Do you fill up here, in the other jurisdiction\'s currency?',
+     participateChoices: [
+       {
+         label: 'Yes — fill up now, pay in whichever currency you have on you.',
+         consequence: "Completely ordinary behaviour in border towns — fuel and grocery prices shift with the exchange rate on either side, and plenty of routines are built around whichever side happens to be cheaper that week.",
+       },
+       {
+         label: "No — go back and fill up on your own side, to keep it simple.",
+         consequence: "Also completely normal — plenty of people simply prefer not to think about currency and units more than they have to, and it costs you very little either way.",
+       },
+       {
+         label: 'Fill up here, but specifically pay in the "wrong" currency since they take both.',
+         consequence: "They take it, as promised — just not at quite as good a rate as the local currency would get you. A small, routine cost of living this close to two currencies at once.",
+       },
+     ],
+     reflectPoints: [
+       "There's no passport checkpoint at the Ireland–UK land border today — crossing is as simple as driving through, a direct legacy of Good Friday Agreement-era arrangements.",
+       "Northern Ireland uses pounds sterling and measures speed in mph; the Republic uses the euro and km/h — both change the moment you cross, and most border-town shops and petrol stations accept either currency.",
+       "Fuel and grocery prices genuinely shift with the exchange rate on either side, and cross-border shopping trips based on whichever side is cheaper that week are a real, common habit in border towns.",
+       "Phones commonly switch mobile networks automatically at the border, sometimes triggering a roaming notice depending on your provider and plan.",
+       "The relationship between the two jurisdictions remains an active, sometimes contested political question — but for people who live beside the line itself, daily life mostly means practical adjustments like these, not open dispute.",
+     ],
+   }},
   {id:'c11', year:1893, title:'The Irish Language Revival', category:'Language', difficulty:'intermediate',
    target:['w166','w167'],
    text:"By the early 1900s, Irish had declined sharply as a spoken language, accelerated by the Great Famine of the 1840s and decades of English-only schooling. Athbheochan na Gaeilge — the Irish language revival — began with groups like Conradh na Gaeilge (founded 1893) and continues today: Irish is an official EU language, compulsory in Irish schools, and the first language of Gaeltacht communities.",
@@ -455,7 +533,46 @@ export const GA_CAPSULES = [
   {id:'c18', title:'The Three Dialects', category:'Geography', difficulty:'beginner',
    target:['w146','w167','w154'],
    text:"Living Irish comes in three broad flavours, one per Gaeltacht cúige (province): Ulster Irish in Donegal, Connacht Irish in Connemara and Mayo, and Munster Irish in Kerry, Cork and Waterford. They differ in melody and stress more than in vocabulary — the teanga (language) is one, and speakers understand each other. Most learning materials (and this app's audio) use a standard close to Connacht pronunciation.",
-   quiz:{q:'How many main living dialects does Irish have?', options:['Three','One','Seven','Twelve'], answer:0}},
+   quiz:{q:'How many main living dialects does Irish have?', options:['Three','One','Seven','Twelve'], answer:0},
+   // Living Encounter at a summer coláiste (the same kind mentioned in
+   // c22's Gaeltacht capsule) bringing all three dialect regions into one
+   // room, using each region's real, distinct phrase for "how are you"
+   // as concrete, verified proof of the difference — not just an
+   // abstract claim.
+   encounter: {
+     visual: 'colaiste-mixer',
+     observeTitle: 'A summer coláiste, first evening',
+     teaser: 'Three students, three provinces, three different ways of asking the exact same question.',
+     observeNote: 'A composite scene of an Irish-college mixer evening, where students from different Gaeltacht regions genuinely do meet each summer — not one specific coláiste.',
+     beats: [
+       { type: 'narration', text: "A summer coláiste, first evening. Students have arrived from Gaeltacht regions across three different cúigí, and everyone is introducing themselves at once." },
+       { type: 'line', speaker: 'A student from Donegal (Ulster)', irish: 'Cad é mar atá tú?', phonetic: 'kah JAY mar uh-TAW too', english: 'How are you? (literally: what is it like being you?)' },
+       { type: 'line', speaker: 'A student from Kerry (Munster)', irish: 'Conas atá tú? Ní hé sin an chaoi a ndeirimid é sa bhaile.', phonetic: 'KUN-uss uh-TAW too? nee hay shin un khee uh NYER-im-id ay suh WAL-yeh', english: "How are you? That's not how we say it at home." },
+       { type: 'narration', text: "A student from Connemara (Connacht) just laughs and uses her own version, and somehow every single one of them understands every single one of the others perfectly." },
+     ],
+     participatePrompt: "The Kerry student uses a phrase from her own dialect that you've genuinely never heard before. What do you do?",
+     participateChoices: [
+       {
+         label: 'Just ask her directly what it means.',
+         consequence: "She explains happily, and it becomes the running joke of the week — everyone starts collecting each other's regional phrases like souvenirs.",
+       },
+       {
+         label: "Guess from context, since it's still recognisably Irish.",
+         consequence: "You guess right — this is exactly the point: the teanga underneath is one and the same, whatever shape the greeting takes on top of it.",
+       },
+       {
+         label: 'Reply with your own dialect\'s version instead, just to compare.',
+         consequence: "The three of you end up trading all three versions back and forth, laughing at how different they sound for something so simple.",
+       },
+     ],
+     reflectPoints: [
+       'Ulster Irish (mainly Donegal) typically greets with "Cad é mar atá tú?" — literally "what is it like being you?"',
+       'Connacht Irish (Connemara, Mayo) typically uses "Cén chaoi a bhfuil tú?" — "what is the way that you are?"',
+       'Munster Irish (Kerry, Cork, Waterford) typically uses "Conas atá tú?" — a more direct "how are you?"',
+       "These are real, distinct regional phrasings for the exact same everyday question — different melody, stress, and some vocabulary, but the same underlying language, understood easily across all three.",
+       "Most learning materials, and this app's own audio, use a standard closer to Connacht pronunciation — one dialect among three living ones, not the only correct version.",
+     ],
+   }},
   {id:'c19', title:'The Wild Western Edge', category:'Geography', difficulty:'beginner',
    target:['w99','w100','w144','w101'],
    text:"Ireland's west coast — where the Gaeltacht mostly survives — is a landscape of farraige (sea), sliabh (mountain) and abhainn (river). Connemara's bogs run down to the Atlantic, and offshore sit islands like the Aran Islands, each an oileán where Irish is the daily language. The rougher, remoter land is part of why the language held on here when it faded in the east.",
@@ -500,7 +617,44 @@ export const GA_CAPSULES = [
   {id:'c20', title:'What Place Names Say', category:'Geography', difficulty:'beginner',
    target:['w24','w159','w151','w153'],
    text:"Nearly every place name in Ireland is Irish wearing an English spelling. Baile (town/home) begins hundreds of them — anglicised as 'Bally'. Dublin's Irish name, Baile Átha Cliath, means 'town of the hurdled ford'; Gaillimh (Galway) is a cathair (city) named for its stony river. Reading place names in Irish turns any road sign into a tiny history lesson — signs in the Republic show both languages.",
-   quiz:{q:'What does "baile" — the "Bally-" in Irish place names — mean?', options:['Town or home','Mountain','Church','King'], answer:0}},
+   quiz:{q:'What does "baile" — the "Bally-" in Irish place names — mean?', options:['Town or home','Mountain','Church','King'], answer:0},
+   // A road-trip Living Encounter turning the capsule's own point —
+   // bilingual signage as a tiny history lesson — into an actual scene,
+   // reinforcing the "baile" pattern with one more verified real
+   // etymology (Cork/Corcaigh) beyond the two the base text already gives.
+   encounter: {
+     visual: 'bilingual-road-sign',
+     observeTitle: 'A drive south, bilingual signs the whole way',
+     teaser: 'Every green road sign says the same thing twice — once in English, once in a language that\'s quietly telling you what the place actually means.',
+     observeNote: 'A composite driving scene — the two people in the car are illustrative, but every place-name meaning given is real.',
+     beats: [
+       { type: 'narration', text: "A drive south out of the capital. Every road sign carries two names, one above the other, the way they do across the Republic." },
+       { type: 'line', speaker: 'Your passenger', irish: 'Cad é an bhrí atá le "Baile Átha Cliath"?', phonetic: 'kod ay un vree AH-tah leh BAL-yeh AW-ha KLEE-uh', english: 'What does "Baile Átha Cliath" actually mean?' },
+       { type: 'line', speaker: 'You', irish: 'Baile na hÁtha Cliath — baile\'s "town," agus an chuid eile: "town of the hurdled ford."', phonetic: 'BAL-yeh nuh HAW-ha KLEE-uh — BAL-yeh iss town, AH-gus un khid EL-eh', english: 'The town of the hurdled ford — baile means "town," and the rest names the actual river crossing it grew up around.' },
+       { type: 'narration', text: 'A sign for Corcaigh — Cork — passes a while later. It comes from corcach, meaning "marsh": the whole cathair was built on marshy river islands.' },
+     ],
+     participatePrompt: 'A sign flashes past for "Ballyheigue." Going on the pattern you\'ve just learned, what does it likely mean?',
+     participateChoices: [
+       {
+         label: '"Baile" plus a personal or place name — roughly "[someone or something]\'s town."',
+         consequence: "Exactly the right instinct — \"Bally-\" at the front of a name is baile nearly every time, and hundreds of Irish towns follow this same pattern.",
+       },
+       {
+         label: 'Probably just a coincidence, nothing to do with baile.',
+         consequence: "Worth double-checking rather than assuming — with a name this common, \"Bally-\" is baile far more often than it's a coincidence.",
+       },
+       {
+         label: "You're not sure — you ask your passenger to look it up.",
+         consequence: "A fair instinct when genuinely unsure — and in this case, it confirms the same baile pattern holds again.",
+       },
+     ],
+     reflectPoints: [
+       'Baile ("home" or "town") begins hundreds of Irish place names, anglicised in English as "Bally-".',
+       'Dublin\'s Irish name, Baile Átha Cliath, literally means "town of the hurdled ford" — naming the actual river crossing the city grew up around.',
+       'Gaillimh (Galway) is named for its stony river; Corcaigh (Cork) comes from corcach, "marsh," describing the marshy river islands the city was originally built on.',
+       'Road signs across the Republic of Ireland show both the Irish and English name together — nearly every one of them is quietly naming a real geographic or historical feature, not just a label.',
+     ],
+   }},
   {id:'c21', title:'Weather off the Atlantic', category:'Geography', difficulty:'beginner',
    target:['w128','w129','w35','w98'],
    text:"Ireland's weather arrives from the Atlantic: báisteach (rain) in soft persistent forms English barely has words for, gaoth (wind) that shapes the bent trees of the west coast, and a famously changeable spéir (sky). It is rarely truly fuar (cold) — the Gulf Stream keeps winters mild — which is why the island stays green enough to earn the name 'the Emerald Isle'. Small talk about weather is a national pastime in both languages.",
