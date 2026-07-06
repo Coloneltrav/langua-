@@ -5,7 +5,46 @@ export const ES_CAPSULES = [
   {id:'es-c1', title:'Vos, tú, or usted?', category:'Language', difficulty:'beginner', country:null,
    target:['s7'],
    text:"Spanish has more than one word for \"you\". Most of the Spanish-speaking world uses tú informally, but Argentina, Uruguay, and much of Central America use vos instead — with its own verb endings (vos tenés, not tú tienes). Nearly everywhere, usted is the polite/formal form, used with strangers, elders, or in business.",
-   quiz:{q:'Which pronoun does Argentina use instead of tú?', options:['vos','usted','vosotros','ustedes'], answer:0}},
+   quiz:{q:'Which pronoun does Argentina use instead of tú?', options:['vos','usted','vosotros','ustedes'], answer:0},
+   // This capsule has no fixed country (it's shown regardless of accent),
+   // so the encounter deliberately teaches the universal formal/informal
+   // axis — usted vs. an informal form — rather than picking one
+   // country's specific grammar, and names the real regional variation
+   // (vos, and Costa Rican "ustedeo") explicitly instead of glossing over it.
+   encounter: {
+     visual: 'gathering-introductions',
+     observeTitle: 'A gathering, somewhere in the Spanish-speaking world',
+     teaser: "Two people, two different registers — and no single rule that works on both of them.",
+     observeNote: 'A composite scene of ordinary introductions — the specific people and place are illustrative, not one real gathering.',
+     beats: [
+       { type: 'narration', text: "A friend's family gathering. You're meeting people one at a time, and every one of them expects a slightly different register." },
+       { type: 'line', speaker: "Your friend's grandmother", irish: 'Mucho gusto. ¿De dónde es usted?', phonetic: 'MOO-choh GOOS-toh. deh DOHN-deh ehs oo-STEHD', english: 'Nice to meet you. Where are you from?' },
+       { type: 'line', speaker: 'You', irish: 'Soy de Irlanda. Mucho gusto, señora.', phonetic: 'soy deh eer-LAHN-dah. MOO-choh GOOS-toh, seh-NYOH-rah', english: "I'm from Ireland. Nice to meet you, ma'am." },
+       { type: 'narration', text: 'Your friend pulls you over to someone your own age a moment later — and the register drops immediately.' },
+       { type: 'line', speaker: "Your friend's cousin", irish: '¡Hola! ¿Y tú, de dónde eres?', phonetic: 'OH-lah! ee too, deh DOHN-deh EH-rehs', english: 'Hi! And you, where are you from?' },
+     ],
+     participatePrompt: "Your friend's father joins in — older than you, but joking and casual. How do you address him?",
+     participateChoices: [
+       {
+         label: 'Use usted, to stay safely respectful given his age.',
+         consequence: "Nobody is ever offended by too much respect. He might gently tell you to relax and use tú instead — a common, friendly correction, not a real misstep.",
+       },
+       {
+         label: 'Match his playful tone and use tú.',
+         consequence: 'He laughs and clearly appreciates it — reading his tone correctly. In a stiffer household, the same move could land as too familiar, but here it works.',
+       },
+       {
+         label: 'Just ask him directly which he prefers.',
+         consequence: '"Como quieras" ("Whatever you like"), he says, smiling — asking directly is completely normal, and usually appreciated rather than seen as awkward.',
+       },
+     ],
+     reflectPoints: [
+       'Almost every Spanish-speaking region has this same two-register system: an informal "you" and a formal usted for strangers, elders, or business — the informal form is what actually changes by country.',
+       'Argentina, Uruguay, and much of Central America use vos instead of tú for the informal register, with its own distinct verb endings.',
+       'Costa Rica, and parts of Colombia, show almost the opposite pattern — "ustedeo," where many speakers use usted even with close friends and family, not only as heightened politeness but as their normal, everyday register.',
+       "When you're genuinely unsure which register fits, matching the other person's own choice — or simply asking — is completely normal and low-risk in practice.",
+     ],
+   }},
   {id:'es-c2', title:'21 Countries, One Language', category:'Geography', difficulty:'beginner', country:null,
    target:['s75'],
    text:"Spanish is an official language in 21 países (countries) across four continents — most of Latin America, Spain, and Equatorial Guinea in Africa. It's the world's second most-spoken native language after Mandarin. Accents, slang, and even some grammar (like vos vs. tú) vary widely, but a Spanish speaker from Madrid and one from Mexico City can understand each other easily.",
@@ -13,7 +52,46 @@ export const ES_CAPSULES = [
   {id:'es-c3', title:'Madrid, capital de España', category:'Geography', difficulty:'beginner', country:'es-ES',
    target:['s74'],
    text:"Madrid es la capital de España desde 1561, cuando el rey Felipe II trasladó la corte allí. Está justo en el centro de la península ibérica, la ciudad más alta de Europa Occidental entre las grandes capitales. El Museo del Prado, uno de los mejores museos de arte del mundo, está en Madrid.",
-   quiz:{q:'What is the capital of Spain?', options:['Madrid','Barcelona','Sevilla','Valencia'], answer:0}},
+   quiz:{q:'What is the capital of Spain?', options:['Madrid','Barcelona','Sevilla','Valencia'], answer:0},
+   // A Geography-category Living Encounter distinct from the Madrid tapas
+   // bar scene (es-c10) — built on the real, genuinely strange
+   // consequence of the 1561 capital move: a housing law that led
+   // Madrid homeowners to build deliberately disguised houses for nearly
+   // 300 years.
+   encounter: {
+     visual: 'madrid-1561-plaza',
+     observeTitle: 'Madrid, 1561 — the year the court arrived',
+     teaser: "The king just made your small town the capital. The very next decree is going to cost you half your house.",
+     observeNote: 'Grounded in the real regalía de aposento law and the "casas a la malicia" it produced — the household itself is illustrative.',
+     beats: [
+       { type: 'narration', text: "Madrid, 1561. A town of maybe twenty thousand people, until this year, when the king moved his entire court here from Toledo. Nobody quite knows why he chose it — he never explained himself." },
+       { type: 'line', speaker: 'The town crier', irish: 'Cada casa debe entregar la mitad de su espacio a un oficial del rey.', phonetic: 'KAH-dah KAH-sah DEH-beh en-treh-GAR lah mee-TAD deh soo ehs-PAH-see-oh ah oon oh-fee-see-AL del ray', english: 'Every house must give up half its space to a royal official.' },
+       { type: 'line', speaker: 'Your neighbour', irish: '¿La mitad de mi casa? Eso no puede ser.', phonetic: 'lah mee-TAD deh mee KAH-sah? EH-soh noh PWEH-deh sehr', english: "Half my house? That can't be right." },
+       { type: 'narration', text: "It is right, and it isn't going away — an inspector is coming next week to measure every ciudad-dweller's house and assign a royal lodger. Some of your neighbours are already quietly making plans." },
+     ],
+     participatePrompt: "The inspector arrives next week to assign you a royal lodger for half your home. What do you do?",
+     participateChoices: [
+       {
+         label: 'Build a second floor disguised from the street — low fake roofline, no proper windows.',
+         consequence: "This is exactly what over a thousand Madrid households actually did — \"casas a la malicia,\" houses built to look like one story from outside while secretly holding two. The trick worked for generations.",
+       },
+       {
+         label: 'Comply honestly and hand over half your house.',
+         consequence: "You keep your standing with the crown, and lose half your living space for as long as the law stays in force — which, as it happens, will be nearly three hundred years.",
+       },
+       {
+         label: 'Pay the crown a portion of your rental income instead of housing anyone.',
+         consequence: 'This was a real alternative — paying roughly a third of what the property could earn in rent, rather than housing an official directly. Costly, but your privacy stays intact.',
+       },
+     ],
+     reflectPoints: [
+       "Felipe II moved Spain's royal court from Toledo to Madrid in 1561 and never recorded his reasons — historians still debate it, pointing to Madrid's central location, its freedom from Toledo's powerful archbishopric, its water supply, and nearby royal hunting grounds.",
+       "The regalía de aposento, decreed the same year, required Madrid homeowners to give up half their house to a royal official, or pay dues instead.",
+       "To dodge it, locals built \"casas a la malicia\" — houses disguised as single-story from the street while secretly holding a hidden second floor — and over a thousand of them eventually stood across the city.",
+       "The law stayed in force for nearly 300 years, only formally repealed in 1845.",
+       'Madrid remains the highest-altitude major capital city in Western Europe, sitting almost exactly at the geographic center of the Iberian Peninsula.',
+     ],
+   }},
   {id:'es-c10', title:'Tapas en Madrid', category:'Language', difficulty:'beginner', country:'es-ES',
    target:['sr-es-6','s17','s138'],
    text:"Peninsular Spanish has two features Latin America doesn't: distinción — pronouncing c (before e/i) and z like the \"th\" in \"think\" — and vosotros, the everyday informal \"you all\" (with its own verb endings: queréis, sois, tenéis), used instead of ustedes for casual groups.",

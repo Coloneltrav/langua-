@@ -184,11 +184,85 @@ export const GA_CAPSULES = [
   {id:'c12', year:-500, title:'The Celts', category:'History', difficulty:'intermediate',
    target:['w170','w168'],
    text:"The Ceiltigh — the Celts — arrived in Ireland during the Iron Age, roughly 2,500 years ago, bringing the language family that Irish descends from. Celtic Ireland was never one kingdom: it was a patchwork of small territories, each with its own rí (king), bound together by shared law, language, and mythology rather than a single state.",
-   quiz:{q:'What did the Celts bring to Ireland that survives today?', options:['The ancestor of the Irish language','The county system','Christianity','The potato'], answer:0}},
+   quiz:{q:'What did the Celts bring to Ireland that survives today?', options:['The ancestor of the Irish language','The county system','Christianity','The potato'], answer:0},
+   // Living Encounter built on the real mechanics of early Irish kingship
+   // — tanistry and the derbfhine — rather than a generic "ancient
+   // Celts" scene. Puts the learner inside the actual succession system
+   // Brehon law describes, with a real, recorded kind of choice.
+   encounter: {
+     visual: 'tuath-gathering',
+     observeTitle: 'A túath in early Celtic Ireland',
+     teaser: "The old rí is dying, and by law it isn't his eldest son who inherits — it's whichever eligible kinsman the derbfhine chooses.",
+     observeNote: "Grounded in the real tanistry and derbfhine succession system described in early Irish law tracts — the specific túath and gathering are illustrative, not one verified event.",
+     beats: [
+       { type: 'narration', text: 'A túath — one of roughly a hundred and fifty small kingdoms across the island. The old rí is dying, and word has gone out to every eligible kinsman.' },
+       { type: 'line', speaker: 'An elder', irish: 'Tá an rí ag fáil bháis. Caithfimid rí nua a thoghadh.', phonetic: 'taw un ree egg fawl vawss. KAH-hee-mid ree noo-ah uh HOH-uh', english: 'The king is dying. We must choose a new king.' },
+       { type: 'narration', text: "It won't simply pass to the old king's eldest son. Every man descended from a shared great-grandfather — the derbfhine — has a claim, and the derbfhine itself will decide." },
+       { type: 'line', speaker: 'Your cousin, also eligible', irish: 'Is mise an fear is fearr, agus tá a fhios agat é.', phonetic: 'iss MISH-eh un far iss far, AH-gus taw ah iss AH-gut ay', english: 'I am the best man, and you know it.' },
+     ],
+     participatePrompt: 'The derbfhine will choose within days. How do you make your own case as an eligible kinsman?',
+     participateChoices: [
+       {
+         label: 'Point to your record in raids and cattle-taking — proven strength.',
+         consequence: "It's a real argument here — martial reputation genuinely counted. Some of the derbfhine are convinced; your cousin now has to answer for his own quieter record.",
+       },
+       {
+         label: 'Spend the coming days building quiet alliances among the derbfhine.',
+         consequence: "This is how it actually worked as often as open contest did — by the time the derbfhine gathers to decide, half of them already owe you something.",
+       },
+       {
+         label: 'Step back and support your cousin, to avoid a fight over it.',
+         consequence: "You lose nothing real — the derbfhine remembers who kept the peace. Annals from the period are full of kin who fought each other over exactly this choice; refusing to is its own kind of reputation.",
+       },
+     ],
+     reflectPoints: [
+       'Early medieval Ireland had roughly 100 to 150 túatha (small kingdoms) at any one time, each with its own rí — there was no single Irish king or unified state.',
+       'Kingship passed by tanistry, not simple father-to-son inheritance: any eligible male across four generations of shared descent — the derbfhine — could be chosen, and often was chosen for ability rather than birth order.',
+       'This flexibility came at a real cost: annals from the period record frequent rivalries, depositions, and violence between kinsmen competing for the same succession.',
+       'Brehon law — a detailed native legal system written down in law tracts by the 7th–8th centuries — governed succession, property, and disputes long before any Norman or English law reached Ireland.',
+     ],
+   }},
   {id:'c13', year:1169, title:'The Normans Arrive', category:'History', difficulty:'intermediate',
    target:['w180'],
    text:"In 1169, the Normannaigh — Normans — landed in Ireland, beginning eight centuries of English and later British involvement in Irish affairs. Over generations, many Norman families became, in the famous phrase, 'more Irish than the Irish themselves,' adopting the Irish language and customs.",
-   quiz:{q:'When did the Normans arrive in Ireland?', options:['1169','795','1916','1845'], answer:0}},
+   quiz:{q:'When did the Normans arrive in Ireland?', options:['1169','795','1916','1845'], answer:0},
+   // Living Encounter on the real, specific 1169 landing — not soldiers
+   // arriving to conquer a stranger's land, but mercenaries invited by
+   // Ireland's own exiled king, which is the detail that actually makes
+   // this moment complicated rather than a simple invasion story.
+   encounter: {
+     visual: 'bannow-bay-landing',
+     observeTitle: 'Bannow Bay, County Wexford — 1 May 1169',
+     teaser: "Foreign ships on the horizon — sent for, not sent against you, by the king you used to answer to.",
+     observeNote: "Grounded in the real landing at Bannow Bay, 1 May 1169 — the villagers themselves are illustrative, not verified individuals.",
+     beats: [
+       { type: 'narration', text: 'Bannow Bay, County Wexford. Ships you don\'t recognise are coming ashore — armoured men, more of them than the beach has seen in your lifetime.' },
+       { type: 'line', speaker: 'A neighbour, pointing', irish: 'Sin iad na Normannaigh. Thug Diarmaid Mac Murchadha anseo iad.', phonetic: 'shin EE-ad nuh NOR-man-igh. hug DEER-mid mock MUR-uh-huh un-SHOH ee-ad', english: 'Those are the Normans. Diarmait Mac Murchada brought them here.' },
+       { type: 'narration', text: "Mac Murchada was your king until two years ago, when the other Irish kings drove him out. He went to Wales and England looking for soldiers, and came back with exactly that." },
+       { type: 'line', speaker: 'Your neighbour', irish: 'Tá sé ag iarraidh a ríocht ar ais. Ach ar phraghas cé mhéad, meas tú?', phonetic: 'taw shay egg EER-ee ah REE-okht air ash. ahkh air PRY-shus kay vayd, mass too', english: "He wants his kingdom back. But at what price, do you think?" },
+     ],
+     participatePrompt: 'Mac Murchada was your rightful king before his exile — now he\'s back, with foreign soldiers behind him. Where do you stand?',
+     participateChoices: [
+       {
+         label: 'Support his return — he is still your king, whoever he brought with him.',
+         consequence: "Plenty of his old subjects felt exactly this. It restores him to Leinster within the year — but the soldiers he brought don't simply leave once the debt is repaid.",
+       },
+       {
+         label: "Refuse — inviting foreign mercenaries onto Irish soil isn't a king's right to spend.",
+         consequence: "History mostly agrees with you in hindsight: this single invitation opens eight centuries of English and later British involvement in Ireland. But in 1169, that's a judgment only later generations get to make.",
+       },
+       {
+         label: "Wait and see which way the wind actually blows.",
+         consequence: "Realistic, and common — most people in Wexford in 1169 had no real say in any of this, and simply waited to find out who'd still be in charge by winter.",
+       },
+     ],
+     reflectPoints: [
+       "Diarmait Mac Murchada, deposed King of Leinster, spent two years in exile seeking help from Norman lords in Wales and, eventually, King Henry II of England.",
+       "The first Norman force landed at Bannow Bay, County Wexford, on 1 May 1169 — the date this capsule's own text uses.",
+       "Richard de Clare — Strongbow — arrived the following year, married Mac Murchada's daughter Aoife, and inherited his claim to Leinster; Henry II then invaded in person in 1171 to keep control of his own Norman lords.",
+       'The phrase "more Irish than the Irish themselves" really does describe later generations of these Norman families assimilating into Gaelic culture — but the phrase itself was actually coined centuries afterward, in the late 1700s, not at the time.',
+     ],
+   }},
   {id:'c14', year:1845, title:'An Gorta Mór — The Great Famine', category:'History', difficulty:'intermediate',
    target:['w171','w172','w173'],
    text:"An Gorta Mór — the Great Famine, or Great Hunger — devastated Ireland from 1845 to 1852 after potato blight destroyed the crop most of the rural poor depended on. Around one million people died of ocras (hunger) and disease, and over a million more left on imirce — emigration. Ireland's population has still not returned to its pre-famine level, and the Famine dealt a heavy blow to the Irish language, which was strongest in the poorest regions.",
