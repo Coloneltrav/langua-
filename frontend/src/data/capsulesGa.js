@@ -49,23 +49,208 @@ export const GA_CAPSULES = [
   {id:'c2', title:'The Four Provinces', category:'Geography', difficulty:'beginner',
    target:['w146','w147','w148','w149','w150'],
    text:"Ireland has traditionally been divided into four cúigí — provinces: Cúige Uladh (Ulster) in the north, Cúige Chonnacht (Connacht) in the west, Cúige Laighean (Leinster) in the east, and Cúige Mumhan (Munster) in the south. They aren't official administrative units today, but they're still everywhere — especially in sport, where county teams compete within their cúige.",
-   quiz:{q:'Which province is in the west?', options:['Cúige Chonnacht (Connacht)','Cúige Uladh (Ulster)','Cúige Laighean (Leinster)','Cúige Mumhan (Munster)'], answer:0}},
+   quiz:{q:'Which province is in the west?', options:['Cúige Chonnacht (Connacht)','Cúige Uladh (Ulster)','Cúige Laighean (Leinster)','Cúige Mumhan (Munster)'], answer:0},
+   // A GAA match-day Living Encounter — the base capsule's own point
+   // (provinces live on through sport) made concrete through the real
+   // structure of the provincial championships, including the genuinely
+   // surprising fact that Ulster GAA itself straddles the modern border.
+   encounter: {
+     visual: 'ulster-final-day',
+     observeTitle: 'An Ulster final, match day',
+     teaser: 'Nine counties, one cup, and a rivalry that runs straight through the same border the last capsule was about.',
+     observeNote: 'A composite match-day scene — the specific final and supporters are illustrative, but the provincial structure described is real.',
+     beats: [
+       { type: 'narration', text: 'An Ulster final, packed stands, county colours everywhere. Your own county went out weeks ago, but you\'re here anyway.' },
+       { type: 'line', speaker: 'Your friend, in a rival county\'s jersey', irish: 'Tá Cúige Uladh iomlán tréan i mbliana.', phonetic: 'taw KOO-geh UL-uh UM-lawn tray-un ih MLEE-un-uh', english: "Ulster is all-out strong this year." },
+       { type: 'narration', text: "Ulster's championship is famously the hardest of the four to win — closer, most years, than Connacht, Leinster, or Munster's own." },
+       { type: 'line', speaker: 'You', irish: 'Nach bhfuil dhá chontae de chuid Chúige Uladh sa Phoblacht?', phonetic: 'nakh vwil GHAW KHUN-tay deh khid KOO-geh UL-uh suh FOB-lukht', english: "Doesn't Ulster's own championship have counties from the Republic in it too?" },
+     ],
+     participatePrompt: "Your own county is long out of the running. Who do you actually support today?",
+     participateChoices: [
+       {
+         label: 'Whichever Ulster county is still in it, rivalry or not.',
+         consequence: "This is genuinely common GAA fan behaviour — cúige loyalty often outlasts county rivalry the moment your own team is out.",
+       },
+       {
+         label: "Whichever team you simply like watching, regardless of province.",
+         consequence: "Also completely normal — plenty of fans follow style of play or a favourite player over strict provincial loyalty once their own county's out.",
+       },
+       {
+         label: "Honestly, you lose a bit of interest once your county's gone.",
+         consequence: "No shame in it — for a lot of fans, the real emotional stake was always their own county, not the province as an abstract idea.",
+       },
+     ],
+     reflectPoints: [
+       'The four cúigí — Ulster (north), Connacht (west), Leinster (east), and Munster (south) — aren\'t official administrative units today, but structure GAA sport completely: every inter-county team competes within its own province before the All-Ireland series.',
+       "Ulster's GAA championship is contested by nine traditional counties — the six counties of Northern Ireland, plus Cavan, Donegal, and Monaghan in the Republic — meaning the sporting province cuts straight across the modern political border.",
+       "Ulster's football championship is widely regarded as the toughest of the four provincial championships to win.",
+       "All-Ireland finals are played at Croke Park in Dublin, with the winning football team lifting the Sam Maguire Cup — and even diaspora clubs from London and New York compete within the Connacht championship structure.",
+     ],
+   }},
   {id:'c3', title:'The Counties', category:'Counties', difficulty:'beginner',
    target:['w145'],
    text:"Ireland is divided into 32 contaetha — counties. 26 make up the Republic of Ireland, and 6 make up Northern Ireland. Counties predate the modern state by centuries and are still the basis for local identity, sports rivalries, and postal addresses.",
-   quiz:{q:'How many counties are on the island of Ireland?', options:['32','4','26','6'], answer:0}},
+   quiz:{q:'How many counties are on the island of Ireland?', options:['32','4','26','6'], answer:0},
+   // Distinct from c2's GAA framing — this Living Encounter goes to the
+   // diaspora instead, where county identity became something practical
+   // and even life-saving: real county associations abroad that
+   // genuinely helped new emigrants find work and housing.
+   encounter: {
+     visual: 'county-association-hall',
+     observeTitle: 'A county association hall, New York',
+     teaser: 'Off the boat one day, and already someone is asking which contae you\'re from — because the answer decides who helps you next.',
+     observeNote: 'A composite scene grounded in the real, documented role of Irish county associations abroad — the specific person and hall are illustrative.',
+     beats: [
+       { type: 'narration', text: "A county association hall, New York. You've been in the city three days, and someone from home told you exactly where to go first." },
+       { type: 'line', speaker: 'A woman at the door', irish: 'Cén contae as ar tháinig tú?', phonetic: 'kayn KUN-tay ass air HAWN-ig too', english: 'What county did you come from?' },
+       { type: 'line', speaker: 'You', irish: 'Ciarraí — an Ríocht, mar a deir siad.', phonetic: 'KEER-ee — un REEKHT, mar uh JER shee-ud', english: 'Kerry — "the Kingdom," as they call it.' },
+       { type: 'narration', text: "She lights up immediately and waves you toward a table of other Kerry people — this is exactly what these county associations have done since the 1840s, one new arrival at a time." },
+     ],
+     participatePrompt: "The association offers to help you find both a job and a room to stay in, starting this week. What do you do?",
+     participateChoices: [
+       {
+         label: 'Accept both gratefully — you barely know the city yet.',
+         consequence: "This is exactly what county associations have done for generations of new arrivals — for many, it was the actual first job and first roof, not just a friendly gesture.",
+       },
+       {
+         label: 'Thank them, but try to manage on your own out of pride.',
+         consequence: "Plenty did exactly this too, and often it worked out fine eventually — though most who accepted the help later said it saved them weeks of struggling alone.",
+       },
+       {
+         label: 'Take the housing help, but look for work yourself.',
+         consequence: 'A common middle ground — a safe place to sleep first, while you find your own footing on the job front at your own pace.',
+       },
+     ],
+     reflectPoints: [
+       "Ireland has 32 contaetha (counties) — 26 in the Republic, 6 in Northern Ireland — predating the modern state by centuries and still central to local identity.",
+       'Counties carry real, well-known nicknames: Kerry is "the Kingdom," Clare is "the Banner County," Galway is "the Tribesmen" — most rooted in centuries-old local history.',
+       "Irish county associations in New York date back to the late 1840s, and around 32 of them are still active today — historically, they were often a new emigrant's very first point of contact for jobs, housing, and community.",
+       "Similar county-based clubs exist in London and other major diaspora cities, still helping new arrivals with the practical business of moving somewhere entirely new.",
+     ],
+   }},
   {id:'c4', title:'Dublin / Baile Átha Cliath', category:'Geography', difficulty:'beginner', province:'laighin',
    target:['w151','w152'],
    text:"Baile Átha Cliath — literally 'town of the hurdled ford' — is the Irish name for Dublin, the príomhchathair (capital city) of the Republic of Ireland. It sits on the east coast, at the mouth of the River Liffey.",
-   quiz:{q:'What is the Irish name for Dublin?', options:['Baile Átha Cliath','Gaillimh','Cúige Laighean','An Ghaeltacht'], answer:0}},
+   quiz:{q:'What is the Irish name for Dublin?', options:['Baile Átha Cliath','Gaillimh','Cúige Laighean','An Ghaeltacht'], answer:0},
+   // Deliberately a different Dublin from c9's 1916 drama and c20's ford
+   // etymology — this Living Encounter is the city's literary side,
+   // built on the real Bloomsday festival, an actual annual event with
+   // its own well-documented customs.
+   encounter: {
+     visual: 'bloomsday-street',
+     observeTitle: 'Bloomsday, 16 June, Dublin',
+     teaser: "The whole city dresses like it's 1904 for one day a year, over a single fictional afternoon that never happened.",
+     observeNote: 'A composite Bloomsday scene grounded in the real annual festival — the specific participants are illustrative.',
+     beats: [
+       { type: 'narration', text: "Bloomsday, 16 June, on the streets of the príomhchathair. Straw boaters and bowler hats everywhere — Dublin dressing as it did in 1904, for one day only." },
+       { type: 'line', speaker: 'A woman in Edwardian dress', irish: 'Tá tú ag leanúint chosán Bloom freisin, nach bhfuil?', phonetic: 'taw too egg LAN-oon KHOH-sawn bloom FRESH-in, nokh vwil', english: "You're following Bloom's route too, aren't you?" },
+       { type: 'narration', text: "You've arrived at Davy Byrne's, a real Dublin pub — and one Joyce actually wrote into Ulysses itself, as the exact place Bloom stops for lunch." },
+       { type: 'line', speaker: 'The bartender', irish: 'An gnáthbhéile, an ea? Ceapaire gorgonzola agus gloine burgundy?', phonetic: 'un GNAW-vay-leh, un ah? KAP-ir-eh gor-gon-ZOH-lah AH-gus GLIN-eh BUR-gun-dee', english: 'The usual, is it? Gorgonzola sandwich and a glass of burgundy?' },
+     ],
+     participatePrompt: "That's the exact meal Bloom eats in the novel, at this exact pub. Do you order it yourself?",
+     participateChoices: [
+       {
+         label: 'Order exactly what Bloom had — the full experience.',
+         consequence: "You're in good company — plenty of Bloomsday regulars order precisely this at Davy Byrne's every 16 June, treating the novel's own menu as tradition.",
+       },
+       {
+         label: "Order something else and just enjoy watching everyone else commit to it.",
+         consequence: "An equally valid way to spend Bloomsday — half the appeal is simply the spectacle of an entire city performing one fictional afternoon together.",
+       },
+       {
+         label: 'Order the meal, and read a line of Ulysses aloud at the bar.',
+         consequence: "A few dedicated enthusiasts do exactly this every year — the bartenders at Davy Byrne's have heard it all before, and don't mind one bit.",
+       },
+     ],
+     reflectPoints: [
+       'Baile Átha Cliath ("town of the hurdled ford") is the príomhchathair (capital city) of Ireland, sitting at the mouth of the River Liffey on the east coast.',
+       'Dublin was named a UNESCO City of Literature in July 2010 — only the fourth city ever given that designation, after Edinburgh, Melbourne, and Iowa City.',
+       "Bloomsday, held every 16 June since 1994, celebrates James Joyce's Ulysses, entirely set on that same date in 1904 — participants often dress in Edwardian costume and retrace the novel's real Dublin locations.",
+       "Davy Byrne's is a real, still-operating Dublin pub that Joyce wrote directly into Ulysses, as the exact place his character Leopold Bloom stops for a gorgonzola sandwich and a glass of burgundy.",
+     ],
+   }},
   {id:'c5', title:'Galway / Gaillimh', category:'Geography', difficulty:'beginner', province:'connachta',
    target:['w153'],
    text:"Gaillimh (Galway) is a city on Ireland's west coast, known for its arts scene, festivals, and closeness to the Connemara Gaeltacht. It's one of the places you're most likely to hear Irish spoken casually on the street.",
-   quiz:{q:'Which part of Ireland is Gaillimh in?', options:['The west','The east','The north','The south'], answer:0}},
+   quiz:{q:'Which part of Ireland is Gaillimh in?', options:['The west','The east','The north','The south'], answer:0},
+   // Living Encounter built on the real, specific Galway International
+   // Oyster Festival — the base capsule's own point about "festivals" made
+   // concrete, and distinct from c19's crossing-to-Aran and c22's
+   // Gaeltacht material already covering nearby Connemara.
+   encounter: {
+     visual: 'oyster-festival',
+     observeTitle: 'The Galway Oyster Festival, a September weekend',
+     teaser: "The world's longest-running oyster festival, and a shucking record that's stood since the 1980s.",
+     observeNote: 'A composite festival scene grounded in the real Galway International Oyster Festival — the specific person and stall are illustrative.',
+     beats: [
+       { type: 'narration', text: "Gaillimh, a September weekend. The oyster festival has been running here since 1954 — the longest-running one in the world — and the whole city smells faintly of the sea." },
+       { type: 'line', speaker: 'A stallholder', irish: 'Bain triail as ceann amháin — díreach ón bhfarraige ar maidin.', phonetic: 'bon TREE-al ass kyoon uh-WAWN — JEER-ukh ohn WAR-i-geh air MOD-in', english: 'Try one — straight from the sea this morning.' },
+       { type: 'narration', text: 'Nearby, a small crowd is timing someone at the shucking table. The world record for opening oysters — thirty in under a minute and a half — was set by an Irishman decades ago and has never been broken.' },
+       { type: 'line', speaker: 'Your friend', irish: 'Ar mhaith leat triail a bhaint as?', phonetic: 'air wah lat TREE-al uh vint ass', english: 'Would you like to give it a try?' },
+     ],
+     participatePrompt: 'Someone hands you a shucking knife, half-joking about the record. What do you do?',
+     participateChoices: [
+       {
+         label: 'Give it a genuine go, however slow you are.',
+         consequence: "You're nowhere close to the record, but the crowd cheers anyway — half the fun of the festival's shucking competition is exactly this, amateurs having a go alongside the real contenders.",
+       },
+       {
+         label: 'Decline, and just enjoy the oysters someone else opens.',
+         consequence: "Most attendees do exactly this — the festival draws far more people to eat oysters than to compete opening them.",
+       },
+       {
+         label: 'Ask to see the technique properly first, then try.',
+         consequence: 'A sensible instinct — oyster shucking is genuinely a skill, and the festival\'s competitors have spent years refining exactly this motion.',
+       },
+     ],
+     reflectPoints: [
+       'Gaillimh (Galway) sits on Ireland\'s west coast, known for its arts scene and closeness to the Connemara Gaeltacht — one of the best places to hear everyday, casual Irish on the street.',
+       'The Galway International Oyster Festival began in 1954, when a local hotel manager was looking for a way to draw visitors during a quiet autumn month — it remains the world\'s longest-running oyster festival today.',
+       "The Irish and World Oyster Opening (shucking) Championships have run at the festival since 1968.",
+       "Irish shucker Willie Moran's record of opening 30 oysters in 1 minute 31 seconds, set in the 1980s, still stands today.",
+     ],
+   }},
   {id:'c6', title:'The Gaeltacht', category:'Gaeltacht', difficulty:'intermediate',
    target:['w154','w155'],
    text:"A Ghaeltacht is a region — mostly along the west coast, in places like Donegal, Connemara, and Kerry — where Irish remains the everyday community language, not just a school subject. Labhraítear Gaeilge sa Ghaeltacht: Irish is spoken in the Gaeltacht, at home and in daily life, by the local pobal (community).",
-   quiz:{q:'What is a Gaeltacht?', options:['A region where Irish is the community language','A type of county','A river','A province'], answer:0}},
+   quiz:{q:'What is a Gaeltacht?', options:['A region where Irish is the community language','A type of county','A river','A province'], answer:0},
+   // Set in Donegal's Gaeltacht for variety alongside c19/c22's Connemara
+   // material — and, unlike those two, faces the harder real statistics
+   // directly: a Gaeltacht is its living pobal, not just a line on an
+   // official map, and that pobal has genuinely been shrinking.
+   encounter: {
+     visual: 'gaoth-dobhair-kitchen',
+     observeTitle: 'Gaoth Dobhair, County Donegal',
+     teaser: "An older neighbour remembers when every house on this road spoke Irish. Not every house does now.",
+     observeNote: 'A composite scene grounded in real, documented Gaeltacht census figures — this household is illustrative.',
+     beats: [
+       { type: 'narration', text: "Gaoth Dobhair, Donegal — one of the strongest Gaeltacht areas left. An older neighbour has dropped in for tea, the way she has for decades." },
+       { type: 'line', speaker: 'Your neighbour', irish: 'Nuair a bhí mise óg, bhí Gaeilge ag gach teach ar an mbóthar seo.', phonetic: 'NOO-ur uh vee MISH-eh ohg, vee GAY-lig egg gokh chakh air un MOH-hur shuh', english: 'When I was young, every house on this road had Irish.' },
+       { type: 'line', speaker: 'You', irish: 'Agus an pobal inniu?', phonetic: 'AH-gus un POB-ul in-YOO', english: 'And the community today?' },
+       { type: 'narration', text: "She pauses. Fewer houses, she admits — but the local naíonra (Irish-language playgroup) is full this year, and a few young families have moved back for the remote-work hub down the road." },
+     ],
+     participatePrompt: "You're a visitor in a real Gaeltacht community that's genuinely stretched thinner than it once was. How do you engage while you're here?",
+     participateChoices: [
+       {
+         label: 'Commit to speaking only Irish while you\'re here, however imperfectly.',
+         consequence: "Locals in genuine Gaeltacht communities consistently say this is exactly what helps most — every honest attempt is one more daily use of the language, however halting.",
+       },
+       {
+         label: 'Mostly listen and observe, worried about getting it wrong.',
+         consequence: "Understandable, but it's worth knowing: in a community actively working to keep the language daily, a well-meant attempt is almost always welcomed over polished silence.",
+       },
+       {
+         label: 'Ask the community directly what actually helps them most.',
+         consequence: "Your neighbour appreciates being asked directly — and the honest answer is usually simple: use the language here, whenever you can, however imperfectly.",
+       },
+     ],
+     reflectPoints: [
+       'Pobal (community) is really what makes a Gaeltacht a Gaeltacht — the official government boundary is a separate, legal thing from the strength of the actual living community speaking Irish daily within it.',
+       'The Gaeltacht Act 2012 created Category A, B, and C areas based on the real percentage of daily Irish speakers, an official acknowledgment that not every area inside the historic Gaeltacht map has an equally strong linguistic community.',
+       "Ireland's 2022 census recorded just over 20,000 people speaking Irish daily within official Gaeltacht boundaries — a real, ongoing decline from previous censuses.",
+       "Alongside that decline, real countervailing efforts continue: Irish-medium naíonraí (preschools), and remote-work digital hubs drawing some families back to Gaeltacht areas specifically for the language and the lifestyle.",
+     ],
+   }},
   {id:'c7', year:432, title:'Saint Patrick', category:'Mythology', difficulty:'beginner',
    target:['w156','w157'],
    text:"Naomh Pádraig — Saint Patrick — is Ireland's patron saint, traditionally credited with bringing Christianity to Ireland in the 5th century. Lá Fhéile Pádraig, March 17th, is Ireland's national holiday. The famous story of him driving snakes out of Ireland is a legend, not history — Ireland likely never had snakes to begin with.",
@@ -527,7 +712,46 @@ export const GA_CAPSULES = [
   {id:'c17', year:2026, title:'How Ireland Is Governed', category:'Politics', difficulty:'intermediate',
    target:['w176','w177','w178','w179'],
    text:"The Republic of Ireland is a parliamentary democracy. The rialtas (government) is led by the Taoiseach — the head of government, comparable to a prime minister. Laws are made in the Dáil (Dáil Éireann), the main chamber of parliament, whose members are called TDs. The uachtarán (president) is the directly elected head of state, with a largely ceremonial and constitutional role. Nearly all Irish political vocabulary is used in Irish even in English-language news — Taoiseach, Dáil, and TD are everyday words in Ireland.",
-   quiz:{q:'Who is the head of government in Ireland?', options:['The Taoiseach','The uachtarán','The rí','The TD'], answer:0}},
+   quiz:{q:'Who is the head of government in Ireland?', options:['The Taoiseach','The uachtarán','The rí','The TD'], answer:0},
+   // Deliberately structural and non-partisan — this Living Encounter
+   // teaches the actual mechanics of PR-STV voting and the real
+   // distinction between the Taoiseach (chosen by the Dáil) and the
+   // uachtarán (directly elected by voters), not any current political
+   // debate.
+   encounter: {
+     visual: 'polling-station',
+     observeTitle: 'A polling station, election day',
+     teaser: "You're not choosing just one candidate today — you're ranking them, and the count itself will take hours to untangle.",
+     observeNote: 'A composite polling-day scene explaining the real PR-STV system — the specific voter and station are illustrative.',
+     beats: [
+       { type: 'narration', text: "A polling station, election day. It's your first time voting for the Dáil, and the ballot paper looks nothing like you expected." },
+       { type: 'line', speaker: 'The polling clerk', irish: 'Ná roghnaigh ach duine amháin — cuir uimhir le gach iarrthóir de réir do rogha.', phonetic: 'naw ROY-nee ahkh DIN-eh uh-WAWN — kwir IV-ir leh gokh EER-hohr deh RAY-r duh ROH-uh', english: "Don't just pick one — number every candidate in order of your preference." },
+       { type: 'narration', text: 'That evening, at the count centre, votes are sorted, a quota is set, and any candidate\'s surplus votes over that quota get redistributed by next preference — a process that can run for hours before a single seat is actually decided.' },
+       { type: 'line', speaker: 'A local TD, watching the count', irish: 'Ní bhíonn an rialtas socraithe an oíche seo féin — sin obair don Dáil.', phonetic: 'nee VEE-un un REEL-tuss SUK-ra-heh un EE-heh shuh fayn — shin UB-ir dun dawl', english: "The government isn't decided tonight itself — that's the Dáil's job." },
+     ],
+     participatePrompt: 'You genuinely like your first-choice candidate, but barely know several of the others on the ballot. How do you rank them?',
+     participateChoices: [
+       {
+         label: 'Rank everyone you have a real opinion on, and leave the rest blank.',
+         consequence: "Completely valid under this system — you're never required to rank every candidate, only as many as you actually want to.",
+       },
+       {
+         label: 'Rank every single candidate, just to be thorough.',
+         consequence: "Also valid, and it means your vote can keep transferring through more rounds of counting if your earlier choices are eliminated or already elected.",
+       },
+       {
+         label: 'Just mark your first choice and stop there.',
+         consequence: "Perfectly allowed — a single-preference vote still counts fully for that first choice, it simply won't transfer further if that candidate is eliminated early.",
+       },
+     ],
+     reflectPoints: [
+       "Ireland's rialtas (government) is led by the Taoiseach, but voters don't elect the Taoiseach directly by name — the role goes to whoever the Dáil, after an election, actually nominates from among its own members.",
+       "The Dáil is elected using PR-STV (Proportional Representation, Single Transferable Vote) — voters rank candidates in order of preference rather than choosing just one, a system written directly into Article 16.2.5° of the Constitution.",
+       'At the count, any candidate who clears a set quota has their surplus votes redistributed by next preference, and the lowest-placed candidate is eliminated and their votes redistributed too — repeating until every seat is filled.',
+       "PR-STV is genuinely uncommon internationally, shared most notably with Malta and the Australian Senate.",
+       "By contrast, the uachtarán (president) is directly elected by the whole country — but the role is largely ceremonial and constitutional, not one of day-to-day government.",
+     ],
+   }},
 
   // ---- Geography set (hand-written; targets stay within the audio-backed vocabulary) ----
   {id:'c18', title:'The Three Dialects', category:'Geography', difficulty:'beginner',
@@ -658,7 +882,44 @@ export const GA_CAPSULES = [
   {id:'c21', title:'Weather off the Atlantic', category:'Geography', difficulty:'beginner',
    target:['w128','w129','w35','w98'],
    text:"Ireland's weather arrives from the Atlantic: báisteach (rain) in soft persistent forms English barely has words for, gaoth (wind) that shapes the bent trees of the west coast, and a famously changeable spéir (sky). It is rarely truly fuar (cold) — the Gulf Stream keeps winters mild — which is why the island stays green enough to earn the name 'the Emerald Isle'. Small talk about weather is a national pastime in both languages.",
-   quiz:{q:'What does "báisteach" mean?', options:['Rain','Wind','Sky','Snow'], answer:0}},
+   quiz:{q:'What does "báisteach" mean?', options:['Rain','Wind','Sky','Snow'], answer:0},
+   // A Living Encounter built around "four seasons in one day" — a real,
+   // commonly cited description of Irish weather's speed of change — and
+   // the genuine colloquialism "a soft day," rather than an abstract
+   // description of climate.
+   encounter: {
+     visual: 'changeable-sky',
+     observeTitle: 'A walk, and four seasons in one afternoon',
+     teaser: 'Rain, sun, wind, and rain again, inside the same hour — and a local barely breaks stride through any of it.',
+     observeNote: 'A composite scene of ordinary Irish weather small talk — the walk and the people are illustrative.',
+     beats: [
+       { type: 'narration', text: "A walk along the coast road. The spéir was clear twenty minutes ago; now a fine mist is drifting in off the water." },
+       { type: 'line', speaker: 'A local, unbothered', irish: 'Lá bog atá ann.', phonetic: 'law bug uh-TAW on', english: '"It\'s a soft day" (a real, still-used phrase for this exact gentle, misty rain).' },
+       { type: 'narration', text: 'Ten minutes later the báisteach has stopped entirely, the sun is back, and the gaoth off the Atlantic has picked up enough to lean the roadside trees permanently sideways, the way they\'ve grown for generations.' },
+       { type: 'line', speaker: 'The same local', irish: 'Ní bheidh sé fuar go deo anseo — sin an Sruth Murascaille, a deir siad.', phonetic: 'nee vay shay FOO-ur guh joh un-SHOH — shin un SRUH MUR-us-kal-yeh, uh jer shee-ud', english: "It's never truly cold here — that's the Gulf Stream, they say." },
+     ],
+     participatePrompt: 'The sky looks clear again right now. Do you bring rain gear anyway?',
+     participateChoices: [
+       {
+         label: 'Bring it regardless — the sky here means nothing for long.',
+         consequence: "The locally wise choice — \"four seasons in one day\" isn't just a saying here, it's a genuinely accurate description of how fast conditions shift.",
+       },
+       {
+         label: "Leave it behind — it's clear right now, so why bother.",
+         consequence: "You're caught out within the hour, same as almost everyone who tries this at least once before learning better.",
+       },
+       {
+         label: 'Ask a local directly for their honest read.',
+         consequence: '"Bring it anyway," they say without even glancing at the sky — the safest, and most commonly given, answer to this exact question.',
+       },
+     ],
+     reflectPoints: [
+       '"A soft day" is a real, still-used Irish expression for the gentle, persistent misty rain that\'s especially common along the west coast.',
+       "Atlantic gaoth (wind) genuinely shapes the coastal landscape — trees along the most exposed stretches grow permanently bent from a lifetime of wind from one direction.",
+       "The Gulf Stream keeps Irish winters unusually mild for the island's northerly latitude, rarely truly fuar (cold) — part of why the country stays green enough to earn the name \"the Emerald Isle.\"",
+       '"Four seasons in one day" is a commonly used, broadly accurate description of how quickly Irish weather can shift between rain, wind, sun, and back again.',
+     ],
+   }},
   {id:'c22', title:'A Day in the Gaeltacht', category:'Geography', difficulty:'intermediate', province:'connachta',
    target:['w123','w79','w25','w124','w23'],
    text:"In a Gaeltacht village, Irish carries the whole day: maidin (morning) greetings at the shop, tae (tea) with neighbours, obair (work) on land or sea or — increasingly — remote for a city employer, music in the pub come tráthnóna (evening), and oíche mhaith (good night) at the door. Thousands of Irish teenagers spend summer weeks boarding in these villages at Irish colleges — for many it's where the school subject first becomes a living language.",
